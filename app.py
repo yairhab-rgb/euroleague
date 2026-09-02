@@ -104,18 +104,25 @@ if nav_option == "Head-to-Head Comparison":
                 return f"{val:.2f}"
             return str(val)
             
-        rows_html = ""
+       rows_html = ""
         for label, col, lower_is_better in METRICS:
             val_a = player_a[col]
             val_b = player_b[col]
             
-            if lower_is_better:
-                a_better = val_a < val_b
-                b_better = val_b < val_a
-            else:
-                a_better = val_a > val_b
-                b_better = val_b > val_b
-                
+            # Safe numeric conversion for comparison
+            try:
+                num_a = float(val_a)
+                num_b = float(val_b)
+                if lower_is_better:
+                    a_better = num_a < num_b
+                    b_better = num_b < num_a
+                else:
+                    a_better = num_a > num_b
+                    b_better = num_b > num_a
+            except:
+                a_better = False
+                b_better = False
+            
             color_a = GREEN if a_better else NEUTRAL
             color_b = GREEN if b_better else NEUTRAL
             weight_a = "bold" if a_better else "normal"
