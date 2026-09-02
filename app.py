@@ -85,15 +85,32 @@ def load_data():
     current_df = None
     past_df = None
 
-    # קובץ ראשי (האקסל הגדול)
-    if os.path.exists("euroleague_current_season.csv"):
-        current_df = pd.read_csv("euroleague_current_season.csv")
+    # זיהוי אוטומטי חכם של הקובץ הראשי (הגדול) בתיקייה
+    csv_files = [
+        f for f in os.listdir(".") if f.endswith(".csv") and f != "new.csv"
+    ]
+    main_file = None
 
-    # קובץ קטן (new.csv)
+    euroleague_candidates = [
+        f
+        for f in csv_files
+        if any(
+            kw in f.lower() for kw in ["euroleague", "current", "season", "stats"]
+        )
+    ]
+    if euroleague_candidates:
+        main_file = max(euroleague_candidates, key=os.path.getmtime)
+    elif csv_files:
+        main_file = max(csv_files, key=os.path.getmtime)
+
+    if main_file and os.path.exists(main_file):
+        current_df = pd.read_csv(main_file)
+
+    # טעינת הקובץ הקטן new.csv
     if os.path.exists("new.csv"):
         past_df = pd.read_csv("new.csv")
 
-    return current_df, past_df
+    return current_df, past_df, main_file
 
 
 st.markdown(
@@ -101,13 +118,16 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-df, past_df = load_data()
+df, past_df, found_main_file = load_data()
 
 if df is None or len(df.columns) == 0:
     st.error(
-        "⚠️ Current season data file ('euroleague_current_season.csv') not found."
+        "⚠️ לא נמצא קובץ ראשי מתאים בתיקייה (חפש קובץ CSV של היורוליג)."
     )
     st.stop()
+
+# הצגת שם הקובץ הראשי שנטען לידיעה
+st.caption(f"📁 טען בהצלחה קובץ ראשי: `{found_main_file}` | קובץ השוואה: `new.csv`")
 
 df.columns = df.columns.str.strip().str.replace("\ufeff", "")
 if past_df is not None:
