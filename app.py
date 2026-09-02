@@ -5,64 +5,70 @@ import os
 st.set_page_config(
     page_title="EuroLeague Fantasy Dashboard",
     page_icon="🏀",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
-# --- Advanced Custom UI / UX Styling & Dark Theme Background ---
+# --- Clean High-Readability Light Theme & Hiding Sidebar ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
-    /* Global App Background & Font */
+    /* Global Clean Light Background */
     .stApp {
-        background: linear-gradient(135deg, #0b0c10 0%, #1f2833 100%);
-        color: #f1f1f1;
+        background-color: #f8f9fa;
+        color: #212529;
         font-family: 'Inter', sans-serif;
     }
     
-    /* Modern Sidebar Styling */
+    /* Completely Hide Sidebar */
     section[data-testid="stSidebar"] {
-        background-color: #12161f;
-        border-right: 1px solid rgba(255, 255, 255, 0.08);
+        display: none !important;
     }
     
-    /* Main Title */
+    /* Main Title Styling */
     .main-title {
         font-weight: 700;
-        color: #66fcf1;
-        font-size: 2.3rem;
-        margin-bottom: 25px;
+        color: #00b4d8;
+        font-size: 2.2rem;
+        margin-bottom: 20px;
         letter-spacing: -0.5px;
     }
     
-    /* Sleek Glassmorphism Metric Cards */
+    /* Clean Modern Metric Cards for Light Mode */
     div[data-testid="stMetric"] {
-        background: rgba(31, 40, 51, 0.65);
-        backdrop-filter: blur(12px);
-        padding: 18px;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        background: #ffffff;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
     
     div[data-testid="stMetric"] label {
-        color: #c5c6c7 !important;
+        color: #64748b !important;
         font-weight: 500;
         font-size: 0.9rem;
     }
     
     div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        color: #ffffff !important;
+        color: #0f172a !important;
         font-weight: 700;
-        font-size: 1.8rem;
+        font-size: 1.7rem;
     }
     
-    /* Dataframe Container Border */
-    div[data-testid="stDataFrame"] {
-        border-radius: 12px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Custom Styling for Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background-color: #edf2f7;
+        border-radius: 8px 8px 0px 0px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #4a5568;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #00b4d8 !important;
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -78,7 +84,7 @@ def load_data():
 
 st.markdown("<h1 class='main-title'>🏀 EuroLeague Fantasy Analytics</h1>", unsafe_allow_html=True)
 
-# Automatically load local data without manual uploader
+# Automatically load local data
 df = load_data()
 
 if df is None:
@@ -117,23 +123,21 @@ if max_raw > 0 and pd.notna(max_raw):
 else:
     df["Yaya Rating"] = 5.0
 
-# Sidebar Navigation (Clean & English)
-st.sidebar.markdown("### Navigation Menu")
-nav_option = st.sidebar.radio("Select View", ["Head-to-Head Comparison", "Player Database"], label_visibility="collapsed")
+# --- Clean Top-Level Tabs Navigation (Replacing Sidebar) ---
+tab_h2h, tab_db = st.tabs(["⚔️ Head-to-Head Comparison", "📋 Player Database"])
 
-if nav_option == "Head-to-Head Comparison":
-    st.markdown("---")
-    st.subheader("⚔️ Head-to-Head Player Comparison")
+with tab_h2h:
+    st.subheader("Head-to-Head Player Comparison")
     
     if len(df.columns) > 0:
         players = sorted(df[player_col].dropna().unique().tolist())
         col_select_a, col_select_b = st.columns(2)
         
         with col_select_a:
-            player_a_name = st.selectbox("Player A", players, index=0)
+            player_a_name = st.selectbox("Player A", players, index=0, key="player_a_select")
         with col_select_b:
             default_b_index = 1 if len(players) > 1 else 0
-            player_b_name = st.selectbox("Player B", players, index=default_b_index)
+            player_b_name = st.selectbox("Player B", players, index=default_b_index, key="player_b_select")
             
         player_a = df[df[player_col] == player_a_name].iloc[0]
         player_b = df[df[player_col] == player_b_name].iloc[0]
@@ -183,8 +187,9 @@ if nav_option == "Head-to-Head Comparison":
 
     else:
         st.error("Dataset is empty or invalid.")
-else:
-    st.subheader("📋 Player Database Overview")
+
+with tab_db:
+    st.subheader("Player Database Overview")
     
     db_cols_mapping = {
         player_col: "Player",
@@ -201,4 +206,3 @@ else:
     display_db = df[list(valid_db_cols.keys())].rename(columns=valid_db_cols)
     
     st.dataframe(display_db, use_container_width=True, hide_index=True)
-    
