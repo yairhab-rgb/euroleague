@@ -1,0 +1,311 @@
+﻿Full Name,Team,Position,Overall Avg FPT,Home Avg FPT,Away Avg FPT,FPT Std Dev,Floor Rate % (FPT<8),Ceiling Rate % (FPT>=20),Total Minutes,FPT per Minute,Games Played
+Juom Maker Bol,Baskonia Vitoria-Gasteiz,C,2,2,,0,100,0,2.6,0.759,1
+Ognjen Radosic,Crvena Zvezda Meridianbet Belgrade,G,0,0,,0,100,0,0.8,0,1
+Juan Nunez,FC Barcelona,G,-2,,-2,0,100,0,5.3,-0.38,1
+Nikola Kusturica,FC Barcelona,F,-1.8,,-1.8,0,100,0,1.1,-1.588,1
+Mitar Bosnjakovic,Partizan Mozzart Bet Belgrade,G,0,0,,0,100,0,9.4,0,3
+Mario Nakic,Partizan Mozzart Bet Belgrade,F,3.3,3.3,,0,100,0,6.2,0.531,1
+Gunars Grinvalds,Real Madrid,F,0,0,,0,100,0,0.8,0,1
+Itay Segev,Hapoel IBI Tel Aviv,C,-1.8,,-1.8,0,100,0,3,-0.603,1
+Izan Almansa,Real Madrid,F,-0.63,-0.9,-0.5,0.55,100,0,9.6,-0.197,3
+Vit Hrabar,Baskonia Vitoria-Gasteiz,F,0.02,-0.3,1,0.78,100,0,10.2,0.01,4
+Isaac Nogues,Valencia Basket,G,0.36,0.64,0.19,0.97,100,0,42.3,0.111,13
+Miikka Muurinen,Partizan Mozzart Bet Belgrade,F,0.03,-0.5,0.3,1.17,100,0,10.9,0.018,6
+Uros Mijailovic,Partizan Mozzart Bet Belgrade,F,-1.14,-1.35,-1,1.2,100,0,12.2,-0.467,5
+Guy Palatin,Hapoel IBI Tel Aviv,G,0.17,0.43,0.06,1.52,100,0,21.7,0.078,10
+Nemanja Dangubic,Dubai Basketball,F,0.64,0.6,0.7,1.57,100,0,107.4,0.084,14
+Levi Randolph,Hapoel IBI Tel Aviv,F,0.74,1.08,0.5,1.9,100,0,123.1,0.072,12
+Leon Kratzer,FC Bayern Munich,C,-0.34,-0.02,-1,1.93,100,0,58,-0.053,9
+Matteo Baiocchi,Virtus Bologna,G,-1.12,-1,-1.3,2.04,100,0,49.5,-0.113,5
+Rafa Villar,Baskonia Vitoria-Gasteiz,G,1,0.77,1.28,2.3,100,0,168.2,0.16,27
+Yago Dos Santos,Crvena Zvezda Meridianbet Belgrade,G,1.65,1.04,2.13,2.41,100,0,269.1,0.153,25
+Giannoulis Larentzakis,Olympiacos Piraeus,G,0.13,-1.35,0.72,2.56,100,0,20.9,0.043,7
+Xabi Lopez-arostegui,Valencia Basket,G,0.42,-0.7,1.54,2.56,100,0,84.7,0.05,10
+David Mutaf,Anadolu Efes Istanbul,G,1.47,0.2,1.9,2.59,100,0,49.8,0.237,8
+Panagiotis Kalaitzakis,Panathinaikos AKTOR Athens,F,1.11,0.91,1.49,2.6,100,0,132.8,0.217,26
+Stefan Joksimovic,Baskonia Vitoria-Gasteiz,F,-0.35,-1.13,1,2.62,100,0,65.3,-0.06,11
+Nathan Sestina,EA7 Emporio Armani Milan,F,1.68,3.75,-0.1,2.68,100,0,110.5,0.197,13
+Gabriele Procida,Real Madrid,F,0.97,4.4,-0.17,2.74,100,0,39.9,0.195,8
+Diego Flaccadori,EA7 Emporio Armani Milan,G,1.04,1.67,0.2,2.92,100,0,41.3,0.177,7
+Tomer Ginat,Hapoel IBI Tel Aviv,F,3.35,4.14,2.3,2.93,100,0,137.3,0.342,14
+Erkan Yilmaz,Anadolu Efes Istanbul,F,1.76,1.33,2.04,3.06,95.65,0,203.8,0.199,23
+Marius Grigonis,Panathinaikos AKTOR Athens,G,0.59,0.91,0.41,3.08,94.74,0,110.6,0.102,19
+Ousmane Diop,EA7 Emporio Armani Milan,F,3.25,,3.25,3.18,100,0,13.3,0.488,2
+Dejan Davidovac,Crvena Zvezda Meridianbet Belgrade,F,3.68,3.65,3.7,3.19,85.71,0,299,0.258,21
+Melih Mahmutoglu,Fenerbahce Beko Istanbul,G,0.31,1.6,-1.4,3.23,100,0,41.8,0.053,7
+Yankuba Sima,Valencia Basket,C,0.6,0.1,0.85,3.25,100,0,49.5,0.073,6
+Juani Marcos,FC Barcelona,G,1.53,1.58,1.47,3.48,96.77,0,266.3,0.178,31
+Stefan Miljenovic,Crvena Zvezda Meridianbet Belgrade,G,2.37,2.13,2.76,3.54,100,0,89.5,0.344,13
+Stefano Tonut,EA7 Emporio Armani Milan,G,1.57,2.53,-0.67,3.62,90,0,89.7,0.175,10
+Matteo Accorsi,Virtus Bologna,G,0.68,-0.9,1.73,3.65,100,0,25.3,0.134,5
+Bar Timor,Hapoel IBI Tel Aviv,G,1.88,0.78,3.52,3.68,90,0,57.8,0.325,10
+Armando Bacot Jr.,Fenerbahce Beko Istanbul,C,1.55,2.3,0.91,3.69,92.31,0,263,0.154,26
+Enzo Shahrvin,Paris Basketball,C,2.35,0.8,3.23,3.71,100,0,94.9,0.272,11
+Monte Morris,Olympiacos Piraeus,G,1.48,-0.25,2.05,3.72,87.5,0,92.3,0.128,8
+Adam Atamna,LDLC ASVEL Villeurbanne,G,0.49,-0.84,1.67,3.72,94.12,0,176.9,0.047,17
+Dovydas Giedraitis,Zalgiris Kaunas,G,1.94,1.5,2.29,3.75,95,0,249.7,0.155,20
+Terry Tarpey,AS Monaco,G,3.48,4.31,2.75,3.84,83.33,0,276.8,0.453,36
+Kostas Papanikolaou,Olympiacos Piraeus,F,2.52,2.62,2.41,3.87,91.67,0,515.2,0.176,36
+Mantas Rubstavicius,Zalgiris Kaunas,G,1.05,1.22,0.81,3.99,94.12,0,73.5,0.244,17
+Francesco Ferrari,Virtus Bologna,F,3.8,5,2.8,4.03,90.91,0,113.3,0.369,11
+Sergio Llull,Real Madrid,G,2.12,3.07,1.18,4.03,92.5,0,426.2,0.199,40
+Aleksa Radanov,Partizan Mozzart Bet Belgrade,G,0.32,-0.57,2.4,4.1,90,0,68.3,0.047,10
+Myles Cale,FC Barcelona,F,3.42,5.59,1.25,4.17,82.35,0,515.9,0.225,34
+Gur Lavi,Maccabi Rapyd Tel Aviv,F,3.43,3.45,3.41,4.18,86.67,0,168.8,0.305,15
+Daulton Hommes,Paris Basketball,F,4.5,4.37,4.69,4.25,76.19,0,285.3,0.332,21
+Onuralp Bitim,Fenerbahce Beko Istanbul,F,2.59,1.81,3.32,4.25,82.76,0,307.6,0.244,29
+Leopold Cavaliere,Paris Basketball,F,4.8,5.19,4.35,4.43,72.22,0,504.6,0.342,36
+Joel Ayayi,Paris Basketball,G,2.86,3.03,2.67,4.55,76.92,0,136.9,0.272,13
+Niels Giffey,FC Bayern Munich,F,3.85,4.19,3.51,4.63,84.38,0,423,0.291,32
+Alberto Abalde,Real Madrid,F,4.06,5.81,2.61,4.64,85.71,0,654,0.261,42
+Vanja Marinkovic,Partizan Mozzart Bet Belgrade,F,4.28,3.87,4.73,4.69,84.21,0,389.3,0.209,19
+Georgios Papagiannis,Anadolu Efes Istanbul,C,5.58,5.3,6,4.75,60,0,73.9,0.378,5
+Tyson Ward,Olympiacos Piraeus,F,8.32,8.13,8.58,4.77,51.43,0,668.1,0.436,35
+William Rayman,Maccabi Rapyd Tel Aviv,F,2.91,3.41,2.42,4.77,81.58,0,455,0.243,38
+Giampaolo Ricci,EA7 Emporio Armani Milan,F,4.64,4.57,4.72,4.83,76.32,0,622.8,0.283,38
+Yakuba Ouattara,Paris Basketball,G,4.43,3.22,5.51,4.85,73.53,0,573.5,0.263,34
+Bryant Dunston,EA7 Emporio Armani Milan,C,4.92,6.69,3.36,4.95,70.59,0,186.1,0.45,17
+Alexandros Samodurov,Panathinaikos AKTOR Athens,F,3.05,4.1,2.16,5.01,84.62,0,80.3,0.494,13
+Bodian Massa,LDLC ASVEL Villeurbanne,C,4.54,3.98,5.17,5.03,73.53,0,539,0.286,34
+David Lighty,LDLC ASVEL Villeurbanne,F,4.07,4.87,3.11,5.06,87.88,0,612.8,0.219,33
+Daniel Hackett,Virtus Bologna,G,4.73,5.51,3.99,5.1,69.7,0,484,0.322,33
+Khalifa Diop,Baskonia Vitoria-Gasteiz,C,6.4,7.26,5.65,5.11,64.29,0,468.5,0.382,28
+Clement Frisch,Baskonia Vitoria-Gasteiz,F,5.04,6.68,3.48,5.12,75.68,0,449.5,0.415,37
+Chris Silva,Fenerbahce Beko Istanbul,C,4.53,5.96,3.41,5.13,75,0,139.2,0.52,16
+Niccolo Mannion,EA7 Emporio Armani Milan,G,3.48,4.32,2.77,5.16,81.82,0,254,0.301,22
+David Kramer,Real Madrid,G,1.11,3.65,-0.79,5.17,92.86,0,158.7,0.098,14
+Awudu Abass,Dubai Basketball,F,2.55,3.59,1.58,5.19,90.32,3.23,507.7,0.156,31
+Zachary Hankins,Maccabi Rapyd Tel Aviv,C,4.82,4.64,5,5.2,70,0,103,0.468,10
+Joel Bolomboy,Crvena Zvezda Meridianbet Belgrade,C,8.04,9.09,6.84,5.21,46.67,0,216.8,0.556,15
+Justus Hollatz,FC Bayern Munich,G,4.93,4.97,4.9,5.22,61.54,0,433.4,0.296,26
+Kosta Kondic,Dubai Basketball,G,3.84,3.79,3.9,5.22,75,0,188,0.327,16
+Josep Puerto,Valencia Basket,G,5.6,4.8,6.59,5.23,60.53,0,598.4,0.356,38
+Shaquielle Mckissic,Olympiacos Piraeus,G,5.44,5.45,5.43,5.24,70.37,0,311.7,0.471,27
+Mouhamed Faye,Paris Basketball,C,7.33,7.69,6.98,5.3,50,0,652.6,0.427,38
+Juhann Begarin,AS Monaco,G,4.02,5.12,3.02,5.31,82.61,0,309.9,0.298,23
+Shake Milton,Partizan Mozzart Bet Belgrade,G,6.21,6.72,5.65,5.34,65.22,0,427.4,0.334,23
+John Dibartolomeo,Maccabi Rapyd Tel Aviv,G,4.64,4.37,4.93,5.39,74.07,0,386.9,0.324,27
+Miles Norris,FC Barcelona,F,4.94,6.59,3.45,5.43,69.44,2.78,445.8,0.399,36
+Marcio Santos,Maccabi Rapyd Tel Aviv,C,6.26,6.07,6.44,5.45,72.97,0,520.4,0.445,37
+Ignas Brazdeikis,Zalgiris Kaunas,F,3.44,4.56,2.43,5.55,81.58,0,561.7,0.233,38
+Metecan Birsen,Fenerbahce Beko Istanbul,F,2.88,2.76,3.05,5.58,83.33,0,269.8,0.256,24
+Gytis Radzevicius,Baskonia Vitoria-Gasteiz,G,5.36,9.11,1.91,5.62,76,0,443,0.303,25
+Edwin Jackson,LDLC ASVEL Villeurbanne,F,4.35,2.77,6.47,5.64,76.19,0,330.2,0.277,21
+Edgaras Ulanovas,Zalgiris Kaunas,F,7.03,7.18,6.89,5.65,61.9,2.38,779.2,0.379,42
+Frank Ntilikina,Olympiacos Piraeus,G,2.98,2.89,3.11,5.69,87.5,0,393.8,0.182,24
+Kobi Simmons,Baskonia Vitoria-Gasteiz,G,11.26,12.12,10.46,5.72,19.35,9.68,687.5,0.508,31
+Arturs Zagars,Fenerbahce Beko Istanbul,G,4.46,5.77,2.5,5.72,80,0,56.4,0.396,5
+Tyson Carter,Crvena Zvezda Meridianbet Belgrade,G,2.22,0.88,2.99,5.75,81.82,0,161.6,0.151,11
+Nicola Akele,Virtus Bologna,F,3.42,1.96,5.13,5.77,84.62,3.85,259.2,0.343,26
+Brice Dessert,Anadolu Efes Istanbul,C,5.68,5.6,5.76,5.77,52.94,0,219.7,0.44,17
+Aleksej Pokusevski,Partizan Mozzart Bet Belgrade,F,3.12,2.43,4.14,5.81,85.19,3.7,325.9,0.259,27
+Nick Calathes,Partizan Mozzart Bet Belgrade,G,6.29,5.43,7.2,5.82,58.06,0,596.2,0.327,31
+Ish Wainright,Hapoel IBI Tel Aviv,F,4.5,5.76,3.25,5.91,69.05,0,966.9,0.196,42
+Tai Odiase,Hapoel IBI Tel Aviv,C,4.28,5.02,3.48,5.92,79.31,3.45,345.8,0.359,29
+Jaime Pradilla,Valencia Basket,C,9.93,10.27,9.57,5.93,36.36,4.55,858.4,0.509,44
+Semi Ojeleye,Crvena Zvezda Meridianbet Belgrade,F,8.36,7.36,9.32,5.93,43.59,0,894.2,0.365,39
+Nemanja Nedovic,AS Monaco,G,5.28,4.61,5.78,5.95,71.43,2.86,470.4,0.393,35
+Yam Madar,Hapoel IBI Tel Aviv,G,3.29,2.81,3.67,5.98,81.25,0,155.3,0.339,16
+Laurynas Birutis,Zalgiris Kaunas,C,5.58,4.3,6.92,5.99,73.17,4.88,409.7,0.558,41
+Melvin Ajinca,LDLC ASVEL Villeurbanne,F,3.6,4.93,2.09,6,80,0,529.8,0.204,30
+Jeremy Morgan,Paris Basketball,F,6.08,4.93,7.11,6.03,56.25,0,566.8,0.343,32
+Donatas Motiejunas,Crvena Zvezda Meridianbet Belgrade,C,7.8,7.05,8.6,6.06,55.56,7.41,338.9,0.621,27
+Timothe Luwawu-cabarrot,Baskonia Vitoria-Gasteiz,F,17.02,18.96,14.85,6.08,5.56,33.33,914.8,0.67,36
+Stefan Jovic,FC Bayern Munich,G,7.95,8.26,7.43,6.08,52.63,0,351.1,0.43,19
+Rodrigue Beaubois,Anadolu Efes Istanbul,G,4.83,4.12,5.47,6.1,76.19,4.76,260.5,0.389,21
+Nikola Kalinic,Crvena Zvezda Meridianbet Belgrade,F,6.67,8.55,4.88,6.16,66.67,5.13,903.3,0.288,39
+Arijan Lakic,Partizan Mozzart Bet Belgrade,G,2.94,4.1,1.69,6.18,84,4,328.5,0.224,25
+Deividas Sirvydis,Zalgiris Kaunas,G,3.82,3.85,3.78,6.18,70.37,0,331.3,0.311,27
+Jasiel Rivero,Crvena Zvezda Meridianbet Belgrade,C,4.37,4.7,4.2,6.2,66.67,0,88.4,0.444,9
+Chuma Okeke,Real Madrid,F,8.46,9.53,7.53,6.3,53.49,4.65,770,0.473,43
+Amath M'baye,Paris Basketball,F,6.52,9.16,3.55,6.31,73.53,5.88,588.3,0.377,34
+Matthew Costello,Valencia Basket,F,7.92,8.26,7.51,6.34,50,5,662.5,0.478,40
+Klemen Prepelic,Dubai Basketball,G,3.63,4.12,3.25,6.34,81.48,3.7,363.1,0.27,27
+Alessandro Pajola,Virtus Bologna,G,7.28,7.64,6.91,6.35,50,4.17,458,0.381,24
+Justin Anderson,Dubai Basketball,F,6.68,7.67,5.74,6.37,63.64,6.06,774.9,0.284,33
+Braxton Key,Valencia Basket,F,7.09,6.41,7.85,6.37,61.76,2.94,578.8,0.416,34
+Sergio De Larrea,Valencia Basket,G,4.93,6.19,4.02,6.41,70.97,6.45,345.7,0.442,31
+Shane Larkin,Anadolu Efes Istanbul,G,15.56,13.39,18.6,6.45,8.33,16.67,364.3,0.513,12
+Tadas Sedekerskis,Baskonia Vitoria-Gasteiz,F,10.37,11.97,8.5,6.45,53.85,7.69,310.4,0.434,13
+Allan Dokossi,Paris Basketball,F,8.95,9.03,8.85,6.45,50,5.88,549.9,0.553,34
+Rolands Smits,Anadolu Efes Istanbul,F,6.25,8.45,4.18,6.46,68.57,2.86,664.3,0.329,35
+Nicolo Melli,Fenerbahce Beko Istanbul,C,10.97,11.95,10.05,6.48,28.57,2.86,831.1,0.462,35
+Sebastian Herrera,Paris Basketball,G,5.29,5.64,4.95,6.49,63.89,0,591.2,0.322,36
+Gabriel Deck,Real Madrid,F,9.38,10.61,8.09,6.52,39.02,4.88,836.5,0.46,41
+Lamar Stevens,Paris Basketball,F,8.32,7.34,9.22,6.54,43.48,8.7,459.1,0.417,23
+Jan Vesely,FC Barcelona,C,9.94,10.07,9.81,6.56,31.58,5.26,804.2,0.47,38
+Andres Feliz,Real Madrid,G,7.22,8.01,6.38,6.56,56.41,0,649.4,0.433,39
+Devon Hall,Fenerbahce Beko Istanbul,G,8.97,10.45,7.57,6.58,42.86,2.86,883.8,0.355,35
+Cory Joseph,Olympiacos Piraeus,G,7.4,8.05,6.32,6.59,50,6.25,249.1,0.475,16
+Paul Eboua,LDLC ASVEL Villeurbanne,C,7.35,5.4,10.14,6.59,52.94,0,318.1,0.393,17
+Markquis Nowell,Baskonia Vitoria-Gasteiz,G,6.16,6.65,5.61,6.6,71.43,7.14,402.9,0.428,28
+Alex Len,Real Madrid,C,3.93,3.42,4.48,6.63,78.26,4.35,210.8,0.428,23
+Usman Garuba,Real Madrid,F,6.94,8.28,5.61,6.64,72.5,7.5,499.8,0.556,40
+Mikael Jantunen,Fenerbahce Beko Istanbul,F,5.36,6.87,3.84,6.65,72.22,5.56,669,0.288,36
+Karim Jallow,Virtus Bologna,F,5.58,3.51,7.43,6.67,66.67,5.56,752.8,0.267,36
+Iffe Lundberg,Maccabi Rapyd Tel Aviv,G,13.24,15.54,11.44,6.69,12.5,12.5,390.2,0.543,16
+Alpha Diallo,AS Monaco,F,14.39,14.39,14.39,6.7,19.05,19.05,1172.3,0.515,42
+O'shae J Brissett,Maccabi Rapyd Tel Aviv,F,10.99,11.23,10.76,6.75,33.33,11.11,885.2,0.447,36
+Quinn Ellis,EA7 Emporio Armani Milan,G,11.82,14.75,8.89,6.78,30.56,8.33,913.8,0.466,36
+Kamar Baldwin,FC Bayern Munich,G,5.91,6.17,5.4,6.8,55.56,0,146.9,0.362,9
+Brandon Boston Jr.,Fenerbahce Beko Istanbul,G,4.18,4.9,3.56,6.81,67.86,3.57,331.3,0.353,28
+Jaylen Hoard,Maccabi Rapyd Tel Aviv,F,17.01,17.01,17.01,6.83,8.57,34.29,1007.4,0.591,35
+Dustin Sleva,Zalgiris Kaunas,F,6.49,5.09,7.89,6.84,64.29,4.76,769.3,0.354,42
+Lorenzo Brown,EA7 Emporio Armani Milan,G,7.07,5.3,8.83,6.86,41.67,8.33,173.7,0.488,12
+Thomas Walkup,Olympiacos Piraeus,G,10.32,11.34,9.12,6.87,35.14,10.81,888.8,0.429,37
+Josh Nebo,EA7 Emporio Armani Milan,C,14.32,14.22,14.39,6.89,19.23,23.08,560.2,0.664,26
+Xavier Rathan-mayes,FC Bayern Munich,G,5.04,4.65,5.39,6.93,68.75,3.13,487.2,0.331,32
+Ognjen Dobric,Crvena Zvezda Meridianbet Belgrade,F,4.85,5.44,4.11,6.94,84,4,312.5,0.388,25
+Khem Birch,Fenerbahce Beko Istanbul,C,5.29,3.32,7.17,7,74.42,4.65,711.4,0.32,43
+Moustapha Fall,Olympiacos Piraeus,C,6.05,1.1,11,7,50,0,13.4,0.901,2
+Neno Dimitrijevic,FC Bayern Munich,G,14.8,13.95,15.65,7.02,18.75,25,333.8,0.709,16
+Isaac Bonga,Partizan Mozzart Bet Belgrade,F,15,16.29,13.71,7.06,10.53,18.42,1055.8,0.54,38
+Konstantinos Mitoglou,Panathinaikos AKTOR Athens,F,5.76,4.07,6.98,7.07,70.97,3.23,401.2,0.445,31
+Alen Smailagic,Virtus Bologna,F,7.64,7.19,8.04,7.08,56.67,10,495.9,0.462,30
+Dylan Osetkowski,Partizan Mozzart Bet Belgrade,F,7.58,6.34,8.63,7.09,54.29,8.57,702.5,0.378,35
+Armel Traore,LDLC ASVEL Villeurbanne,F,6.39,4.12,8.8,7.09,65.71,5.71,545.4,0.41,35
+Nikola Milutinov,Olympiacos Piraeus,C,20.89,21.14,20.54,7.11,5,50,861.3,0.97,40
+Neal Sako,Valencia Basket,C,6.64,7.49,5.7,7.14,59.52,2.38,561.6,0.496,42
+Joel Parra,FC Barcelona,F,7.28,7.28,7.29,7.16,62.5,10,746.2,0.39,40
+Ercan Osmani,Anadolu Efes Istanbul,F,11.81,11.86,11.76,7.18,27.78,16.67,879.6,0.483,36
+Daniel Theis,AS Monaco,C,12.96,14.4,11.51,7.19,23.68,13.16,779.9,0.631,38
+Mouhamet Diouf,Virtus Bologna,C,10.81,14.21,7.61,7.19,36.36,6.06,611.7,0.583,33
+Wade Baldwin Iv,Fenerbahce Beko Istanbul,G,17.42,16.54,18.3,7.2,9.52,33.33,1085.6,0.674,42
+Aliou Diarra,Virtus Bologna,C,6.59,4.81,8.24,7.2,66.67,3.7,284.1,0.626,27
+Mathias Lessort,Panathinaikos AKTOR Athens,C,12.97,12.14,13.8,7.21,28.57,14.29,317.2,0.572,14
+Zachary Seljaas,LDLC ASVEL Villeurbanne,F,6.17,6.37,5.94,7.21,51.43,5.71,713.2,0.303,35
+Kai Jones,Anadolu Efes Istanbul,C,7.67,9.15,6.34,7.21,50,5.56,556.5,0.496,36
+Rodions Kurucs,Baskonia Vitoria-Gasteiz,F,7.43,8.54,6.48,7.21,57.69,3.85,550,0.351,26
+Mike James,AS Monaco,G,20.03,17.86,22.31,7.24,2.56,51.28,1167.5,0.669,39
+Justinian Jessup,FC Bayern Munich,F,8.31,10.37,6.14,7.24,59.46,8.11,714.9,0.43,37
+Marko Guduric,EA7 Emporio Armani Milan,G,11.74,12.49,10.95,7.25,28.57,11.43,771.4,0.533,35
+Bonzie Colson,Fenerbahce Beko Istanbul,F,9.23,10.55,8.03,7.26,45,5,674.9,0.547,40
+Kevarrius Hayes,AS Monaco,C,7.76,7.56,7.96,7.28,50,5,697.1,0.445,40
+Nikolaos Rogkavopoulos,Panathinaikos AKTOR Athens,F,4.99,8.03,1.95,7.28,70.59,2.94,418.9,0.405,34
+Donta Hall,Olympiacos Piraeus,C,12.39,11.48,13.39,7.32,28.95,13.16,579.9,0.812,38
+Sehmus Hazer,Anadolu Efes Istanbul,G,4.16,2.93,5.47,7.32,75.76,3.03,435.1,0.316,33
+Sayon Keita,FC Barcelona,C,2.82,3.5,2.13,7.32,83.33,0,51.6,0.328,6
+Tj Leaf,Maccabi Rapyd Tel Aviv,F,13.2,14.65,11.76,7.36,33.33,16.67,436.9,0.725,24
+Bruno Fernando,Partizan Mozzart Bet Belgrade,C,10.15,10.66,9.62,7.44,43.24,13.51,640.7,0.586,37
+Jerian Grant,Panathinaikos AKTOR Athens,G,8.83,8.97,8.69,7.44,52.38,9.52,993.3,0.373,42
+Davis Bertans,Dubai Basketball,F,5.81,6.78,4.91,7.47,68.97,3.45,540.6,0.312,29
+Chris Jones,Hapoel IBI Tel Aviv,G,12.45,12.4,12.5,7.48,28.57,14.29,858,0.609,42
+Antonio Blakeney,Hapoel IBI Tel Aviv,G,11.13,13.04,9.31,7.52,34.15,9.76,928.4,0.491,41
+Wenyen Gabriel,FC Bayern Munich,C,6.07,6.42,5.72,7.55,69.44,2.78,610,0.358,36
+Vassilis Toliopoulos,Panathinaikos AKTOR Athens,G,3.73,7.48,1.23,7.57,90,10,95.6,0.39,10
+Brancou Badio,Valencia Basket,G,10.28,11.53,8.75,7.61,40,12.5,819.8,0.501,40
+Collin Malcolm,Hapoel IBI Tel Aviv,F,9.04,10.67,7.56,7.67,45,10,994.6,0.364,40
+Arnas Butkevicius,Zalgiris Kaunas,F,8.06,8.88,7.23,7.68,55.26,10.53,685.2,0.447,38
+Cole Swider,Anadolu Efes Istanbul,F,4.17,3.22,5.13,7.7,80,6.67,270.4,0.463,30
+Bastien Vautier,LDLC ASVEL Villeurbanne,C,5.22,6.21,4.18,7.73,70.27,2.7,467.9,0.413,37
+Kessler Edwards,Hapoel IBI Tel Aviv,F,5.96,6.18,5.77,7.76,61.54,0,170.6,0.454,13
+Eugene Omoruyi,Baskonia Vitoria-Gasteiz,C,11.43,8.96,13.68,7.8,30.43,17.39,465.2,0.565,23
+Omari Moore,Valencia Basket,G,8.35,8.15,8.58,7.8,55.81,6.98,741.8,0.484,43
+Devin Booker,EA7 Emporio Armani Milan,C,9.98,11.09,8.87,7.83,44.44,11.11,719.3,0.5,36
+Matteo Spagnolo,Baskonia Vitoria-Gasteiz,G,6.57,8.36,4.88,7.84,70.27,5.41,572.5,0.425,37
+Oscar Da Silva,FC Bayern Munich,F,8.14,11.48,4.59,7.85,54.29,8.57,557,0.511,35
+Matthew Morgan,Virtus Bologna,G,12.66,14.75,10.56,7.87,26.47,14.71,677.8,0.635,34
+Zach Leday,EA7 Emporio Armani Milan,F,15.91,16.31,15.51,7.88,10,26.67,738.7,0.646,30
+Vladimir Lucic,FC Bayern Munich,F,11.19,10.02,12.29,7.9,42.42,15.15,764.6,0.483,33
+Derek Willis,Paris Basketball,F,8.41,10.34,6.48,7.92,53.57,14.29,455.2,0.517,28
+Nicolas Laprovittola,FC Barcelona,G,7.74,5.37,9.68,7.93,50,10,336.7,0.46,20
+Luca Vildoza,Virtus Bologna,G,10.22,11.96,8.47,7.94,46.67,13.33,632.5,0.485,30
+Azuolas Tubelis,Zalgiris Kaunas,F,13.49,13.76,13.23,7.96,26.19,21.43,953.1,0.595,42
+Kameron Taylor,Valencia Basket,F,14.47,15.37,13.37,7.96,20,17.5,962.1,0.601,40
+Dario Brizuela,FC Barcelona,G,6.26,5.31,7.11,8,63.16,5.26,590.6,0.403,38
+Jared Rhoden,Paris Basketball,G,8.35,6.95,9.56,8.02,46.15,7.69,554.6,0.392,26
+Alec Peters,Olympiacos Piraeus,F,9.12,8.14,10.24,8.04,55.81,11.63,652.9,0.601,43
+Maodo Lo,Zalgiris Kaunas,G,7.58,7.99,7.18,8.07,53.66,7.32,738.9,0.42,41
+Jeffrey Dowtin Jr,Maccabi Rapyd Tel Aviv,G,7.13,7.53,6.76,8.07,57.89,5.26,324.8,0.417,19
+Mbaye Ndiaye,LDLC ASVEL Villeurbanne,C,10.18,11.51,8.57,8.08,38.71,12.9,731.1,0.432,31
+Tonye Jekiri,Partizan Mozzart Bet Belgrade,C,10.57,9.87,11.18,8.1,40,13.33,289.1,0.548,15
+Johannes Voigtmann,FC Bayern Munich,C,6.53,5.71,7.16,8.1,69.57,4.35,299.1,0.502,23
+Youssoupha Fall,FC Barcelona,C,4.97,5.68,4.27,8.12,77.78,5.56,134.8,0.664,18
+Nikola Mirotic,AS Monaco,F,13.46,17.32,10.28,8.14,22.58,19.35,590.5,0.706,31
+Juancho Hernangomez,Panathinaikos AKTOR Athens,F,12.97,13.4,12.53,8.16,27.27,18.18,1076.4,0.53,44
+Derrick Alston Jr.,Virtus Bologna,F,9.22,9.74,8.76,8.17,47.22,11.11,798.6,0.416,36
+Johnathan Motley,Hapoel IBI Tel Aviv,C,8.62,8.83,8.4,8.18,40,5.71,512.4,0.589,35
+Shaquille Harrison,LDLC ASVEL Villeurbanne,F,9.3,9.19,9.45,8.21,46.43,7.14,534.8,0.487,28
+Jaron Blossomgame,AS Monaco,F,11.19,13.61,8.88,8.27,34.88,13.95,1019.8,0.472,43
+Walter Tavares,Real Madrid,C,16.49,18.99,13.85,8.28,17.95,33.33,887.6,0.724,39
+Vincent Poirier,Anadolu Efes Istanbul,C,11.44,9.19,13.69,8.29,35.71,14.29,259.1,0.618,14
+Matthew Strazel,AS Monaco,G,11.77,16.2,7.54,8.37,37.21,13.95,1045.5,0.484,43
+Thomas Heurtel,LDLC ASVEL Villeurbanne,G,9.68,9.76,9.57,8.37,33.33,4.17,472.4,0.492,24
+Chima Moneke,Crvena Zvezda Meridianbet Belgrade,F,19.62,19.74,19.48,8.38,5.71,42.86,941.8,0.729,35
+Willy Hernangomez,FC Barcelona,C,7.52,8.05,7.03,8.38,58.97,10.26,528,0.556,39
+Bruno Caboclo,Dubai Basketball,F,7.63,4.73,11.1,8.39,54.55,9.09,140,0.599,11
+Codi Miller-mcintyre,Crvena Zvezda Meridianbet Belgrade,G,15.92,17.58,14.34,8.4,12.82,30.77,1206.5,0.515,39
+Aleksa Avramovic,Dubai Basketball,G,10.54,11.83,8.99,8.4,36.36,13.64,374.5,0.619,22
+Jimmy Clark Iii,Maccabi Rapyd Tel Aviv,G,9.08,10.75,7.49,8.53,45.95,10.81,728.6,0.461,37
+Tamir Blatt,Maccabi Rapyd Tel Aviv,G,9.38,9.85,8.91,8.55,55.26,10.53,737.3,0.483,38
+Tomas Satoransky,FC Barcelona,G,11.69,15.33,8.24,8.57,32.43,13.51,921.7,0.469,37
+Ebuka Izundu,Crvena Zvezda Meridianbet Belgrade,C,10.99,10.71,11.26,8.6,36.36,12.12,474.9,0.764,33
+Trey Lyles,Real Madrid,F,16.09,14.95,17.23,8.65,16.67,35.71,890,0.759,42
+Darius Thompson,Valencia Basket,G,10.55,9.23,12,8.65,43.18,18.18,828.6,0.56,44
+Tornike Shengelia,FC Barcelona,F,16.33,15.18,17.49,8.67,14.71,20.59,848.2,0.655,34
+Pj Dozier,Anadolu Efes Istanbul,G,7.38,6.67,8.1,8.69,50,7.69,570.5,0.337,26
+Glynn Watson,LDLC ASVEL Villeurbanne,G,12.54,14.42,10.52,8.73,27.59,24.14,742.5,0.49,29
+Tarik Biberovic,Fenerbahce Beko Istanbul,F,8.98,6.9,10.95,8.74,46.34,12.2,997.8,0.369,41
+Isiaha Mike,FC Bayern Munich,F,9.71,10.16,9.28,8.74,48.65,10.81,828.2,0.434,37
+Jordan Nwora,Crvena Zvezda Meridianbet Belgrade,F,16.84,17.87,15.93,8.75,20.59,35.29,922.4,0.621,34
+Tj Shorts,Panathinaikos AKTOR Athens,G,8.41,8.65,8.18,8.75,60.47,16.28,692.6,0.522,43
+Nigel Hayes-davis,Panathinaikos AKTOR Athens,F,13.59,12.87,14.31,8.78,31.25,18.75,456.8,0.476,16
+Vasilije Micic,Hapoel IBI Tel Aviv,G,12.01,14.23,9.79,8.79,42.5,20,963.8,0.498,40
+Nick Weiler-babb,Anadolu Efes Istanbul,G,11.28,13.27,9.18,8.86,40.54,18.92,1065.5,0.392,37
+Dwayne Bacon,Dubai Basketball,F,14.72,18.92,11.32,8.88,24.14,34.48,852,0.501,29
+Theo Maledon,Real Madrid,G,12.06,14.57,9.56,8.91,42.11,18.42,646.5,0.709,38
+Sasha Vezenkov,Olympiacos Piraeus,F,23.79,24.67,22.65,8.97,5.13,64.1,1085.6,0.855,39
+Dan Oturu,Hapoel IBI Tel Aviv,C,17.67,16.11,19.23,9.02,11.9,38.1,1003.5,0.74,42
+Mario Hezonja,Real Madrid,F,13.29,14.24,12.43,9.06,31.82,25,994.9,0.588,44
+Kenneth Faried,Panathinaikos AKTOR Athens,C,8.11,10.46,5.63,9.06,60,14.29,460.1,0.617,35
+Carlik Jones,Partizan Mozzart Bet Belgrade,G,18.08,20.9,15.61,9.13,20,53.33,421,0.644,15
+Filip Petrusev,Dubai Basketball,F,16.15,15.32,16.98,9.13,21.05,31.58,892.9,0.687,38
+Leandro Bolmaro,EA7 Emporio Armani Milan,G,11.21,12.13,10.22,9.13,31.03,10.34,656.5,0.495,29
+Nando De Colo,Fenerbahce Beko Istanbul,G,14.03,15.05,13.01,9.14,33.33,30,564.5,0.746,30
+Armoni Brooks,EA7 Emporio Armani Milan,G,11.11,11.64,10.58,9.15,34.21,13.16,857.6,0.492,38
+Nadir Hifi,Paris Basketball,G,18.41,18.46,18.35,9.17,13.51,40.54,824.9,0.826,37
+Nigel Williams-goss,Zalgiris Kaunas,G,11.57,10.62,12.72,9.17,35.48,19.35,745.9,0.481,31
+Lonnie Walker Iv,Maccabi Rapyd Tel Aviv,G,13.32,14.11,12.41,9.22,28.57,28.57,635.7,0.587,28
+Facundo Campazzo,Real Madrid,G,15.37,16.18,14.63,9.24,22.73,22.73,1073.1,0.63,44
+Saliou Niang,Virtus Bologna,F,11.39,12.44,10.39,9.29,40.54,16.22,791.3,0.533,37
+Isaia Cordinier,Anadolu Efes Istanbul,G,8.93,8.19,9.79,9.29,46.67,6.67,726.1,0.369,30
+Braian Angola,LDLC ASVEL Villeurbanne,F,17.91,21,14.83,9.33,7.14,42.86,338.3,0.741,14
+Sterling Brown,Partizan Mozzart Bet Belgrade,G,11.59,13.56,9.73,9.35,45.95,21.62,1040.9,0.412,37
+Nathan Reuvers,Valencia Basket,F,11.63,9.67,13.79,9.35,43.18,13.64,838.5,0.61,44
+Mamadi Diakite,Baskonia Vitoria-Gasteiz,F,10.51,10.45,10.56,9.41,45.95,13.51,713.3,0.545,37
+Markus Howard,Baskonia Vitoria-Gasteiz,G,7.09,5.99,8.1,9.45,69.57,13.04,474.8,0.344,23
+Duane Washington,Partizan Mozzart Bet Belgrade,G,11.41,12.4,10.34,9.46,39.13,17.39,504.4,0.52,23
+Shavon Shields,EA7 Emporio Armani Milan,F,13.42,12.68,14.12,9.59,31.43,17.14,942.4,0.498,35
+Sylvain Francisco,Zalgiris Kaunas,G,20.43,20.04,20.82,9.62,11.9,54.76,1166.6,0.735,42
+Roman Sorkin,Maccabi Rapyd Tel Aviv,F,14.93,15.49,14.36,9.64,26.32,28.95,870.5,0.652,38
+Evan Fournier,Olympiacos Piraeus,G,9.73,9.61,9.86,9.65,43.59,15.38,855.5,0.444,39
+Talen Horton Tucker,Fenerbahce Beko Istanbul,G,15.5,16.86,14.33,9.67,24.39,36.59,977.3,0.65,41
+Mfiondu Kabengele,Dubai Basketball,C,18.37,16.86,19.72,9.69,11.11,41.67,801,0.826,36
+Tyler Dorsey,Olympiacos Piraeus,G,14.7,13.51,16.05,9.75,23.26,25.58,1082.1,0.584,43
+Kostas Sloukas,Panathinaikos AKTOR Athens,G,13.3,13.14,13.48,9.75,31.58,23.68,810.5,0.624,38
+Jared Butler,Crvena Zvezda Meridianbet Belgrade,G,11.41,10.44,12.17,9.83,40.63,15.63,640.1,0.57,32
+Kenan Kamenjas,Dubai Basketball,C,6.17,7.81,4,9.83,71.43,10.71,304.1,0.569,28
+Moses Wright,Zalgiris Kaunas,C,18.23,20.3,16.15,9.84,7.14,38.1,992.7,0.771,42
+David Mccormack,FC Bayern Munich,C,8.08,8.81,7.36,9.84,64.29,14.29,433.5,0.522,28
+Trent Forrest,Baskonia Vitoria-Gasteiz,G,15.08,17.31,13.29,9.96,22.22,33.33,644.5,0.632,27
+Elie Okobo,AS Monaco,G,12.55,16.58,8.89,10.01,35.71,19.05,1073.8,0.491,42
+Cedi Osman,Panathinaikos AKTOR Athens,F,13.59,12.98,14.17,10.25,33.33,23.08,1065,0.498,39
+Saben Lee,Anadolu Efes Istanbul,G,8.29,11.9,4.93,10.28,59.26,22.22,453.1,0.494,27
+Jean Montero,Valencia Basket,G,19.17,18.53,19.96,10.32,10.53,36.84,873.7,0.834,38
+Justin Robinson,Paris Basketball,G,14.99,15.03,14.94,10.35,19.44,27.78,684,0.789,36
+Tyrique Jones,Olympiacos Piraeus,C,13.8,14.9,12.3,10.37,36.36,27.27,640.8,0.711,33
+Jordan Loyd,Anadolu Efes Istanbul,G,11.29,10.98,11.63,10.43,44.12,20.59,798.1,0.481,34
+Elijah Bryant,Hapoel IBI Tel Aviv,G,21.01,21.38,20.65,10.48,7.89,44.74,1119.2,0.713,38
+Andreas Obst,FC Bayern Munich,G,12.83,16.6,8.84,10.54,28.57,17.14,930.5,0.483,35
+Carsen Edwards,Virtus Bologna,G,11.48,13.95,9.14,10.67,37.14,28.57,883.4,0.455,35
+Will Clyburn,FC Barcelona,F,15.72,16.69,14.81,10.74,21.21,27.27,843.6,0.615,33
+Kendrick Nunn,Panathinaikos AKTOR Athens,G,16.75,19.64,13.69,10.86,18.92,37.84,1100,0.563,37
+Dzanan Musa,Dubai Basketball,F,16.67,24.68,8.66,11.43,16.67,38.89,480.4,0.625,18
+Mckinley Wright Iv,Dubai Basketball,G,16.66,19.41,13.92,11.59,28.95,31.58,1123,0.564,38
+Kevin Punter,FC Barcelona,G,14.16,17.54,10.95,12.33,30.77,25.64,1059.8,0.521,39
+Kajus Mikalauskas,Zalgiris Kaunas,G,5.15,14.3,-4,12.94,50,0,18.1,0.567,2
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
