@@ -267,12 +267,13 @@ else:
     st.markdown("---")
 
     METRICS = [
-        ("Games", False),
-        ("Overall Avg", False),
-        ("Home Avg", False),
-        ("Away Avg", "Risk (<8)", True),
-        ("Upside (>20)", False),
-        ("Consistency Score", False),
+        ("Games", "משחקים", False),
+        ("Overall Avg", "ממוצע כללי", False),
+        ("Home Avg", "ממוצע בית", False),
+        ("Away Avg", "ממוצע חוץ", False),
+        ("Risk (<8)", "אחוז מתחת ל-8", True),
+        ("Upside (>20)", "אחוז מעל 20", False),
+        ("Consistency Score", "ציון יציבות", False),
     ]
 
     GREEN = "#1db954"
