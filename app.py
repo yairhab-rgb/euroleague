@@ -233,19 +233,18 @@ if page == "📊 דירוג שחקנים כולל":
 # מסך 2: השוואת שחקנים ראש בראש
 # --------------------------------------------------------------
 else:
-    st.title("⚔️ השוואת שחקנים ראש בראש")
+    st.title("⚔️ Head-to-Head Comparison")
 
-    players = sorted(df["שחקן"].unique().tolist())
-    col_select_a, col_select_b = st.columns(2)
-    with col_select_a:
-        player_a_name = st.selectbox("שחקן A", players, index=0)
-    with col_select_b:
-        default_b_index = 1 if len(players) > 1 else 0
-        player_b_name = st.selectbox("שחקן B", players, index=default_b_index)
+players = sorted(df["Full Name"].unique().tolist())
+col_select_a, col_select_b = st.columns(2)
+with col_select_a:
+    player_a_name = st.selectbox("Player A", players, index=0)
+with col_select_b:
+    default_b_index = 1 if len(players) > 1 else 0
+    player_b_name = st.selectbox("Player B", players, index=default_b_index)
 
-    player_a = df[df["שחקן"] == player_a_name].iloc[0]
-    player_b = df[df["שחקן"] == player_b_name].iloc[0]
-
+player_a = df[df["Full Name"] == player_a_name].iloc[0]
+player_b = df[df["Full Name"] == player_b_name].iloc[0]
     st.markdown("---")
 
     rating_a, rating_b = player_a["דירוג חכם"], player_b["דירוג חכם"]
