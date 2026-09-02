@@ -34,11 +34,12 @@ try:
         
     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
     
-    # Normalize Smart Rating to a 9.8 maximum scale if column exists
+    # Normalize Smart Rating to a 9.8 maximum scale with comma decimal support
     rating_col = next((col for col in df.columns if "דירוג" in col or "Rating" in col or "smart" in col.lower()), None)
     
     if rating_col and rating_col in df.columns:
-        raw_ratings = pd.to_numeric(df[rating_col], errors='coerce')
+        raw_series = df[rating_col].astype(str).str.replace(',', '.')
+        raw_ratings = pd.to_numeric(raw_series, errors='coerce')
         max_raw = raw_ratings.max()
         if max_raw > 0 and pd.notna(max_raw):
             df["Smart Rating (Normalized)"] = (raw_ratings / max_raw) * 9.8
@@ -92,8 +93,8 @@ if nav_option == "Head-to-Head Comparison":
         
         def fmt(val):
             try:
-                if isinstance(val, (float, int)) or pd.notna(float(val)):
-                    return f"{float(val):.2f}"
+                if isinstance(val, (float, int)) or pd.notna(float(str(val).replace(',', '.'))):
+                    return f"{float(str(val).replace(',', '.')):.2f}"
             except:
                 pass
             return str(val)
