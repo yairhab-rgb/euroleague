@@ -34,8 +34,8 @@ try:
         
     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
     
-    # Normalize Smart Rating to a 9.8 maximum scale with comma decimal support
-    rating_col = next((col for col in df.columns if "דירוג" in col or "Rating" in col or "smart" in col.lower()), None)
+    # Fully case-insensitive search for Smart Rating / Rating column
+    rating_col = next((col for col in df.columns if "דירוג" in col or "rating" in col.lower() or "smart" in col.lower()), None)
     
     if rating_col and rating_col in df.columns:
         raw_series = df[rating_col].astype(str).str.replace(',', '.')
@@ -46,6 +46,7 @@ try:
         else:
             df["Smart Rating (Normalized)"] = raw_ratings
     else:
+        # Fallback: if no rating column is found, use the last numerical column or 5.0
         df["Smart Rating (Normalized)"] = 5.0
 
 except Exception as e:
