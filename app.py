@@ -6,73 +6,79 @@ st.set_page_config(
     page_title="EuroLeague Fantasy Dashboard", page_icon="🏀", layout="wide"
 )
 
-# --- Clean High-Readability Light Theme & Hiding Sidebar ---
+# --- Custom Dark Glowing Theme Matching Your Graphic & Hiding Sidebar ---
 st.markdown(
     """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     .stApp {
-        background-color: #f8f9fa;
-        color: #212529;
+        background: 
+            radial-gradient(circle at 5% 30%, rgba(255, 110, 0, 0.22) 0%, transparent 45%),
+            radial-gradient(circle at 95% 70%, rgba(255, 110, 0, 0.22) 0%, transparent 45%),
+            linear-gradient(135deg, #140626 0%, #0a0214 100%);
+        color: #f8f9fa;
         font-family: 'Inter', sans-serif;
+        background-attachment: fixed;
     }
     
     section[data-testid="stSidebar"] {
         display: none !important;
     }
     
-    .main-title {
-        font-weight: 700;
-        color: #00b4d8;
-        font-size: 2.2rem;
-        margin-bottom: 20px;
-        letter-spacing: -0.5px;
-    }
-    
     div[data-testid="stMetric"] {
-        background: #ffffff;
+        background: rgba(26, 11, 46, 0.85);
         padding: 16px;
         border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(255, 140, 0, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
     
     div[data-testid="stMetric"] label {
-        color: #64748b !important;
+        color: #cbd5e1 !important;
         font-weight: 500;
         font-size: 0.9rem;
     }
     
     div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        color: #0f172a !important;
+        color: #00b4d8 !important;
         font-weight: 700;
         font-size: 1.7rem;
     }
     
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
+        background-color: transparent;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #edf2f7;
+        background-color: rgba(26, 11, 46, 0.6);
         border-radius: 8px 8px 0px 0px;
         padding: 10px 20px;
         font-weight: 600;
-        color: #4a5568;
+        color: #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
     .stTabs [aria-selected="true"] {
         background-color: #00b4d8 !important;
         color: white !important;
+        border-color: #00b4d8 !important;
     }
     
     .warning-badge {
-        background-color: #fff3cd;
-        color: #856404;
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid #ffeeba;
+        background-color: rgba(255, 193, 7, 0.15);
+        color: #ffda6a;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 193, 7, 0.4);
         font-weight: 600;
         margin-bottom: 15px;
+    }
+    
+    /* DataFrame Styling for Dark Theme */
+    div[data-testid="stDataFrame"] {
+        background-color: rgba(20, 6, 38, 0.7);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
     }
 </style>
 """,
@@ -109,11 +115,6 @@ def load_data():
 
   return current_df, past_df
 
-
-st.markdown(
-    "<h1 class='main-title'>🏀 EuroLeague Fantasy Analytics</h1>",
-    unsafe_allow_html=True,
-)
 
 df, past_df = load_data()
 
@@ -203,7 +204,6 @@ df["Last_Name"] = (
 )
 
 # --- שיטת הדרה (Elimination Method) ---
-# השארת אך ורק שחקנים ששם המשפחה שלהם קיים בקובץ הקטן (new.csv)
 df = df[df["Last_Name"].isin(past_last_names)].copy()
 
 if df.empty:
@@ -219,7 +219,7 @@ for idx, row in df.iterrows():
   orig_team = str(row[col_team]).strip() if col_team in df.columns else ""
   if l_name in past_team_map:
     new_team = past_team_map[l_name]
-    df.loc[idx, col_team] = new_team  # עדכון הקבוצה לפי הקובץ הקטן
+    df.loc[idx, col_team] = new_team
     if orig_team and orig_team.lower() != new_team.lower():
       team_changed.append(True)
     else:
@@ -241,7 +241,7 @@ val_price = (
 )
 df["Price_Clean"] = val_price
 
-# חישוב מדד יאיא מובטח לכל השחקנים
+# חישוב מדד יאיא
 safe_price = val_price.replace(0, 1.0)
 efficiency = val_overall / safe_price
 max_eff = efficiency.max() if efficiency.max() > 0 else 1.0
@@ -256,7 +256,7 @@ else:
   df["Yaya Rating"] = 5.0
 df["Yaya Rating"] = df["Yaya Rating"].fillna(5.0)
 
-# --- ניווט טאבים (שני טאבים בלבד) ---
+# --- ניווט טאבים (ללא כותרת כלל) ---
 tab_h2h, tab_db = st.tabs(["⚔️ Head-to-Head Comparison", "📋 Player Database"])
 
 with tab_h2h:
