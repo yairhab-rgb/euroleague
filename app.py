@@ -86,28 +86,31 @@ def load_data():
     current_df = None
     past_df = None
 
-    csv_files = [f for f in os.listdir(".") if f.endswith(".csv")]
+    # 1. עדיפות ראשונה: טעינה ישירה של קובץ הנתונים הראשי המוגדר
+    if os.path.exists("euroleague_current_season.csv"):
+        current_df = pd.read_csv("euroleague_current_season.csv")
+    else:
+        # 2. גיבוי דינמי: אם הקובץ הראשי לא נמצא, נחפש אוטומטית קובץ מתאים בתיקייה
+        csv_files = [f for f in os.listdir(".") if f.endswith(".csv")]
+        if csv_files:
+            current_candidates = [
+                f
+                for f in csv_files
+                if "current" in f.lower()
+                or "2026" in f.lower()
+                or "2027" in f.lower()
+            ]
+            if current_candidates:
+                latest_current_file = max(
+                    current_candidates, key=os.path.getmtime
+                )
+            else:
+                latest_current_file = max(csv_files, key=os.path.getmtime)
+            current_df = pd.read_csv(latest_current_file)
 
-    if csv_files:
-        current_candidates = [
-            f
-            for f in csv_files
-            if "current" in f.lower() or "2026" in f.lower() or "2027" in f.lower()
-        ]
-        if current_candidates:
-            latest_current_file = max(
-                current_candidates, key=os.path.getmtime
-            )
-        else:
-            latest_current_file = max(csv_files, key=os.path.getmtime)
-
-        current_df = pd.read_csv(latest_current_file)
-
+    # טעינת קובץ נתוני העבר להשוואה (לזיהוי שחקנים חדשים)
     if os.path.exists("fantasy_euroleague_stats.csv"):
         past_df = pd.read_csv("fantasy_euroleague_stats.csv")
-    elif len(csv_files) > 1:
-        sorted_files = sorted(csv_files, key=os.path.getmtime, reverse=True)
-        past_df = pd.read_csv(sorted_files[1])
 
     return current_df, past_df
 
@@ -121,7 +124,7 @@ df, past_df = load_data()
 
 if df is None or len(df.columns) == 0:
     st.error(
-        "⚠️ No valid CSV data files found or the dataset is empty. Please check your files."
+        "⚠️ Current season data file ('euroleague_current_season.csv') or any valid dataset not found in directory."
     )
     st.stop()
 
@@ -145,7 +148,7 @@ def get_safe_col(dataset, keywords, fallback_idx):
         return found
     if len(dataset.columns) > fallback_idx:
         return dataset.columns[fallback_idx]
-    return dataset.columns[0]  # Fallback בטוח לעמודה הראשונה
+    return dataset.columns[0]
 
 
 def get_num_series(dataset, col_name):
@@ -160,7 +163,7 @@ def get_num_series(dataset, col_name):
     return pd.Series([0.0] * len(df))
 
 
-# בחירת עמודות בטוחה למניעת Index Error
+# בחירת עמודות בטוחה למניעת שגיאות אינדקס
 player_col = df.columns[0]
 col_team = get_safe_col(df, ["team"], 1 if len(df.columns) > 1 else 0)
 col_pos = get_safe_col(df, ["position", "pos"], 2 if len(df.columns) > 2 else 0)
