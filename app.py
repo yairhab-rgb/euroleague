@@ -89,9 +89,9 @@ def load_data():
     if os.path.exists("euroleague_current_season.csv"):
         current_df = pd.read_csv("euroleague_current_season.csv")
 
-    # קובץ קטן (היסטורי / שמות משפחה)
-    if os.path.exists("fantasy_euroleague_stats.csv"):
-        past_df = pd.read_csv("fantasy_euroleague_stats.csv")
+    # קובץ קטן (new.csv)
+    if os.path.exists("new.csv"):
+        past_df = pd.read_csv("new.csv")
 
     return current_df, past_df
 
@@ -169,8 +169,7 @@ val_price = (
     get_num_series(df, col_price) if col_price else pd.Series([10.0] * len(df))
 )
 
-# --- לוגיקת השוואת שמות משפחה מול הקובץ הקטן ---
-# חילוץ שם משפחה מהקובץ הראשי (המילה האחרונה בשם)
+# --- לוגיקת השוואת שמות משפחה מול new.csv ---
 df["Last_Name"] = (
     df[player_col]
     .astype(str)
@@ -259,7 +258,7 @@ with tab_h2h:
         # אזהרות מותאמות: שחקן חדש לגמרי או שינוי מועדון
         if player_a["Is_New_Player"]:
             st.markdown(
-                f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a brand new player (not found in small file)!</div>",
+                f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a brand new player (not found in new.csv)!</div>",
                 unsafe_allow_html=True,
             )
         elif player_a["Team_Changed"]:
@@ -270,7 +269,7 @@ with tab_h2h:
 
         if player_b["Is_New_Player"]:
             st.markdown(
-                f"<div class='warning-badge'>⚠️ Warning: {player_b_name} is a brand new player (not found in small file)!</div>",
+                f"<div class='warning-badge'>⚠️ Warning: {player_b_name} is a brand new player (not found in new.csv)!</div>",
                 unsafe_allow_html=True,
             )
         elif player_b["Team_Changed"]:
@@ -359,11 +358,11 @@ with tab_db:
     st.dataframe(display_db, use_container_width=True, hide_index=True)
 
 with tab_new:
-    st.subheader("🚨 New / Unmatched Players (Not found in the small file)")
+    st.subheader("🚨 New / Unmatched Players (Not found in new.csv)")
     new_players_df = df[df["Is_New_Player"]][[player_col, col_team]]
     if not new_players_df.empty:
         st.write(
-            "להלן השחקנים המופיעים בקובץ הראשי אך לא נמצאו בקובץ הקטן (חדשים לגמרי):"
+            "להלן השחקנים המופיעים בקובץ הראשי אך לא נמצאו בקובץ new.csv (חדשים לגמרי):"
         )
         st.dataframe(
             new_players_df.rename(
@@ -373,4 +372,4 @@ with tab_new:
             hide_index=True,
         )
     else:
-        st.success("כל השחקנים נמצאו בקובץ הקטן!")
+        st.success("כל השחקנים נמצאו בקובץ new.csv!")
