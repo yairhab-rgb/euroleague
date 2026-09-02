@@ -46,7 +46,7 @@ try:
             return pd.to_numeric(df[col_name].astype(str).str.replace(',', '.'), errors='coerce').fillna(0)
         return pd.Series([0.0] * len(df))
 
-    # Inventing / Calculating Smart Rating dynamically based on player stats
+    # Identify core columns for Yaya Rating calculation
     col_overall = find_col(["overall", "avg"]) or (df.columns[2] if len(df.columns) > 2 else df.columns[1])
     col_per_min = find_col(["per minute"]) or col_overall
     col_ceiling = find_col(["ceiling"]) or col_overall
@@ -55,14 +55,13 @@ try:
     val_per_min = get_num_series(col_per_min)
     val_ceiling = get_num_series(col_ceiling)
     
-    # Custom formula combining average, efficiency per minute, and upside/ceiling
+    # Calculating Yaya Rating dynamically
     raw_ratings = (val_overall * 1.5) + (val_per_min * 25) + (val_ceiling * 0.1)
-    
     max_raw = raw_ratings.max()
     if max_raw > 0 and pd.notna(max_raw):
-        df["Smart Rating (Normalized)"] = (raw_ratings / max_raw) * 9.8
+        df["Yaya Rating"] = (raw_ratings / max_raw) * 9.8
     else:
-        df["Smart Rating (Normalized)"] = 5.0
+        df["Yaya Rating"] = 5.0
 
 except Exception as e:
     st.error(f"⚠️ Error loading data: {e}")
@@ -90,20 +89,28 @@ if nav_option == "Head-to-Head Comparison":
         
         st.markdown("---")
         
-        METRICS = []
-        for col in df.columns:
-            if col != player_col and col != "Smart Rating (Normalized)":
-                METRICS.append((col, col))
-        METRICS.append(("Smart Rating", "Smart Rating (Normalized)"))
+        # Curated list of metrics requested by Yaya
+        col_team = find_col(["team"]) or df.columns[1]
+        col_pos = find_col(["position", "pos"]) or df.columns[2]
+        col_games = find_col(["games", "played"]) or df.columns[-1]
         
-        rating_a = player_a["Smart Rating (Normalized)"]
-        rating_b = player_b["Smart Rating (Normalized)"]
+        METRICS = [
+            ("Team", col_team),
+            ("Position", col_pos),
+            ("Overall Avg FPT", col_overall),
+            ("FPT per Minute", col_per_min),
+            ("Games Played", col_games),
+            ("Yaya Rating", "Yaya Rating"),
+        ]
+        
+        rating_a = player_a["Yaya Rating"]
+        rating_b = player_b["Yaya Rating"]
         
         col_m1, col_m2 = st.columns(2)
         with col_m1:
-            st.metric(f"Smart Rating - {player_a_name}", f"{rating_a:.2f} / 9.8")
+            st.metric(f"Yaya Rating - {player_a_name}", f"{rating_a:.2f} / 9.8")
         with col_m2:
-            st.metric(f"Smart Rating - {player_b_name}", f"{rating_b:.2f} / 9.8")
+            st.metric(f"Yaya Rating - {player_b_name}", f"{rating_b:.2f} / 9.8")
             
         st.markdown("---")
         
@@ -117,7 +124,7 @@ if nav_option == "Head-to-Head Comparison":
             
         comparison_data = []
         for label, col in METRICS:
-            if col in player_a and col in player_b:
+            if col and col in df.columns:
                 comparison_data.append({
                     player_a_name: fmt(player_a[col]),
                     "Metric": label,
@@ -126,6 +133,25 @@ if nav_option == "Head-to-Head Comparison":
         
         comp_df = pd.DataFrame(comparison_data)
         st.dataframe(comp_df, use_container_width=True, hide_index=True)
+        
+        # --- Visualization Section ---
+        st.markdown("### 📊 Visual Comparison")
+        chart_data = pd.DataFrame({
+            'Metric': ['Overall Avg', 'FPT x10 (Min Scale)', 'Yaya Rating'],
+            player_a_name: [
+                float(str(player_a[col_overall]).replace(',', '.')) if col_overall in player_a else 0,
+                float(str(player_a[col_per_min]).replace(',', '.')) * 10 if col_per_min in player_a else 0,
+                float(player_a["Yaya Rating"])
+            ],
+            player_b_name: [
+                float(str(player_b[col_overall]).replace(',', '.')) if col_overall in player_b else 0,
+                float(str(player_b[col_per_min]).replace(',', '.')) * 10 if col_per_min in player_b else 0,
+                float(player_b["Yaya Rating"])
+            ]
+        }).set_index('Metric')
+        
+        st.bar_chart(chart_data)
+
     else:
         st.error("Dataset is empty or invalid.")
 else:
