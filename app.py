@@ -34,19 +34,34 @@ try:
         
     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
     
-    # Fully case-insensitive search for Smart Rating / Rating column
-    rating_col = next((col for col in df.columns if "דירוג" in col or "rating" in col.lower() or "smart" in col.lower()), None)
+    # Helper function to find a column dynamically by keywords
+    def find_col(keywords):
+        for col in df.columns:
+            if all(kw.lower() in col.lower() for kw in keywords):
+                return col
+        return None
+
+    def get_num_series(col_name):
+        if col_name and col_name in df.columns:
+            return pd.to_numeric(df[col_name].astype(str).str.replace(',', '.'), errors='coerce').fillna(0)
+        return pd.Series([0.0] * len(df))
+
+    # Inventing / Calculating Smart Rating dynamically based on player stats
+    col_overall = find_col(["overall", "avg"]) or (df.columns[2] if len(df.columns) > 2 else df.columns[1])
+    col_per_min = find_col(["per minute"]) or col_overall
+    col_ceiling = find_col(["ceiling"]) or col_overall
     
-    if rating_col and rating_col in df.columns:
-        raw_series = df[rating_col].astype(str).str.replace(',', '.')
-        raw_ratings = pd.to_numeric(raw_series, errors='coerce')
-        max_raw = raw_ratings.max()
-        if max_raw > 0 and pd.notna(max_raw):
-            df["Smart Rating (Normalized)"] = (raw_ratings / max_raw) * 9.8
-        else:
-            df["Smart Rating (Normalized)"] = raw_ratings
+    val_overall = get_num_series(col_overall)
+    val_per_min = get_num_series(col_per_min)
+    val_ceiling = get_num_series(col_ceiling)
+    
+    # Custom formula combining average, efficiency per minute, and upside/ceiling
+    raw_ratings = (val_overall * 1.5) + (val_per_min * 25) + (val_ceiling * 0.1)
+    
+    max_raw = raw_ratings.max()
+    if max_raw > 0 and pd.notna(max_raw):
+        df["Smart Rating (Normalized)"] = (raw_ratings / max_raw) * 9.8
     else:
-        # Fallback: if no rating column is found, use the last numerical column or 5.0
         df["Smart Rating (Normalized)"] = 5.0
 
 except Exception as e:
