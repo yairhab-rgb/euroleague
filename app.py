@@ -181,6 +181,8 @@ df.columns = df.columns.str.strip().str.replace('\ufeff', '')
 
 df["דירוג חכם"] = df.apply(calculate_smart_rating, axis=1)
 
+st.write("העמודות שיש בקובץ:", df.columns.tolist())
+
 # --------------------------------------------------------------
 # מסך 1: דירוג שחקנים כולל (ללא pyarrow וללא st.dataframe!)
 # --------------------------------------------------------------
