@@ -177,6 +177,8 @@ except Exception as e:
     st.error(f"⚠️ שגיאה בטעינת הנתונים: {e}")
     st.stop()
 
+df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+
 df["דירוג חכם"] = df.apply(calculate_smart_rating, axis=1)
 
 # --------------------------------------------------------------
