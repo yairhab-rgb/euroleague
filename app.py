@@ -6,20 +6,16 @@ st.set_page_config(
     page_title="EuroLeague Fantasy Dashboard", page_icon="🏀", layout="wide"
 )
 
-# --- Custom Dark Glowing Theme Matching Your Graphic & Hiding Sidebar ---
+# --- Clean High-Readability Light Theme & Hiding Sidebar ---
 st.markdown(
     """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     .stApp {
-        background: 
-            radial-gradient(circle at 5% 30%, rgba(255, 110, 0, 0.22) 0%, transparent 45%),
-            radial-gradient(circle at 95% 70%, rgba(255, 110, 0, 0.22) 0%, transparent 45%),
-            linear-gradient(135deg, #140626 0%, #0a0214 100%);
-        color: #f8f9fa;
+        background-color: #f4f6f9;
+        color: #1e293b;
         font-family: 'Inter', sans-serif;
-        background-attachment: fixed;
     }
     
     section[data-testid="stSidebar"] {
@@ -27,21 +23,21 @@ st.markdown(
     }
     
     div[data-testid="stMetric"] {
-        background: rgba(26, 11, 46, 0.85);
+        background: #ffffff;
         padding: 16px;
         border-radius: 12px;
-        border: 1px solid rgba(255, 140, 0, 0.3);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
     
     div[data-testid="stMetric"] label {
-        color: #cbd5e1 !important;
+        color: #64748b !important;
         font-weight: 500;
         font-size: 0.9rem;
     }
     
     div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        color: #00b4d8 !important;
+        color: #0284c7 !important;
         font-weight: 700;
         font-size: 1.7rem;
     }
@@ -51,34 +47,35 @@ st.markdown(
         background-color: transparent;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: rgba(26, 11, 46, 0.6);
+        background-color: #e2e8f0;
         border-radius: 8px 8px 0px 0px;
         padding: 10px 20px;
         font-weight: 600;
-        color: #cbd5e1;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: #475569;
+        border: 1px solid #cbd5e1;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #00b4d8 !important;
+        background-color: #0284c7 !important;
         color: white !important;
-        border-color: #00b4d8 !important;
+        border-color: #0284c7 !important;
     }
     
     .warning-badge {
-        background-color: rgba(255, 193, 7, 0.15);
-        color: #ffda6a;
+        background-color: #fef3c7;
+        color: #92400e;
         padding: 10px 14px;
         border-radius: 8px;
-        border: 1px solid rgba(255, 193, 7, 0.4);
+        border: 1px solid #fde68a;
         font-weight: 600;
         margin-bottom: 15px;
     }
     
-    /* DataFrame Styling for Dark Theme */
+    /* DataFrame Styling for Light Theme */
     div[data-testid="stDataFrame"] {
-        background-color: rgba(20, 6, 38, 0.7);
+        background-color: #ffffff;
         border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
     }
 </style>
 """,
