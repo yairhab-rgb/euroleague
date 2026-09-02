@@ -13,13 +13,21 @@ st.markdown(
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     .stApp {
-        background-color: #f4f6f9;
-        color: #1e293b;
+        background-color: #f8f9fa;
+        color: #212529;
         font-family: 'Inter', sans-serif;
     }
     
     section[data-testid="stSidebar"] {
         display: none !important;
+    }
+    
+    .main-title {
+        font-weight: 700;
+        color: #00b4d8;
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
     }
     
     div[data-testid="stMetric"] {
@@ -37,45 +45,34 @@ st.markdown(
     }
     
     div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        color: #0284c7 !important;
+        color: #0f172a !important;
         font-weight: 700;
         font-size: 1.7rem;
     }
     
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: transparent;
     }
     .stTabs [data-baseweb="tab"] {
-        background-color: #e2e8f0;
+        background-color: #edf2f7;
         border-radius: 8px 8px 0px 0px;
         padding: 10px 20px;
         font-weight: 600;
-        color: #475569;
-        border: 1px solid #cbd5e1;
+        color: #4a5568;
     }
     .stTabs [aria-selected="true"] {
-        background-color: #0284c7 !important;
+        background-color: #00b4d8 !important;
         color: white !important;
-        border-color: #0284c7 !important;
     }
     
     .warning-badge {
-        background-color: #fef3c7;
-        color: #92400e;
-        padding: 10px 14px;
-        border-radius: 8px;
-        border: 1px solid #fde68a;
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: 1px solid #ffeeba;
         font-weight: 600;
         margin-bottom: 15px;
-    }
-    
-    /* DataFrame Styling for Light Theme */
-    div[data-testid="stDataFrame"] {
-        background-color: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
     }
 </style>
 """,
@@ -112,6 +109,11 @@ def load_data():
 
   return current_df, past_df
 
+
+st.markdown(
+    "<h1 class='main-title'>🏀 EuroLeague Fantasy Analytics</h1>",
+    unsafe_allow_html=True,
+)
 
 df, past_df = load_data()
 
@@ -201,6 +203,7 @@ df["Last_Name"] = (
 )
 
 # --- שיטת הדרה (Elimination Method) ---
+# השארת אך ורק שחקנים ששם המשפחה שלהם קיים בקובץ הקטן (new.csv)
 df = df[df["Last_Name"].isin(past_last_names)].copy()
 
 if df.empty:
@@ -216,7 +219,7 @@ for idx, row in df.iterrows():
   orig_team = str(row[col_team]).strip() if col_team in df.columns else ""
   if l_name in past_team_map:
     new_team = past_team_map[l_name]
-    df.loc[idx, col_team] = new_team
+    df.loc[idx, col_team] = new_team  # עדכון הקבוצה לפי הקובץ הקטן
     if orig_team and orig_team.lower() != new_team.lower():
       team_changed.append(True)
     else:
@@ -238,7 +241,7 @@ val_price = (
 )
 df["Price_Clean"] = val_price
 
-# חישוב מדד יאיא
+# חישוב מדד יאיא מובטח לכל השחקנים
 safe_price = val_price.replace(0, 1.0)
 efficiency = val_overall / safe_price
 max_eff = efficiency.max() if efficiency.max() > 0 else 1.0
@@ -253,7 +256,7 @@ else:
   df["Yaya Rating"] = 5.0
 df["Yaya Rating"] = df["Yaya Rating"].fillna(5.0)
 
-# --- ניווט טאבים (ללא כותרת כלל) ---
+# --- ניווט טאבים (שני טאבים בלבד) ---
 tab_h2h, tab_db = st.tabs(["⚔️ Head-to-Head Comparison", "📋 Player Database"])
 
 with tab_h2h:
