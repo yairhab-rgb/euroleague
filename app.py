@@ -8,6 +8,41 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- Custom UI / UX Styling (Fonts, Colors, Clean Cards) ---
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Heebo', sans-serif;
+    }
+    
+    .main-title {
+        font-weight: 700;
+        color: #FF4B4B;
+        margin-bottom: 20px;
+    }
+    
+    .stMetric {
+        background-color: #1E1E2F;
+        padding: 16px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border: 1px solid #2d2d44;
+    }
+    
+    .stMetric label {
+        color: #A0A0AB !important;
+        font-weight: 500;
+    }
+    
+    .stMetric [data-testid="stMetricValue"] {
+        color: #FFFFFF !important;
+        font-weight: 700;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 @st.cache_data
 def load_data(file_path_or_buffer, is_csv=True):
     if is_csv:
@@ -15,7 +50,7 @@ def load_data(file_path_or_buffer, is_csv=True):
     else:
         return pd.read_excel(file_path_or_buffer)
 
-st.title("🏀 EuroLeague Fantasy Analytics Dashboard")
+st.markdown("<h1 class='main-title'>🏀 EuroLeague Fantasy Dashboard</h1>", unsafe_allow_html=True)
 
 uploaded_file = st.sidebar.file_uploader("Upload Fantasy CSV/Excel file", type=["csv", "xlsx"])
 df = None
@@ -34,7 +69,7 @@ try:
         
     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
     
-    # Helper function to find a column dynamically by keywords
+    # Helper function to find columns dynamically
     def find_col(keywords):
         for col in df.columns:
             if all(kw.lower() in col.lower() for kw in keywords):
@@ -46,14 +81,18 @@ try:
             return pd.to_numeric(df[col_name].astype(str).str.replace(',', '.'), errors='coerce').fillna(0)
         return pd.Series([0.0] * len(df))
 
-    # Identify core columns for Yaya Rating calculation
-    col_overall = find_col(["overall", "avg"]) or (df.columns[2] if len(df.columns) > 2 else df.columns[1])
+    # Column mappings
+    player_col = df.columns[0]
+    col_team = find_col(["team"]) or df.columns[1]
+    col_pos = find_col(["position", "pos"]) or df.columns[2]
+    col_overall = find_col(["overall", "avg"]) or df.columns[3]
+    col_mins = find_col(["min"]) or df.columns[4]
     col_per_min = find_col(["per minute"]) or col_overall
-    col_ceiling = find_col(["ceiling"]) or col_overall
-    
+    col_games = find_col(["games", "played", "gp"]) or df.columns[-1]
+
     val_overall = get_num_series(col_overall)
     val_per_min = get_num_series(col_per_min)
-    val_ceiling = get_num_series(col_ceiling)
+    val_ceiling = get_num_series(find_col(["ceiling"]) or col_overall)
     
     # Calculating Yaya Rating dynamically
     raw_ratings = (val_overall * 1.5) + (val_per_min * 25) + (val_ceiling * 0.1)
@@ -67,40 +106,36 @@ except Exception as e:
     st.error(f"⚠️ Error loading data: {e}")
     st.stop()
 
-nav_option = st.sidebar.radio("Navigation", ["Head-to-Head Comparison", "Player Database"])
+nav_option = st.sidebar.radio("ניווט במערכת", ["השוואת ראש בראש (Head-to-Head)", "מסד נתונים שחקנים (Database)"])
 
-if nav_option == "Head-to-Head Comparison":
+if nav_option == "השוואת ראש בראש (Head-to-Head)":
     st.markdown("---")
-    st.subheader("⚔️ Head-to-Head Player Comparison")
+    st.subheader("⚔️ השוואת שחקנים")
     
     if len(df.columns) > 0:
-        player_col = df.columns[0]
         players = sorted(df[player_col].dropna().unique().tolist())
         col_select_a, col_select_b = st.columns(2)
         
         with col_select_a:
-            player_a_name = st.selectbox("Player A", players, index=0)
+            player_a_name = st.selectbox("שחקן א'", players, index=0)
         with col_select_b:
             default_b_index = 1 if len(players) > 1 else 0
-            player_b_name = st.selectbox("Player B", players, index=default_b_index)
+            player_b_name = st.selectbox("שחקן ב'", players, index=default_b_index)
             
         player_a = df[df[player_col] == player_a_name].iloc[0]
         player_b = df[df[player_col] == player_b_name].iloc[0]
         
         st.markdown("---")
         
-        # Curated list of metrics requested by Yaya
-        col_team = find_col(["team"]) or df.columns[1]
-        col_pos = find_col(["position", "pos"]) or df.columns[2]
-        col_games = find_col(["games", "played"]) or df.columns[-1]
-        
+        # Curated exact metrics requested by Yaya
         METRICS = [
-            ("Team", col_team),
-            ("Position", col_pos),
-            ("Overall Avg FPT", col_overall),
-            ("FPT per Minute", col_per_min),
-            ("Games Played", col_games),
-            ("Yaya Rating", "Yaya Rating"),
+            ("קבוצה", col_team),
+            ("עמדה", col_pos),
+            ("סה\"כ ממוצע נקודות", col_overall),
+            ("דקות", col_mins),
+            ("נקודות לדקה", col_per_min),
+            ("סה\"כ משחקים", col_games),
+            ("דירוג יאיא", "Yaya Rating"),
         ]
         
         rating_a = player_a["Yaya Rating"]
@@ -108,9 +143,9 @@ if nav_option == "Head-to-Head Comparison":
         
         col_m1, col_m2 = st.columns(2)
         with col_m1:
-            st.metric(f"Yaya Rating - {player_a_name}", f"{rating_a:.2f} / 9.8")
+            st.metric(f"דירוג יאיא - {player_a_name}", f"{rating_a:.2f} / 9.8")
         with col_m2:
-            st.metric(f"Yaya Rating - {player_b_name}", f"{rating_b:.2f} / 9.8")
+            st.metric(f"דירוג יאיא - {player_b_name}", f"{rating_b:.2f} / 9.8")
             
         st.markdown("---")
         
@@ -124,36 +159,34 @@ if nav_option == "Head-to-Head Comparison":
             
         comparison_data = []
         for label, col in METRICS:
-            if col and col in df.columns:
+            if col and (col in df.columns or col == "Yaya Rating"):
                 comparison_data.append({
                     player_a_name: fmt(player_a[col]),
-                    "Metric": label,
+                    "מדד": label,
                     player_b_name: fmt(player_b[col])
                 })
         
         comp_df = pd.DataFrame(comparison_data)
         st.dataframe(comp_df, use_container_width=True, hide_index=True)
-        
-        # --- Visualization Section ---
-        st.markdown("### 📊 Visual Comparison")
-        chart_data = pd.DataFrame({
-            'Metric': ['Overall Avg', 'FPT x10 (Min Scale)', 'Yaya Rating'],
-            player_a_name: [
-                float(str(player_a[col_overall]).replace(',', '.')) if col_overall in player_a else 0,
-                float(str(player_a[col_per_min]).replace(',', '.')) * 10 if col_per_min in player_a else 0,
-                float(player_a["Yaya Rating"])
-            ],
-            player_b_name: [
-                float(str(player_b[col_overall]).replace(',', '.')) if col_overall in player_b else 0,
-                float(str(player_b[col_per_min]).replace(',', '.')) * 10 if col_per_min in player_b else 0,
-                float(player_b["Yaya Rating"])
-            ]
-        }).set_index('Metric')
-        
-        st.bar_chart(chart_data)
 
     else:
-        st.error("Dataset is empty or invalid.")
+        st.error("הנתונים ריקים או שגויים.")
 else:
-    st.subheader("Player Database Overview")
-    st.dataframe(df)
+    st.subheader("📋 מסד נתונים שחקנים (סינון מדדים)")
+    
+    # Selecting only the requested columns for the database view
+    db_cols_mapping = {
+        player_col: "שחקן",
+        col_team: "קבוצה",
+        col_pos: "עמדה",
+        col_overall: "סה\"כ ממוצע נקודות",
+        col_mins: "דקות",
+        col_per_min: "נקודות לדקה",
+        col_games: "סה\"כ משחקים",
+        "Yaya Rating": "דירוג יאיא"
+    }
+    
+    valid_db_cols = {k: v for k, v in db_cols_mapping.items() if k and (k in df.columns or k == "Yaya Rating")}
+    display_db = df[list(valid_db_cols.keys())].rename(columns=valid_db_cols)
+    
+    st.dataframe(display_db, use_container_width=True, hide_index=True)
