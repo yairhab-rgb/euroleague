@@ -115,14 +115,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-current_df, past_df = load_data()
+df, past_df = load_data()
 
-if past_df is None or len(past_df.columns) == 0:
-  st.error("⚠️ לא נמצא קובץ new.csv בתיקייה (הקובץ הקטן חובה).")
+if df is None or len(df.columns) == 0:
+  st.error("⚠️ לא נמצא קובץ ראשי מתאים בתיקייה.")
   st.stop()
 
-if current_df is not None:
-  current_df.columns = current_df.columns.str.strip().str.replace("\ufeff", "")
+if past_df is None or len(past_df.columns) == 0:
+  st.error("⚠️ לא נמצא קובץ new.csv בתיקייה.")
+  st.stop()
+
+df.columns = df.columns.str.strip().str.replace("\ufeff", "")
 past_df.columns = past_df.columns.str.strip().str.replace("\ufeff", "")
 
 
@@ -144,164 +147,103 @@ def get_safe_col(dataset, keywords, fallback_idx):
   return dataset.columns[0]
 
 
-# מיפוי עמודות מהקובץ הראשי (אם קיים)
-if current_df is not None and len(current_df.columns) > 0:
-  curr_player_col = current_df.columns[0]
-  col_team = get_safe_col(current_df, ["team"], 1)
-  col_pos = get_safe_col(current_df, ["position", "pos"], 2)
-  col_overall = get_safe_col(current_df, ["overall", "avg", "pts"], 3)
-  col_mins = get_safe_col(current_df, ["min"], 4)
-  col_per_min = find_col(current_df, ["per minute"]) or col_overall
-  col_games = (
-      find_col(current_df, ["games", "played", "gp"])
-      or current_df.columns[-1]
-  )
-  col_price = find_col(current_df, ["price", "cost", "credit"])
+def get_num_series(dataset, col_name):
+  if dataset is not None and col_name and col_name in dataset.columns:
+    return (
+        pd.to_numeric(
+            dataset[col_name].astype(str).str.replace(",", "."), errors="coerce"
+        )
+        .fillna(0)
+    )
+  return pd.Series([0.0] * len(df))
 
-  current_df["Last_Name"] = (
-      current_df[curr_player_col]
-      .fillna("")
-      .astype(str)
-      .str.strip()
-      .str.split()
-      .str[-1]
-      .str.lower()
-  )
-  stats_dict = {}
-  for _, row in current_df.iterrows():
-    l_name = row["Last_Name"]
-    if l_name:
-      stats_dict[l_name] = row
-else:
-  stats_dict = {}
 
-# בניית רשימת השחקנים הסופית מתוך הקובץ הקטן (new.csv) שהוא המאסטר המחייב
+# זיהוי עמודות בקובץ הראשי
+player_col = df.columns[0]
+col_team = get_safe_col(df, ["team"], 1 if len(df.columns) > 1 else 0)
+col_pos = get_safe_col(df, ["position", "pos"], 2 if len(df.columns) > 2 else 0)
+col_overall = get_safe_col(
+    df, ["overall", "avg", "pts"], 3 if len(df.columns) > 3 else 0
+)
+col_mins = get_safe_col(df, ["min"], 4 if len(df.columns) > 4 else 0)
+col_per_min = find_col(df, ["per minute"]) or col_overall
+col_games = (
+    find_col(df, ["games", "played", "gp"])
+    or df.columns[-1]
+    if len(df.columns) > 0
+    else player_col
+)
+col_price = find_col(df, ["price", "cost", "credit"])
+
+# מיפוי קבוצות מתוך הקובץ הקטן (new.csv) לפי שם משפחה
 past_player_col = past_df.columns[0]
 past_team_col = find_col(past_df, ["team"])
-past_price_col = find_col(past_df, ["price", "cost", "credit"])
-past_pos_col = find_col(past_df, ["position", "pos"])
 
-rows = []
-for _, p_row in past_df.iterrows():
-  p_name = str(p_row[past_player_col]).strip()
-  if not p_name or pd.isna(p_name):
-    continue
-  l_name = p_name.split()[-1].lower()
+past_last_names = set()
+past_team_map = {}
 
-  # קבוצה מהקובץ הקטן קובעת בלעדית
-  team = (
-      str(p_row[past_team_col]).strip()
-      if past_team_col and pd.notna(p_row[past_team_col])
-      else "Unknown"
-  )
+for _, row in past_df.iterrows():
+  p_name = str(row[past_player_col]).strip().lower()
+  if p_name:
+    l_name = p_name.split()[-1]
+    past_last_names.add(l_name)
+    if past_team_col and pd.notna(row[past_team_col]):
+      past_team_map[l_name] = str(row[past_team_col]).strip()
 
-  stat_row = stats_dict.get(l_name, None)
+# חילוץ שם משפחה מהקובץ הראשי
+df["Last_Name"] = (
+    df[player_col]
+    .fillna("")
+    .astype(str)
+    .str.strip()
+    .str.split()
+    .str[-1]
+    .str.lower()
+    .fillna("")
+)
 
-  if stat_row is not None:
-    orig_team = (
-        str(stat_row[col_team]).strip()
-        if current_df is not None
-        and col_team in current_df.columns
-        and pd.notna(stat_row[col_team])
-        else ""
-    )
-    team_changed = orig_team.lower() != team.lower() if orig_team else False
-
-    pos = (
-        stat_row[col_pos]
-        if current_df is not None
-        and col_pos in current_df.columns
-        and pd.notna(stat_row[col_pos])
-        else "Unknown"
-    )
-    price = (
-        pd.to_numeric(str(stat_row[col_price]).replace(",", "."), errors="coerce")
-        if current_df is not None
-        and col_price
-        and col_price in current_df.columns
-        and pd.notna(stat_row[col_price])
-        else 10.0
-    )
-    overall = (
-        pd.to_numeric(
-            str(stat_row[col_overall]).replace(",", "."), errors="coerce"
-        )
-        if current_df is not None
-        and col_overall in current_df.columns
-        and pd.notna(stat_row[col_overall])
-        else 0.0
-    )
-    mins = (
-        pd.to_numeric(str(stat_row[col_mins]).replace(",", "."), errors="coerce")
-        if current_df is not None
-        and col_mins in current_df.columns
-        and pd.notna(stat_row[col_mins])
-        else 0.0
-    )
-    per_min = (
-        pd.to_numeric(
-            str(stat_row[col_per_min]).replace(",", "."), errors="coerce"
-        )
-        if current_df is not None
-        and col_per_min in current_df.columns
-        and pd.notna(stat_row[col_per_min])
-        else overall
-    )
-    games = (
-        pd.to_numeric(
-            str(stat_row[col_games]).replace(",", "."), errors="coerce"
-        )
-        if current_df is not None
-        and col_games in current_df.columns
-        and pd.notna(stat_row[col_games])
-        else 0.0
-    )
-  else:
-    # שחקן חדש לגמרי שמופיע רק בקובץ הקטן
-    team_changed = False
-    pos = (
-        p_row[past_pos_col]
-        if past_pos_col
-        and past_pos_col in past_df.columns
-        and pd.notna(p_row[past_pos_col])
-        else "Unknown"
-    )
-    price = (
-        pd.to_numeric(str(p_row[past_price_col]).replace(",", "."), errors="coerce")
-        if past_price_col
-        and past_price_col in past_df.columns
-        and pd.notna(p_row[past_price_col])
-        else 10.0
-    )
-    overall = 0.0
-    mins = 0.0
-    per_min = 0.0
-    games = 0.0
-
-  rows.append({
-      "Player": p_name,
-      "Team": team,
-      "Position": pos,
-      "Price": price if pd.notna(price) else 10.0,
-      "Total Avg Points": overall if pd.notna(overall) else 0.0,
-      "Minutes": mins if pd.notna(mins) else 0.0,
-      "Points per Minute": per_min if pd.notna(per_min) else 0.0,
-      "Total Games": games if pd.notna(games) else 0.0,
-      "Team_Changed": team_changed,
-  })
-
-df = pd.DataFrame(rows)
+# --- שיטת הדרה (Elimination Method) ---
+# השארת אך ורק שחקנים ששם המשפחה שלהם קיים בקובץ הקטן (new.csv)
+df = df[df["Last_Name"].isin(past_last_names)].copy()
 
 if df.empty:
-  st.error("⚠️ לא נמצאו שחקנים תקינים בקובץ new.csv.")
+  st.error(
+      "⚠️ לא נמצאו שחקנים חופפים בין הקובץ הראשי לקובץ new.csv לאחר הסינון."
+  )
   st.stop()
 
-# חישוב Yaya Rating מובטח לכל השחקנים ללא יוצא מן הכלל
-val_overall = df["Total Avg Points"].fillna(0)
-val_per_min = df["Points per Minute"].fillna(0)
-val_price = df["Price"].fillna(10.0).replace(0, 1.0)
+# עדכון הקבוצות בהתאם לקובץ הקטן ובדיקת שינוי מועדון
+team_changed = []
+for idx, row in df.iterrows():
+  l_name = row["Last_Name"]
+  orig_team = str(row[col_team]).strip() if col_team in df.columns else ""
+  if l_name in past_team_map:
+    new_team = past_team_map[l_name]
+    df.loc[idx, col_team] = new_team  # עדכון הקבוצה לפי הקובץ הקטן
+    if orig_team and orig_team.lower() != new_team.lower():
+      team_changed.append(True)
+    else:
+      team_changed.append(False)
+  else:
+    team_changed.append(False)
 
-efficiency = val_overall / val_price
+df["Team_Changed"] = team_changed
+
+# נתונים ומחירים אמיתיים מהקובץ הראשי
+val_overall = get_num_series(df, col_overall).fillna(0)
+val_per_min = get_num_series(df, col_per_min).fillna(0)
+val_games = get_num_series(df, col_games).fillna(0)
+val_mins = get_num_series(df, col_mins).fillna(0)
+val_price = (
+    get_num_series(df, col_price).fillna(10.0)
+    if col_price
+    else pd.Series([10.0] * len(df))
+)
+df["Price_Clean"] = val_price
+
+# חישוב מדד יאיא מובטח לכל השחקנים
+safe_price = val_price.replace(0, 1.0)
+efficiency = val_overall / safe_price
 max_eff = efficiency.max() if efficiency.max() > 0 else 1.0
 
 raw_ratings = (
@@ -320,106 +262,108 @@ tab_h2h, tab_db = st.tabs(["⚔️ Head-to-Head Comparison", "📋 Player Databa
 with tab_h2h:
   st.subheader("Head-to-Head Player Comparison")
 
-  players = sorted(df["Player"].dropna().unique().tolist())
-  col_select_a, col_select_b = st.columns(2)
+  if len(df.columns) > 0:
+    players = sorted(df[player_col].dropna().unique().tolist())
+    col_select_a, col_select_b = st.columns(2)
 
-  with col_select_a:
-    player_a_name = st.selectbox(
-        "Player A", players, index=0, key="player_a_select"
-    )
-  with col_select_b:
-    default_b_index = 1 if len(players) > 1 else 0
-    player_b_name = st.selectbox(
-        "Player B", players, index=default_b_index, key="player_b_select"
-    )
+    with col_select_a:
+      player_a_name = st.selectbox(
+          "Player A", players, index=0, key="player_a_select"
+      )
+    with col_select_b:
+      default_b_index = 1 if len(players) > 1 else 0
+      player_b_name = st.selectbox(
+          "Player B", players, index=default_b_index, key="player_b_select"
+      )
 
-  player_a = df[df["Player"] == player_a_name].iloc[0]
-  player_b = df[df["Player"] == player_b_name].iloc[0]
+    player_a = df[df[player_col] == player_a_name].iloc[0]
+    player_b = df[df[player_col] == player_b_name].iloc[0]
 
-  st.markdown("---")
+    st.markdown("---")
 
-  if player_a["Team_Changed"]:
-    st.markdown(
-        f"<div class='warning-badge'>⚠️ Warning: {player_a_name} changed teams"
-        " compared to last year!</div>",
-        unsafe_allow_html=True,
-    )
+    if player_a["Team_Changed"]:
+      st.markdown(
+          f"<div class='warning-badge'>⚠️ Warning: {player_a_name} changed"
+          " teams compared to last year!</div>",
+          unsafe_allow_html=True,
+      )
 
-  if player_b["Team_Changed"]:
-    st.markdown(
-        f"<div class='warning-badge'>⚠️ Warning: {player_b_name} changed teams"
-        " compared to last year!</div>",
-        unsafe_allow_html=True,
-    )
+    if player_b["Team_Changed"]:
+      st.markdown(
+          f"<div class='warning-badge'>⚠️ Warning: {player_b_name} changed"
+          " teams compared to last year!</div>",
+          unsafe_allow_html=True,
+      )
 
-  METRICS = [
-      ("Team", "Team"),
-      ("Position", "Position"),
-      ("Price", "Price"),
-      ("Total Avg Points", "Total Avg Points"),
-      ("Minutes", "Minutes"),
-      ("Points per Minute", "Points per Minute"),
-      ("Total Games", "Total Games"),
-      ("Yaya Rating", "Yaya Rating"),
-  ]
+    METRICS = [
+        ("Team", col_team),
+        ("Position", col_pos),
+        ("Price", "Price_Clean"),
+        ("Total Avg Points", col_overall),
+        ("Minutes", col_mins),
+        ("Points per Minute", col_per_min),
+        ("Total Games", col_games),
+        ("Yaya Rating", "Yaya Rating"),
+    ]
 
-  rating_a = player_a["Yaya Rating"]
-  rating_b = player_b["Yaya Rating"]
+    rating_a = player_a["Yaya Rating"]
+    rating_b = player_b["Yaya Rating"]
 
-  col_m1, col_m2 = st.columns(2)
-  with col_m1:
-    st.metric(f"Yaya Rating - {player_a_name}", f"{rating_a:.2f} / 9.8")
-  with col_m2:
-    st.metric(f"Yaya Rating - {player_b_name}", f"{rating_b:.2f} / 9.8")
+    col_m1, col_m2 = st.columns(2)
+    with col_m1:
+      st.metric(f"Yaya Rating - {player_a_name}", f"{rating_a:.2f} / 9.8")
+    with col_m2:
+      st.metric(f"Yaya Rating - {player_b_name}", f"{rating_b:.2f} / 9.8")
 
-  st.markdown("---")
-
-
-  def fmt(val, is_price=False):
-    try:
-      numeric_val = float(str(val).replace(",", "."))
-      if pd.notna(numeric_val):
-        return f"{numeric_val:.1f} ₳" if is_price else f"{numeric_val:.2f}"
-    except:
-      pass
-    return str(val)
+    st.markdown("---")
 
 
-  comparison_data = []
-  for label, col in METRICS:
-    is_p = label == "Price"
-    comparison_data.append({
-        player_a_name: fmt(player_a[col], is_p),
-        "Metric": label,
-        player_b_name: fmt(player_b[col], is_p),
-    })
+    def fmt(val, is_price=False):
+      try:
+        numeric_val = float(str(val).replace(",", "."))
+        if pd.notna(numeric_val):
+          return f"{numeric_val:.1f} ₳" if is_price else f"{numeric_val:.2f}"
+      except:
+        pass
+      return str(val)
 
-  comp_df = pd.DataFrame(comparison_data)
-  st.dataframe(comp_df, use_container_width=True, hide_index=True)
+
+    comparison_data = []
+    for label, col in METRICS:
+      if col and (col in df.columns or col == "Yaya Rating"):
+        is_p = label == "Price"
+        comparison_data.append({
+            player_a_name: fmt(player_a[col], is_p),
+            "Metric": label,
+            player_b_name: fmt(player_b[col], is_p),
+        })
+
+    comp_df = pd.DataFrame(comparison_data)
+    st.dataframe(comp_df, use_container_width=True, hide_index=True)
+
+  else:
+    st.error("Dataset is empty or invalid.")
 
 with tab_db:
   st.subheader("Player Database Overview (Prices & Value)")
 
-  display_db = df[[
-      "Player",
-      "Team",
-      "Position",
-      "Price",
-      "Total Avg Points",
-      "Minutes",
-      "Points per Minute",
-      "Total Games",
-      "Yaya Rating",
-  ]].rename(columns={
-      "Player": "Player",
-      "Team": "Team",
-      "Position": "Position",
-      "Price": "Price",
-      "Total Avg Points": "Total Avg Points",
-      "Minutes": "Minutes",
-      "Points per Minute": "Points per Minute",
-      "Total Games": "Total Games",
+  db_cols_mapping = {
+      player_col: "Player",
+      col_team: "Team",
+      col_pos: "Position",
+      "Price_Clean": "Price",
+      col_overall: "Total Avg Points",
+      col_mins: "Minutes",
+      col_per_min: "Points per Minute",
+      col_games: "Total Games",
       "Yaya Rating": "Yaya Rating",
-  })
+  }
+
+  valid_db_cols = {
+      k: v
+      for k, v in db_cols_mapping.items()
+      if k and (k in df.columns or k in ["Price_Clean", "Yaya Rating"])
+  }
+  display_db = df[list(valid_db_cols.keys())].rename(columns=valid_db_cols)
 
   st.dataframe(display_db, use_container_width=True, hide_index=True)
