@@ -126,7 +126,6 @@ if df is None or len(df.columns) == 0:
     )
     st.stop()
 
-# הצגת שם הקובץ הראשי שנטען לידיעה
 st.caption(f"📁 טען בהצלחה קובץ ראשי: `{found_main_file}` | קובץ השוואה: `new.csv`")
 
 df.columns = df.columns.str.strip().str.replace("\ufeff", "")
@@ -189,11 +188,16 @@ val_price = (
     get_num_series(df, col_price) if col_price else pd.Series([10.0] * len(df))
 )
 
-# --- לוגיקת השוואת שמות משפחה מול new.csv ---
+# --- לוגיקת השוואת שמות משפחה מול new.csv בצורה בטוחה לגמרי ---
 df["Last_Name"] = (
     df[player_col]
+    .fillna("")
     .astype(str)
-    .apply(lambda x: x.strip().split()[-1].lower() if x.strip() else "")
+    .str.strip()
+    .str.split()
+    .str[-1]
+    .str.lower()
+    .fillna("")
 )
 
 past_last_names = set()
