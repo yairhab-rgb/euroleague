@@ -267,14 +267,14 @@ else:
     st.markdown("---")
 
     METRICS = [
-        ("Games Played", "Games Played", False),
-        ("Overall Avg FPT", "Overall Avg FPT", False),
-        ("Home Avg FPT", "Home Avg FPT", False),
-        ("Away Avg FPT", "Away Avg FPT", False),
-        ("Floor Rate % (FPT<8)", "Floor Rate % (FPT<8)", True),
-        ("Ceiling Rate % (FPT>=20)", "Ceiling Rate % (FPT>=20)", False),
-        ("FPT Std Dev", "FPT Std Dev", False),
-    ]
+    ("Games Played", "Games Played", False),
+    ("Overall Avg", "Overall Avg FPT", False),
+    ("Home Avg", "Home Avg FPT", False),
+    ("Away Avg", "Away Avg FPT", False),
+    ("Risk (<8)", "Floor Rate % (FPT<8)", True),
+    ("Upside (>20)", "Ceiling Rate % (FPT>=20)", False),
+    ("Consistency Score", "FPT Std Dev", False),
+]
 
     GREEN = "#1db954"
     NEUTRAL = "#fafafa"
