@@ -1,15 +1,15 @@
-import streamlit as st
-import pandas as pd
+import glob
 import os
+import pandas as pd
+import streamlit as st
 
 st.set_page_config(
-    page_title="EuroLeague Fantasy Dashboard",
-    page_icon="🏀",
-    layout="wide"
+    page_title="EuroLeague Fantasy Dashboard", page_icon="🏀", layout="wide"
 )
 
 # --- Clean High-Readability Light Theme & Hiding Sidebar ---
-st.markdown("""
+st.markdown(
+    """
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
@@ -76,35 +76,64 @@ st.markdown("""
         margin-bottom: 15px;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
+
 
 @st.cache_data
 def load_data():
-    # Load current season data as primary
     current_df = None
-    if os.path.exists("euroleague_current_season.csv"):
-        current_df = pd.read_csv("euroleague_current_season.csv")
-    elif os.path.exists("fantasy_euroleague_stats.csv"):
-        current_df = pd.read_csv("fantasy_euroleague_stats.csv") # Fallback
-        
-    # Load last year's data for new player verification reference
     past_df = None
+
+    # חיפוש דינמי של קובץ הנתונים העדכני ביותר בתיקייה
+    csv_files = [f for f in os.listdir(".") if f.endswith(".csv")]
+
+    if csv_files:
+        # סינון קבצים רלוונטיים לעונה הנוכחית או בחירת הקובץ החדש ביותר לפי תאריך שינוי
+        current_candidates = [
+            f
+            for f in csv_files
+            if "current" in f.lower() or "2026" in f.lower() or "2027" in f.lower()
+        ]
+        if current_candidates:
+            latest_current_file = max(
+                current_candidates, key=os.path.getmtime
+            )
+        else:
+            # אם אין מילת מפתח, ניקח את קובץ ה-CSV המעודכן ביותר בתיקייה
+            latest_current_file = max(csv_files, key=os.path.getmtime)
+
+        current_df = pd.read_csv(latest_current_file)
+
+    # טעינת נתוני העבר לשם זיהוי שחקנים חדשים (השוואה לקובץ היסטורי או גיבוי)
     if os.path.exists("fantasy_euroleague_stats.csv"):
         past_df = pd.read_csv("fantasy_euroleague_stats.csv")
-        
+    elif len(csv_files) > 1:
+        # אם יש יותר מקובץ אחד, ניקח את השני הכי עדכני כרפרנס היסטורי
+        sorted_files = sorted(csv_files, key=os.path.getmtime, reverse=True)
+        past_df = pd.read_csv(sorted_files[1])
+
     return current_df, past_df
 
-st.markdown("<h1 class='main-title'>🏀 EuroLeague Fantasy Analytics</h1>", unsafe_allow_html=True)
+
+st.markdown(
+    "<h1 class='main-title'>🏀 EuroLeague Fantasy Analytics</h1>",
+    unsafe_allow_html=True,
+)
 
 df, past_df = load_data()
 
 if df is None:
-    st.error("⚠️ Current season data file ('euroleague_current_season.csv') not found in directory.")
+    st.error(
+        "⚠️ No valid CSV data files found in the directory. Please upload your dataset."
+    )
     st.stop()
-    
-df.columns = df.columns.str.strip().str.replace('\ufeff', '')
+
+df.columns = df.columns.str.strip().str.replace("\ufeff", "")
 if past_df is not None:
-    past_df.columns = past_df.columns.str.strip().str.replace('\ufeff', '')
+    past_df.columns = past_df.columns.str.strip().str.replace("\ufeff", "")
+
 
 def find_col(dataset, keywords):
     if dataset is None:
@@ -114,10 +143,18 @@ def find_col(dataset, keywords):
             return col
     return None
 
+
 def get_num_series(dataset, col_name):
     if dataset is not None and col_name and col_name in dataset.columns:
-        return pd.to_numeric(dataset[col_name].astype(str).str.replace(',', '.'), errors='coerce').fillna(0)
+        return (
+            pd.to_numeric(
+                dataset[col_name].astype(str).str.replace(",", "."),
+                errors="coerce",
+            )
+            .fillna(0)
+        )
     return pd.Series([0.0] * len(df))
+
 
 player_col = df.columns[0]
 col_team = find_col(df, ["team"]) or df.columns[1]
@@ -132,13 +169,17 @@ val_overall = get_num_series(df, col_overall)
 val_per_min = get_num_series(df, col_per_min)
 val_games = get_num_series(df, col_games)
 val_mins = get_num_series(df, col_mins)
-val_price = get_num_series(df, col_price) if col_price else pd.Series([10.0] * len(df))
+val_price = (
+    get_num_series(df, col_price) if col_price else pd.Series([10.0] * len(df))
+)
 
 # New Player Detection by checking if player existed in last year's dataset
 past_players = set()
 if past_df is not None and len(past_df.columns) > 0:
     past_player_col = past_df.columns[0]
-    past_players = set(past_df[past_player_col].dropna().astype(str).str.strip().str.lower())
+    past_players = set(
+        past_df[past_player_col].dropna().astype(str).str.strip().str.lower()
+    )
 
 current_players = df[player_col].dropna().astype(str).str.strip().str.lower()
 df["Is_New_Player"] = ~current_players.isin(past_players)
@@ -149,7 +190,9 @@ efficiency = val_overall / safe_price
 max_eff = efficiency.max() if efficiency.max() > 0 else 1.0
 
 # Enhanced Yaya Rating incorporating Price Efficiency & Performance
-raw_ratings = (val_overall * 1.2) + (val_per_min * 15) + ((efficiency / max_eff) * 25)
+raw_ratings = (
+    (val_overall * 1.2) + (val_per_min * 15) + ((efficiency / max_eff) * 25)
+)
 max_raw = raw_ratings.max()
 if max_raw > 0 and pd.notna(max_raw):
     df["Yaya Rating"] = (raw_ratings / max_raw) * 9.8
@@ -161,28 +204,38 @@ tab_h2h, tab_db = st.tabs(["⚔️ Head-to-Head Comparison", "📋 Player Databa
 
 with tab_h2h:
     st.subheader("Head-to-Head Player Comparison")
-    
+
     if len(df.columns) > 0:
         players = sorted(df[player_col].dropna().unique().tolist())
         col_select_a, col_select_b = st.columns(2)
-        
+
         with col_select_a:
-            player_a_name = st.selectbox("Player A", players, index=0, key="player_a_select")
+            player_a_name = st.selectbox(
+                "Player A", players, index=0, key="player_a_select"
+            )
         with col_select_b:
             default_b_index = 1 if len(players) > 1 else 0
-            player_b_name = st.selectbox("Player B", players, index=default_b_index, key="player_b_select")
-            
+            player_b_name = st.selectbox(
+                "Player B", players, index=default_b_index, key="player_b_select"
+            )
+
         player_a = df[df[player_col] == player_a_name].iloc[0]
         player_b = df[df[player_col] == player_b_name].iloc[0]
-        
+
         st.markdown("---")
-        
+
         # Warnings for new players
         if player_a["Is_New_Player"]:
-            st.markdown(f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a new player - did not play in EuroLeague last year. Beware!</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a new player - did not play in EuroLeague last year. Beware!</div>",
+                unsafe_allow_html=True,
+            )
         if player_b["Is_New_Player"]:
-            st.markdown(f"<div class='warning-badge'>⚠️ Warning: {player_b_name} is a new player - did not play in EuroLeague last year. Beware!</div>", unsafe_allow_html=True)
-        
+            st.markdown(
+                f"<div class='warning-badge'>⚠️ Warning: {player_b_name} is a new player - did not play in EuroLeague last year. Beware!</div>",
+                unsafe_allow_html=True,
+            )
+
         METRICS = [
             ("Team", col_team),
             ("Position", col_pos),
@@ -193,37 +246,43 @@ with tab_h2h:
             ("Total Games", col_games),
             ("Yaya Rating", "Yaya Rating"),
         ]
-        
+
         rating_a = player_a["Yaya Rating"]
         rating_b = player_b["Yaya Rating"]
-        
+
         col_m1, col_m2 = st.columns(2)
         with col_m1:
             st.metric(f"Yaya Rating - {player_a_name}", f"{rating_a:.2f} / 9.8")
         with col_m2:
             st.metric(f"Yaya Rating - {player_b_name}", f"{rating_b:.2f} / 9.8")
-            
+
         st.markdown("---")
-        
+
         def fmt(val, is_price=False):
             try:
-                numeric_val = float(str(val).replace(',', '.'))
+                numeric_val = float(str(val).replace(",", "."))
                 if pd.notna(numeric_val):
-                    return f"{numeric_val:.1f} ₳" if is_price else f"{numeric_val:.2f}"
+                    return (
+                        f"{numeric_val:.1f} ₳"
+                        if is_price
+                        else f"{numeric_val:.2f}"
+                    )
             except:
                 pass
             return str(val)
-            
+
         comparison_data = []
         for label, col in METRICS:
             if col and (col in df.columns or col == "Yaya Rating"):
-                is_p = (label == "Price")
-                comparison_data.append({
-                    player_a_name: fmt(player_a[col], is_p),
-                    "Metric": label,
-                    player_b_name: fmt(player_b[col], is_p)
-                })
-        
+                is_p = label == "Price"
+                comparison_data.append(
+                    {
+                        player_a_name: fmt(player_a[col], is_p),
+                        "Metric": label,
+                        player_b_name: fmt(player_b[col], is_p),
+                    }
+                )
+
         comp_df = pd.DataFrame(comparison_data)
         st.dataframe(comp_df, use_container_width=True, hide_index=True)
 
@@ -232,7 +291,7 @@ with tab_h2h:
 
 with tab_db:
     st.subheader("Player Database Overview (Prices & Value)")
-    
+
     db_cols_mapping = {
         player_col: "Player",
         col_team: "Team",
@@ -242,10 +301,14 @@ with tab_db:
         col_mins: "Minutes",
         col_per_min: "Points per Minute",
         col_games: "Total Games",
-        "Yaya Rating": "Yaya Rating"
+        "Yaya Rating": "Yaya Rating",
     }
-    
-    valid_db_cols = {k: v for k, v in db_cols_mapping.items() if k and (k in df.columns or k == "Yaya Rating")}
+
+    valid_db_cols = {
+        k: v
+        for k, v in db_cols_mapping.items()
+        if k and (k in df.columns or k == "Yaya Rating")
+    }
     display_db = df[list(valid_db_cols.keys())].rename(columns=valid_db_cols)
-    
+
     st.dataframe(display_db, use_container_width=True, hide_index=True)
