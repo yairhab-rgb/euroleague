@@ -17,7 +17,6 @@ def load_data(file_path_or_buffer, is_csv=True):
 
 st.title("🏀 EuroLeague Fantasy Analytics Dashboard")
 
-# File loading logic
 uploaded_file = st.sidebar.file_uploader("Upload Fantasy CSV/Excel file", type=["csv", "xlsx"])
 df = None
 
@@ -33,14 +32,12 @@ try:
         st.error("⚠️ No data file found. Please upload a CSV file.")
         st.stop()
         
-    # Clean column names
     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
     
-    # Normalize Smart Rating to a 9.8 maximum scale
     if "דירוג חכם" in df.columns:
-        raw_ratings = df["דירוג חכם"]
+        raw_ratings = pd.to_numeric(df["דירוג חכם"], errors='coerce')
         max_raw = raw_ratings.max()
-        if max_raw > 0:
+        if max_raw > 0 and pd.notna(max_raw):
             df["Smart Rating (Normalized)"] = (raw_ratings / max_raw) * 9.8
         else:
             df["Smart Rating (Normalized)"] = raw_ratings
@@ -51,7 +48,6 @@ except Exception as e:
     st.error(f"⚠️ Error loading data: {e}")
     st.stop()
 
-# Navigation menu
 nav_option = st.sidebar.radio("Navigation", ["Head-to-Head Comparison", "Player Database"])
 
 if nav_option == "Head-to-Head Comparison":
@@ -73,7 +69,6 @@ if nav_option == "Head-to-Head Comparison":
         
         st.markdown("---")
         
-        # Metrics Mapping: (UI English Label, CSV Column Name, Lower is Better Flag)
         METRICS = [
             ("Games Played", "משחקים", False),
             ("Overall Avg", "ממוצע_כללי", False),
@@ -100,58 +95,61 @@ if nav_option == "Head-to-Head Comparison":
         NEUTRAL = "#fafafa"
         
         def fmt(val):
-            if isinstance(val, (float, int)):
-                return f"{val:.2f}"
+            try:
+                if isinstance(val, (float, int)) or pd.notna(float(val)):
+                    return f"{float(val):.2f}"
+            except:
+                pass
             return str(val)
             
-       rows_html = ""
-for label, col, lower_is_better in METRICS:
-    val_a = player_a[col]
-    val_b = player_b[col]
-    
-    # Safe numeric conversion for comparison
-    try:
-        num_a = float(val_a)
-        num_b = float(val_b)
-        if lower_is_better:
-            a_better = num_a < num_b
-            b_better = num_b < num_a
-        else:
-            a_better = num_a > num_b
-            b_better = num_b > num_a
-    except:
-        a_better = False
-        b_better = False
-    
-    color_a = GREEN if a_better else NEUTRAL
-    color_b = GREEN if b_better else NEUTRAL
-    weight_a = "bold" if a_better else "normal"
-    weight_b = "bold" if b_better else "normal"
-    
-    rows_html += f"""
-    <tr style="border-bottom: 1px solid #2b3040;">
-        <td style="color:{color_a}; font-weight:{weight_a}; text-align:center; padding:12px; font-size:16px;">{fmt(val_a)}</td>
-        <td style="text-align:center; padding:12px; color:#a3a8b8; font-size:15px;">{label}</td>
-        <td style="color:{color_b}; font-weight:{weight_b}; text-align:center; padding:12px; font-size:16px;">{fmt(val_b)}</td>
-    </tr>
-    """
-    
-table_html = f"""
-<table style="width:100%; border-collapse: collapse; background-color: #1e1e1e; font-family: sans-serif;">
-    <thead>
-        <tr style="border-bottom: 2px solid #333;">
-            <th style="color: white; text-align: center; padding: 12px; font-size: 16px;">{player_a_name}</th>
-            <th style="color: #a3a8b8; text-align: center; padding: 12px; font-size: 15px;">Metric</th>
-            <th style="color: white; text-align: center; padding: 12px; font-size: 16px;">{player_b_name}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {rows_html}
-    </tbody>
-</table>
-"""
-st.markdown(table_html, unsafe_allow_html=True)
-
+        rows_html = ""
+        for label, col, lower_is_better in METRICS:
+            val_a = player_a[col]
+            val_b = player_b[col]
+            
+            try:
+                num_a = float(val_a)
+                num_b = float(val_b)
+                if lower_is_better:
+                    a_better = num_a < num_b
+                    b_better = num_b < num_a
+                else:
+                    a_better = num_a > num_b
+                    b_better = num_b > num_a
+            except:
+                a_better = False
+                b_better = False
+            
+            color_a = GREEN if a_better else NEUTRAL
+            color_b = GREEN if b_better else NEUTRAL
+            weight_a = "bold" if a_better else "normal"
+            weight_b = "bold" if b_better else "normal"
+            
+            rows_html += f"""
+            <tr style="border-bottom: 1px solid #2b3040;">
+                <td style="color:{color_a}; font-weight:{weight_a}; text-align:center; padding:12px; font-size:16px;">{fmt(val_a)}</td>
+                <td style="text-align:center; padding:12px; color:#a3a8b8; font-size:15px;">{label}</td>
+                <td style="color:{color_b}; font-weight:{weight_b}; text-align:center; padding:12px; font-size:16px;">{fmt(val_b)}</td>
+            </tr>
+            """
+            
+        table_html = f"""
+        <table style="width:100%; border-collapse: collapse; background-color: #1e1e1e; font-family: sans-serif;">
+            <thead>
+                <tr style="border-bottom: 2px solid #333;">
+                    <th style="color: white; text-align: center; padding: 12px; font-size: 16px;">{player_a_name}</th>
+                    <th style="color: #a3a8b8; text-align: center; padding: 12px; font-size: 15px;">Metric</th>
+                    <th style="color: white; text-align: center; padding: 12px; font-size: 16px;">{player_b_name}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {rows_html}
+            </tbody>
+        </table>
+        """
+        st.markdown(table_html, unsafe_allow_html=True)
+    else:
+        st.error("Column 'שחקן' not found in dataset.")
 else:
     st.subheader("Player Database Overview")
     st.dataframe(df)
