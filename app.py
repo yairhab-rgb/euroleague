@@ -86,11 +86,9 @@ def load_data():
     current_df = None
     past_df = None
 
-    # חיפוש דינמי של קובץ הנתונים העדכני ביותר בתיקייה
     csv_files = [f for f in os.listdir(".") if f.endswith(".csv")]
 
     if csv_files:
-        # סינון קבצים רלוונטיים לעונה הנוכחית או בחירת הקובץ החדש ביותר לפי תאריך שינוי
         current_candidates = [
             f
             for f in csv_files
@@ -101,16 +99,13 @@ def load_data():
                 current_candidates, key=os.path.getmtime
             )
         else:
-            # אם אין מילת מפתח, ניקח את קובץ ה-CSV המעודכן ביותר בתיקייה
             latest_current_file = max(csv_files, key=os.path.getmtime)
 
         current_df = pd.read_csv(latest_current_file)
 
-    # טעינת נתוני העבר לשם זיהוי שחקנים חדשים (השוואה לקובץ היסטורי או גיבוי)
     if os.path.exists("fantasy_euroleague_stats.csv"):
         past_df = pd.read_csv("fantasy_euroleague_stats.csv")
     elif len(csv_files) > 1:
-        # אם יש יותר מקובץ אחד, ניקח את השני הכי עדכני כרפרנס היסטורי
         sorted_files = sorted(csv_files, key=os.path.getmtime, reverse=True)
         past_df = pd.read_csv(sorted_files[1])
 
@@ -124,9 +119,9 @@ st.markdown(
 
 df, past_df = load_data()
 
-if df is None:
+if df is None or len(df.columns) == 0:
     st.error(
-        "⚠️ No valid CSV data files found in the directory. Please upload your dataset."
+        "⚠️ No valid CSV data files found or the dataset is empty. Please check your files."
     )
     st.stop()
 
@@ -144,6 +139,15 @@ def find_col(dataset, keywords):
     return None
 
 
+def get_safe_col(dataset, keywords, fallback_idx):
+    found = find_col(dataset, keywords)
+    if found:
+        return found
+    if len(dataset.columns) > fallback_idx:
+        return dataset.columns[fallback_idx]
+    return dataset.columns[0]  # Fallback בטוח לעמודה הראשונה
+
+
 def get_num_series(dataset, col_name):
     if dataset is not None and col_name and col_name in dataset.columns:
         return (
@@ -156,13 +160,21 @@ def get_num_series(dataset, col_name):
     return pd.Series([0.0] * len(df))
 
 
+# בחירת עמודות בטוחה למניעת Index Error
 player_col = df.columns[0]
-col_team = find_col(df, ["team"]) or df.columns[1]
-col_pos = find_col(df, ["position", "pos"]) or df.columns[2]
-col_overall = find_col(df, ["overall", "avg"]) or df.columns[3]
-col_mins = find_col(df, ["min"]) or df.columns[4]
+col_team = get_safe_col(df, ["team"], 1 if len(df.columns) > 1 else 0)
+col_pos = get_safe_col(df, ["position", "pos"], 2 if len(df.columns) > 2 else 0)
+col_overall = get_safe_col(
+    df, ["overall", "avg", "pts"], 3 if len(df.columns) > 3 else 0
+)
+col_mins = get_safe_col(df, ["min"], 4 if len(df.columns) > 4 else 0)
 col_per_min = find_col(df, ["per minute"]) or col_overall
-col_games = find_col(df, ["games", "played", "gp"]) or df.columns[-1]
+col_games = (
+    find_col(df, ["games", "played", "gp"])
+    or df.columns[-1]
+    if len(df.columns) > 0
+    else player_col
+)
 col_price = find_col(df, ["price", "cost", "credit"])
 
 val_overall = get_num_series(df, col_overall)
@@ -224,7 +236,6 @@ with tab_h2h:
 
         st.markdown("---")
 
-        # Warnings for new players
         if player_a["Is_New_Player"]:
             st.markdown(
                 f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a new player - did not play in EuroLeague last year. Beware!</div>",
