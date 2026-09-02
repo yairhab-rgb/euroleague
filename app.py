@@ -1,4 +1,3 @@
-import glob
 import os
 import pandas as pd
 import streamlit as st
@@ -86,29 +85,11 @@ def load_data():
     current_df = None
     past_df = None
 
-    # 1. עדיפות ראשונה: טעינה ישירה של קובץ הנתונים הראשי המוגדר
+    # קובץ ראשי (האקסל הגדול)
     if os.path.exists("euroleague_current_season.csv"):
         current_df = pd.read_csv("euroleague_current_season.csv")
-    else:
-        # 2. גיבוי דינמי: אם הקובץ הראשי לא נמצא, נחפש אוטומטית קובץ מתאים בתיקייה
-        csv_files = [f for f in os.listdir(".") if f.endswith(".csv")]
-        if csv_files:
-            current_candidates = [
-                f
-                for f in csv_files
-                if "current" in f.lower()
-                or "2026" in f.lower()
-                or "2027" in f.lower()
-            ]
-            if current_candidates:
-                latest_current_file = max(
-                    current_candidates, key=os.path.getmtime
-                )
-            else:
-                latest_current_file = max(csv_files, key=os.path.getmtime)
-            current_df = pd.read_csv(latest_current_file)
 
-    # טעינת קובץ נתוני העבר להשוואה (לזיהוי שחקנים חדשים)
+    # קובץ קטן (היסטורי / שמות משפחה)
     if os.path.exists("fantasy_euroleague_stats.csv"):
         past_df = pd.read_csv("fantasy_euroleague_stats.csv")
 
@@ -124,7 +105,7 @@ df, past_df = load_data()
 
 if df is None or len(df.columns) == 0:
     st.error(
-        "⚠️ Current season data file ('euroleague_current_season.csv') or any valid dataset not found in directory."
+        "⚠️ Current season data file ('euroleague_current_season.csv') not found."
     )
     st.stop()
 
@@ -163,7 +144,7 @@ def get_num_series(dataset, col_name):
     return pd.Series([0.0] * len(df))
 
 
-# בחירת עמודות בטוחה למניעת שגיאות אינדקס
+# זיהוי עמודות עיקריות בקובץ הראשי
 player_col = df.columns[0]
 col_team = get_safe_col(df, ["team"], 1 if len(df.columns) > 1 else 0)
 col_pos = get_safe_col(df, ["position", "pos"], 2 if len(df.columns) > 2 else 0)
@@ -188,23 +169,53 @@ val_price = (
     get_num_series(df, col_price) if col_price else pd.Series([10.0] * len(df))
 )
 
-# New Player Detection by checking if player existed in last year's dataset
-past_players = set()
+# --- לוגיקת השוואת שמות משפחה מול הקובץ הקטן ---
+# חילוץ שם משפחה מהקובץ הראשי (המילה האחרונה בשם)
+df["Last_Name"] = (
+    df[player_col]
+    .astype(str)
+    .apply(lambda x: x.strip().split()[-1].lower() if x.strip() else "")
+)
+
+past_last_names = set()
+past_team_map = {}
+
 if past_df is not None and len(past_df.columns) > 0:
     past_player_col = past_df.columns[0]
-    past_players = set(
-        past_df[past_player_col].dropna().astype(str).str.strip().str.lower()
-    )
+    past_team_col = find_col(past_df, ["team"])
 
-current_players = df[player_col].dropna().astype(str).str.strip().str.lower()
-df["Is_New_Player"] = ~current_players.isin(past_players)
+    for _, row in past_df.iterrows():
+        p_name = str(row[past_player_col]).strip().lower()
+        if p_name:
+            l_name = p_name.split()[-1]
+            past_last_names.add(l_name)
+            if past_team_col:
+                past_team_map[l_name] = str(row[past_team_col]).strip()
 
-# Value for Money / Cost Efficiency calculation
+is_in_past = []
+team_changed = []
+
+for _, row in df.iterrows():
+    l_name = row["Last_Name"]
+    exists = l_name in past_last_names
+    is_in_past.append(exists)
+
+    if exists and col_team in df.columns and l_name in past_team_map:
+        current_team = str(row[col_team]).strip().lower()
+        old_team = past_team_map[l_name].lower()
+        team_changed.append(current_team != old_team)
+    else:
+        team_changed.append(False)
+
+df["Found_In_Small_File"] = is_in_past
+df["Team_Changed"] = team_changed
+df["Is_New_Player"] = ~df["Found_In_Small_File"]
+
+# חישוב Yaya Rating
 safe_price = val_price.replace(0, 1.0)
 efficiency = val_overall / safe_price
 max_eff = efficiency.max() if efficiency.max() > 0 else 1.0
 
-# Enhanced Yaya Rating incorporating Price Efficiency & Performance
 raw_ratings = (
     (val_overall * 1.2) + (val_per_min * 15) + ((efficiency / max_eff) * 25)
 )
@@ -214,8 +225,14 @@ if max_raw > 0 and pd.notna(max_raw):
 else:
     df["Yaya Rating"] = 5.0
 
-# --- Top-Level Tabs Navigation ---
-tab_h2h, tab_db = st.tabs(["⚔️ Head-to-Head Comparison", "📋 Player Database"])
+# --- ניווט טאבים ---
+tab_h2h, tab_db, tab_new = st.tabs(
+    [
+        "⚔️ Head-to-Head Comparison",
+        "📋 Player Database",
+        "🚨 New / Unmatched Players",
+    ]
+)
 
 with tab_h2h:
     st.subheader("Head-to-Head Player Comparison")
@@ -239,14 +256,26 @@ with tab_h2h:
 
         st.markdown("---")
 
+        # אזהרות מותאמות: שחקן חדש לגמרי או שינוי מועדון
         if player_a["Is_New_Player"]:
             st.markdown(
-                f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a new player - did not play in EuroLeague last year. Beware!</div>",
+                f"<div class='warning-badge'>⚠️ Warning: {player_a_name} is a brand new player (not found in small file)!</div>",
                 unsafe_allow_html=True,
             )
+        elif player_a["Team_Changed"]:
+            st.markdown(
+                f"<div class='warning-badge'>⚠️ Warning: {player_a_name} changed teams compared to last year!</div>",
+                unsafe_allow_html=True,
+            )
+
         if player_b["Is_New_Player"]:
             st.markdown(
-                f"<div class='warning-badge'>⚠️ Warning: {player_b_name} is a new player - did not play in EuroLeague last year. Beware!</div>",
+                f"<div class='warning-badge'>⚠️ Warning: {player_b_name} is a brand new player (not found in small file)!</div>",
+                unsafe_allow_html=True,
+            )
+        elif player_b["Team_Changed"]:
+            st.markdown(
+                f"<div class='warning-badge'>⚠️ Warning: {player_b_name} changed teams compared to last year!</div>",
                 unsafe_allow_html=True,
             )
 
@@ -272,6 +301,7 @@ with tab_h2h:
 
         st.markdown("---")
 
+
         def fmt(val, is_price=False):
             try:
                 numeric_val = float(str(val).replace(",", "."))
@@ -284,6 +314,7 @@ with tab_h2h:
             except:
                 pass
             return str(val)
+
 
         comparison_data = []
         for label, col in METRICS:
@@ -326,3 +357,20 @@ with tab_db:
     display_db = df[list(valid_db_cols.keys())].rename(columns=valid_db_cols)
 
     st.dataframe(display_db, use_container_width=True, hide_index=True)
+
+with tab_new:
+    st.subheader("🚨 New / Unmatched Players (Not found in the small file)")
+    new_players_df = df[df["Is_New_Player"]][[player_col, col_team]]
+    if not new_players_df.empty:
+        st.write(
+            "להלן השחקנים המופיעים בקובץ הראשי אך לא נמצאו בקובץ הקטן (חדשים לגמרי):"
+        )
+        st.dataframe(
+            new_players_df.rename(
+                columns={player_col: "Player Name", col_team: "Team"}
+            ),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        st.success("כל השחקנים נמצאו בקובץ הקטן!")
