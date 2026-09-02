@@ -34,8 +34,11 @@ try:
         
     df.columns = df.columns.str.strip().str.replace('\ufeff', '')
     
-    if "דירוג חכם" in df.columns:
-        raw_ratings = pd.to_numeric(df["דירוג חכם"], errors='coerce')
+    # Normalize Smart Rating to a 9.8 maximum scale if column exists
+    rating_col = next((col for col in df.columns if "דירוג" in col or "Rating" in col or "smart" in col.lower()), None)
+    
+    if rating_col and rating_col in df.columns:
+        raw_ratings = pd.to_numeric(df[rating_col], errors='coerce')
         max_raw = raw_ratings.max()
         if max_raw > 0 and pd.notna(max_raw):
             df["Smart Rating (Normalized)"] = (raw_ratings / max_raw) * 9.8
@@ -54,8 +57,9 @@ if nav_option == "Head-to-Head Comparison":
     st.markdown("---")
     st.subheader("⚔️ Head-to-Head Player Comparison")
     
-    if "שחקן" in df.columns:
-        players = sorted(df["שחקן"].dropna().unique().tolist())
+    if len(df.columns) > 0:
+        player_col = df.columns[0] # Automatically uses the first column for player names
+        players = sorted(df[player_col].dropna().unique().tolist())
         col_select_a, col_select_b = st.columns(2)
         
         with col_select_a:
@@ -64,21 +68,17 @@ if nav_option == "Head-to-Head Comparison":
             default_b_index = 1 if len(players) > 1 else 0
             player_b_name = st.selectbox("Player B", players, index=default_b_index)
             
-        player_a = df[df["שחקן"] == player_a_name].iloc[0]
-        player_b = df[df["שחקן"] == player_b_name].iloc[0]
+        player_a = df[df[player_col] == player_a_name].iloc[0]
+        player_b = df[df[player_col] == player_b_name].iloc[0]
         
         st.markdown("---")
         
-        METRICS = [
-            ("Games Played", "משחקים", False),
-            ("Overall Avg", "ממוצע_כללי", False),
-            ("Home Avg", "ממוצע_בית", False),
-            ("Away Avg", "ממוצע_חוץ", False),
-            ("Risk (<8)", "אחוז_מתחת_8", True),
-            ("Upside (>20)", "אחוז_מעל_20", False),
-            ("Consistency Score", "ציון_יציבות", False),
-            ("Smart Rating", "Smart Rating (Normalized)", False),
-        ]
+        # Dynamic metric mapping based on available columns
+        METRICS = []
+        for col in df.columns:
+            if col != player_col and col != "Smart Rating (Normalized)":
+                METRICS.append((col, col, False))
+        METRICS.append(("Smart Rating", "Smart Rating (Normalized)", False))
         
         rating_a = player_a["Smart Rating (Normalized)"]
         rating_b = player_b["Smart Rating (Normalized)"]
@@ -104,6 +104,8 @@ if nav_option == "Head-to-Head Comparison":
             
         rows_html = ""
         for label, col, lower_is_better in METRICS:
+            if col not in player_a or col not in player_b:
+                continue
             val_a = player_a[col]
             val_b = player_b[col]
             
@@ -149,7 +151,7 @@ if nav_option == "Head-to-Head Comparison":
         """
         st.markdown(table_html, unsafe_allow_html=True)
     else:
-        st.error("Column 'שחקן' not found in dataset.")
+        st.error("Dataset is empty or invalid.")
 else:
     st.subheader("Player Database Overview")
     st.dataframe(df)
