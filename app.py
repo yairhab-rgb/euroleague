@@ -23,10 +23,14 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* =========================
+   GENERAL
+========================= */
+
 .stApp {
     background:
-        radial-gradient(circle at 10% 5%, rgba(0, 255, 135, 0.08), transparent 30%),
-        radial-gradient(circle at 90% 15%, rgba(0, 180, 100, 0.06), transparent 27%),
+        radial-gradient(circle at 10% 5%, rgba(0,255,135,.08), transparent 30%),
+        radial-gradient(circle at 90% 15%, rgba(0,180,100,.06), transparent 27%),
         linear-gradient(180deg, #06100c 0%, #030806 48%, #010302 100%);
     color: white;
 }
@@ -38,13 +42,13 @@ st.markdown("""
 }
 
 
-/* ======================================================
+/* =========================
    HERO
-====================================================== */
+========================= */
 
 .hero {
     position: relative;
-    min-height: 260px;
+    min-height: 290px;
     border-radius: 28px;
     overflow: hidden;
     padding: 45px 48px;
@@ -97,11 +101,15 @@ st.markdown("""
     position: relative;
     z-index: 3;
     display: inline-block;
+
     background: rgba(43,245,130,.10);
     color: #59f79c;
+
     border: 1px solid rgba(70,255,150,.23);
+
     padding: 8px 15px;
     border-radius: 999px;
+
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 1.25px;
@@ -110,11 +118,14 @@ st.markdown("""
 .hero-title {
     position: relative;
     z-index: 3;
+
     font-size: 62px;
     line-height: 1;
     font-weight: 950;
     letter-spacing: -3px;
+
     color: #f6fff9;
+
     margin-top: 25px;
 }
 
@@ -126,193 +137,333 @@ st.markdown("""
 .hero-subtitle {
     position: relative;
     z-index: 3;
-    color: #a6bbb0;
+
+    color: #c4d2ca;
+
     font-size: 19px;
+    font-weight: 650;
+
     margin-top: 15px;
-    letter-spacing: .4px;
+
+    line-height: 1.55;
+
+    max-width: 790px;
+}
+
+.hero-explanation {
+    position: relative;
+    z-index: 3;
+
+    color: #8fa398;
+
+    font-size: 14px;
+
+    margin-top: 10px;
+
+    line-height: 1.55;
+
+    max-width: 800px;
 }
 
 .hero-words {
     position: absolute;
     z-index: 4;
+
     right: 38px;
     top: 36px;
+
     text-align: right;
+
     font-size: 14px;
     line-height: 2.15;
+
     font-weight: 950;
     letter-spacing: 3.5px;
+
     color: rgba(102,255,171,.63);
 }
 
 
-/* ======================================================
+/* =========================
    WARNINGS
-====================================================== */
+========================= */
 
 .global-warning,
 .yellow-warning {
+
     background: rgba(255,193,7,.09);
+
     border: 1px solid rgba(255,204,55,.35);
     border-left: 5px solid #ffd447;
+
     border-radius: 13px;
+
     color: #ffe89b;
+
     padding: 14px 16px;
+
     margin: 12px 0 20px 0;
+
     font-size: 14px;
 }
 
 
-/* ======================================================
-   BIG CENTERED TABS
-====================================================== */
+/* =========================================================
+   VERY LARGE CENTERED TABS
+========================================================= */
 
-div[data-testid="stTabs"] {
-    margin-top: 18px;
-}
+div[data-testid="stTabs"] > div[data-baseweb="tab-list"] {
 
-div[data-testid="stTabs"] div[data-baseweb="tab-list"] {
     display: flex !important;
+
+    width: 100% !important;
+
     justify-content: center !important;
-    align-items: center !important;
-    gap: 24px !important;
+    align-items: stretch !important;
+
+    gap: 28px !important;
+
+    padding: 14px 2% 30px 2% !important;
+
+    margin: 0 auto !important;
 
     background: transparent !important;
-    border-bottom: none !important;
 
-    padding: 10px 0 20px 0 !important;
-    margin: 0 auto !important;
+    border: none !important;
 }
 
-div[data-testid="stTabs"] button[data-baseweb="tab"] {
-    flex: none !important;
 
-    min-width: 390px !important;
-    width: 390px !important;
-    height: 78px !important;
+/* alternative Streamlit selector */
+
+div[data-baseweb="tab-list"] {
+
+    display: flex !important;
+
+    width: 100% !important;
 
     justify-content: center !important;
 
-    padding: 0 30px !important;
+    gap: 28px !important;
 
-    border-radius: 18px !important;
+    padding-top: 14px !important;
+    padding-bottom: 30px !important;
+}
+
+
+button[data-baseweb="tab"] {
+
+    flex: 1 1 0 !important;
+
+    width: 46% !important;
+    max-width: 620px !important;
+    min-width: 360px !important;
+
+    height: 105px !important;
+
+    display: flex !important;
+
+    justify-content: center !important;
+    align-items: center !important;
+
+    border-radius: 24px !important;
+
+    border:
+        2px solid rgba(67,245,141,.25) !important;
 
     background:
         linear-gradient(
             145deg,
-            rgba(12,30,21,.98),
-            rgba(6,17,12,.98)
+            rgba(12,34,23,.98),
+            rgba(5,17,11,.98)
         ) !important;
-
-    border: 1px solid rgba(68,255,150,.22) !important;
-
-    color: #c8d8cf !important;
-
-    font-size: 21px !important;
-    font-weight: 900 !important;
 
     box-shadow:
-        0 12px 30px rgba(0,0,0,.24) !important;
+        0 18px 40px rgba(0,0,0,.30) !important;
 
-    transition: all .2s ease !important;
+    color: #d7e5dd !important;
+
+    transition: .2s ease !important;
 }
 
-div[data-testid="stTabs"] button[data-baseweb="tab"]:hover {
-    border-color: rgba(70,255,150,.48) !important;
+
+button[data-baseweb="tab"] p {
+
+    width: 100% !important;
+
+    text-align: center !important;
+
+    font-size: 25px !important;
+    line-height: 1.2 !important;
+
+    font-weight: 950 !important;
+
+    color: inherit !important;
+
+    margin: 0 !important;
+}
+
+
+button[data-baseweb="tab"]:hover {
+
+    border-color:
+        rgba(70,255,150,.60) !important;
+
     background:
         linear-gradient(
             145deg,
-            rgba(15,48,31,.98),
-            rgba(7,24,16,.98)
+            rgba(18,57,37,.98),
+            rgba(7,27,17,.98)
         ) !important;
-    transform: translateY(-1px);
+
+    transform: translateY(-2px);
 }
 
-div[data-testid="stTabs"] button[data-baseweb="tab"][aria-selected="true"] {
+
+button[data-baseweb="tab"][aria-selected="true"] {
+
     color: white !important;
 
     background:
         linear-gradient(
             135deg,
-            #137b45 0%,
-            #1ab75f 50%,
-            #16904f 100%
+            #0d6f3c 0%,
+            #1ac766 48%,
+            #138849 100%
         ) !important;
 
-    border: 1px solid rgba(97,255,170,.65) !important;
+    border:
+        2px solid rgba(100,255,174,.75) !important;
 
     box-shadow:
-        0 12px 35px rgba(0,255,125,.17),
-        inset 0 0 30px rgba(255,255,255,.04) !important;
+        0 17px 45px rgba(0,255,125,.22),
+        inset 0 0 35px rgba(255,255,255,.06) !important;
 }
 
-div[data-testid="stTabs"] div[data-baseweb="tab-highlight"] {
+
+div[data-baseweb="tab-highlight"],
+div[data-baseweb="tab-border"] {
     display: none !important;
 }
 
-div[data-testid="stTabs"] div[data-baseweb="tab-border"] {
-    display: none !important;
+
+/* =========================================================
+   LABELS ABOVE INPUT BOXES
+========================================================= */
+
+/* Streamlit widget labels */
+
+div[data-testid="stWidgetLabel"] p {
+    color: #e9f3ed !important;
+    font-size: 16px !important;
+    font-weight: 850 !important;
 }
 
 
-/* ======================================================
-   INPUTS
-====================================================== */
+/* Selectbox / multiselect labels */
 
-div[data-baseweb="select"] > div,
-div[data-baseweb="input"] > div {
+div[data-testid="stSelectbox"] label p,
+div[data-testid="stMultiSelect"] label p,
+div[data-testid="stTextInput"] label p,
+div[data-testid="stSlider"] label p {
+
+    color: #e9f3ed !important;
+
+    font-size: 16px !important;
+
+    font-weight: 850 !important;
+}
+
+
+/* generic label fallback */
+
+label[data-testid="stWidgetLabel"] {
+    color: #e9f3ed !important;
+}
+
+
+/* =========================
+   INPUT BOXES
+========================= */
+
+div[data-baseweb="select"] > div {
+
     border-radius: 12px !important;
+
+    min-height: 45px !important;
 }
 
 div[data-testid="stTextInput"] input {
+
     border-radius: 12px !important;
+
+    min-height: 45px !important;
 }
 
 
-/* ======================================================
+/* =========================
    SECTION TITLES
-====================================================== */
+========================= */
 
 .section-title {
-    font-size: 30px;
+
+    font-size: 31px;
+
     font-weight: 950;
-    margin: 25px 0 18px 0;
-    color: #ffffff;
+
+    margin: 22px 0 18px 0;
+
+    color: white;
 }
 
 
-/* ======================================================
-   DATABASE TABLE
-====================================================== */
+/* =========================================================
+   PLAYER DATABASE TABLE
+========================================================= */
 
 .table-wrap {
+
     width: 100%;
+
     overflow-x: auto;
-    max-height: 720px;
     overflow-y: auto;
+
+    max-height: 720px;
 
     border-radius: 18px;
 
-    border: 1px solid rgba(72,255,155,.13);
+    border:
+        1px solid rgba(72,255,155,.13);
 
-    background: rgba(4,11,8,.94);
+    background:
+        rgba(4,11,8,.94);
 
-    box-shadow: 0 20px 50px rgba(0,0,0,.27);
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.27);
 }
 
+
 .yaya-table {
+
     width: 100%;
+
     border-collapse: collapse;
+
     min-width: 1000px;
+
     font-size: 14px;
 }
 
+
 .yaya-table th {
+
     position: sticky;
+
     top: 0;
+
     z-index: 2;
 
     background: #10251a;
+
     color: #57f599;
 
     padding: 15px 13px;
@@ -323,38 +474,98 @@ div[data-testid="stTextInput"] input {
         1px solid rgba(75,255,155,.20);
 
     font-size: 12px;
+
+    font-weight: 900;
+
     letter-spacing: .45px;
+
     text-transform: uppercase;
 }
 
+
 .yaya-table td {
+
     padding: 13px;
+
     border-bottom:
         1px solid rgba(255,255,255,.045);
+
     color: #dce8e1;
 }
 
+
 .yaya-table tr:hover td {
-    background: rgba(45,245,130,.05);
+
+    background:
+        rgba(45,245,130,.05);
 }
 
+
 .player-cell {
+
     color: white !important;
+
     font-weight: 850;
 }
 
+
 .rating-cell {
+
     color: #50f294 !important;
+
     font-weight: 950;
+
     font-size: 15px;
 }
 
 
-/* ======================================================
-   HEAD TO HEAD
-====================================================== */
+/* =========================================================
+   CAPTAIN BADGE
+========================================================= */
+
+.captain-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    margin-left: 7px;
+
+    min-width: 24px;
+    height: 24px;
+
+    padding: 0 7px;
+
+    border-radius: 7px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffd43b,
+            #f4b400
+        );
+
+    border:
+        1px solid #ffe78a;
+
+    color: #171100 !important;
+
+    font-size: 13px;
+
+    font-weight: 950;
+
+    box-shadow:
+        0 0 15px rgba(255,205,45,.22);
+}
+
+
+/* =========================================================
+   H2H CARDS
+========================================================= */
 
 .compare-card {
+
     background:
         radial-gradient(
             circle at 10% 0%,
@@ -372,53 +583,78 @@ div[data-testid="stTextInput"] input {
 
     border-radius: 21px;
 
-    padding: 25px;
+    padding: 27px;
 
-    min-height: 185px;
+    min-height: 190px;
 
     box-shadow:
         0 18px 45px rgba(0,0,0,.24);
 }
 
+
 .compare-name {
-    font-size: 28px;
+
+    font-size: 29px;
+
     font-weight: 950;
+
     color: white;
+
     margin-bottom: 8px;
 }
 
+
 .compare-meta {
-    color: #96aa9e;
-    font-size: 15px;
+
+    color: #a7b8ae;
+
+    font-size: 16px;
+
+    font-weight: 600;
 }
+
 
 .compare-rating {
-    font-size: 40px;
+
+    font-size: 42px;
+
     line-height: 1;
+
     font-weight: 950;
+
     color: #4bf393;
-    margin-top: 18px;
+
+    margin-top: 20px;
 }
+
 
 .rating-caption {
-    color: #788b80;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-top: 5px;
+
+    color: #83968b;
+
+    font-size: 12px;
+
+    font-weight: 850;
+
+    letter-spacing: 1.2px;
+
+    margin-top: 6px;
 }
 
 
-/* ======================================================
+/* =========================================================
    EXPERIENCE BADGES
-====================================================== */
+========================================================= */
 
 .badges-area {
     margin-top: 15px;
 }
 
+
 .badge {
+
     display: inline-block;
+
     padding: 7px 11px;
 
     border-radius: 999px;
@@ -427,59 +663,183 @@ div[data-testid="stTextInput"] input {
     margin-top: 5px;
 
     font-size: 11px;
+
     font-weight: 900;
+
     letter-spacing: .35px;
 
     border:
         1px solid rgba(255,255,255,.12);
 }
 
+
 .badge-high {
-    background: rgba(48,239,134,.12);
+
+    background:
+        rgba(48,239,134,.12);
+
     color: #59f59b;
+
     border-color:
         rgba(60,255,150,.25);
 }
 
+
 .badge-low {
-    background: rgba(64,161,255,.11);
+
+    background:
+        rgba(64,161,255,.11);
+
     color: #8bc6ff;
+
     border-color:
         rgba(100,180,255,.23);
 }
 
+
 .badge-zero {
-    background: rgba(255,193,7,.11);
+
+    background:
+        rgba(255,193,7,.11);
+
     color: #ffd96b;
+
     border-color:
         rgba(255,205,70,.28);
 }
 
 
-/* ======================================================
+/* =========================================================
+   HEAD TO HEAD TABLE
+========================================================= */
+
+.h2h-wrap {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    margin-top: 22px;
+
+    border-radius: 20px;
+
+    border:
+        1px solid rgba(72,255,155,.14);
+
+    background:
+        rgba(4,11,8,.95);
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.27);
+}
+
+
+.h2h-table {
+
+    width: 100%;
+
+    min-width: 900px;
+
+    border-collapse: collapse;
+}
+
+
+.h2h-table th {
+
+    background: #10251a;
+
+    color: #59f69c;
+
+    padding: 22px 18px;
+
+    text-align: center !important;
+
+    font-size: 18px;
+
+    font-weight: 950;
+
+    letter-spacing: .6px;
+
+    text-transform: uppercase;
+
+    border-bottom:
+        1px solid rgba(75,255,155,.22);
+}
+
+
+.h2h-table td {
+
+    padding: 22px 18px;
+
+    text-align: center !important;
+
+    color: #edf5f0;
+
+    font-size: 19px;
+
+    font-weight: 650;
+
+    border-bottom:
+        1px solid rgba(255,255,255,.055);
+}
+
+
+.h2h-table td:first-child {
+
+    color: #6bf6a6;
+
+    font-size: 18px;
+
+    font-weight: 950;
+}
+
+
+.h2h-table tr:hover td {
+
+    background:
+        rgba(45,245,130,.05);
+}
+
+
+.h2h-rating {
+
+    color: #50f294 !important;
+
+    font-size: 23px !important;
+
+    font-weight: 950 !important;
+}
+
+
+/* =========================================================
    RESPONSIVE
-====================================================== */
+========================================================= */
 
 @media (max-width: 900px) {
 
-    div[data-testid="stTabs"]
-    div[data-baseweb="tab-list"] {
-        gap: 10px !important;
+    button[data-baseweb="tab"] {
+
+        min-width: 0 !important;
+
+        width: 48% !important;
+
+        height: 78px !important;
+
+        padding: 0 8px !important;
     }
 
-    div[data-testid="stTabs"]
-    button[data-baseweb="tab"] {
-        min-width: 0 !important;
-        width: 46% !important;
-        height: 68px !important;
+    button[data-baseweb="tab"] p {
+
         font-size: 16px !important;
     }
 
     .hero-title {
+
         font-size: 45px;
     }
 
     .hero-words {
+
         display: none;
     }
 }
@@ -490,9 +850,6 @@ div[data-testid="stTextInput"] input {
 
 # =========================================================
 # HERO
-# IMPORTANT:
-# Built as one continuous HTML string so Streamlit
-# cannot interpret the HTML as a Markdown code block.
 # =========================================================
 
 hero_html = (
@@ -502,8 +859,19 @@ hero_html = (
     '<div class="hero-court"></div>'
     '<div class="hero-tag">EUROLEAGUE FANTASY ANALYTICS</div>'
     '<div class="hero-title">Yaya&apos;s <span>Rating</span></div>'
-    '<div class="hero-subtitle">Data-driven EuroLeague Fantasy player analysis</div>'
-    '<div class="hero-words">PLAY<br>ANALYZE<br>COMPARE<br>WIN</div>'
+    '<div class="hero-subtitle">'
+    'A Fantasy rating built to answer one question: '
+    '<b>How much do I want this player on my Fantasy team?</b>'
+    '</div>'
+    '<div class="hero-explanation">'
+    'The rating combines Fantasy production, value, team role, '
+    'consistency, playing time and efficiency. '
+    'Players without enough previous EuroLeague Fantasy data are evaluated '
+    'using their NBA and European experience, current price and projected team role.'
+    '</div>'
+    '<div class="hero-words">'
+    'PLAY<br>ANALYZE<br>COMPARE<br>WIN'
+    '</div>'
     '</div>'
 )
 
@@ -693,13 +1061,10 @@ NBA_EXPERIENCE = {
     "Max Shulga": 5,
 
     "Yvon Pons": 2,
-
     "Justin Minaya": 3,
 
     "Davion Mintz": 1,
-
     "Tyler Ennis": 3,
-
     "Nikola Djurisic": 1
 }
 
@@ -710,9 +1075,7 @@ NBA_EXPERIENCE = {
 
 EUROPE_EXPERIENCE = {
 
-    # ---------------------------------------------
-    # 5 POINTS - HIGH EUROLEAGUE EXPERIENCE
-    # ---------------------------------------------
+    # 5 - HIGH EUROPEAN / EUROLEAGUE EXPERIENCE
 
     "Guerschon Yabusele": 5,
     "Ante Zizic": 5,
@@ -724,18 +1087,17 @@ EUROPE_EXPERIENCE = {
     "Mam Jaiteh": 5,
     "Sertaç Şanlı": 5,
 
-    # ---------------------------------------------
-    # 4 POINTS - HAS EUROLEAGUE EXPERIENCE
-    # ---------------------------------------------
+
+    # 4 - EUROLEAGUE EXPERIENCE
 
     "Jonas Valanciunas": 4,
     "Dario Saric": 4,
 
-    # Correction
     "Marek Blazevic": 4,
 
     "David DeJulius": 4,
     "Mathis Dossou-Yovo": 4,
+
     "Furkan Korkmaz": 4,
     "Olek Balcerowski": 4,
 
@@ -751,11 +1113,11 @@ EUROPE_EXPERIENCE = {
     "Dimitris Moraitis": 4,
     "Oz Blayzer": 4,
 
-    # ---------------------------------------------
-    # 3 POINTS - MANUAL EUROPE EXPERIENCE
-    # ---------------------------------------------
+
+    # 3 - MANUAL EUROPE EXPERIENCE
 
     "Patty Mills": 3,
+
     "Marcus Bingham": 3,
     "Austin Wiley": 3,
     "Rasheed Bello": 3,
@@ -797,7 +1159,29 @@ EUROPE_EXPERIENCE = {
 
 
 # =========================================================
-# THE PLAYERS TO WHICH EXPERIENCE LABELS APPLY
+# MANUAL ADJUSTMENT TO TOTAL EXPERIENCE
+# =========================================================
+#
+# IMPORTANT:
+# This changes ONLY the total Experience Score.
+#
+# It does NOT change whether the player's label is
+# High/Low NBA or High/Low European Experience.
+#
+# =========================================================
+
+EXPERIENCE_ADJUSTMENT = {
+
+    "Ante Zizic": -2,
+    "Joffrey Lauvergne": -2,
+
+    "Rokas Jokubaitis": 2,
+    "Johannes Thiemann": 2
+}
+
+
+# =========================================================
+# SPECIAL EXPERIENCE PLAYERS
 # =========================================================
 
 SPECIAL_EXPERIENCE_PLAYERS = set(
@@ -806,6 +1190,10 @@ SPECIAL_EXPERIENCE_PLAYERS = set(
 
 SPECIAL_EXPERIENCE_PLAYERS.update(
     EUROPE_EXPERIENCE.keys()
+)
+
+SPECIAL_EXPERIENCE_PLAYERS.update(
+    EXPERIENCE_ADJUSTMENT.keys()
 )
 
 
@@ -960,35 +1348,12 @@ merged.loc[
 
 merged["Captain"] = (
     (
-        merged[
-            "Floor Rate % (FPT<8)"
-        ]
-        <= 10
+        merged["Floor Rate % (FPT<8)"] <= 10
     )
     &
     (
-        merged[
-            "Ceiling Rate % (FPT>=20)"
-        ]
-        > 40
+        merged["Ceiling Rate % (FPT>=20)"] > 40
     )
-)
-
-
-merged["Player"] = (
-    merged["Display Name"]
-)
-
-
-merged.loc[
-    merged["Captain"] == True,
-    "Player"
-] = (
-    merged.loc[
-        merged["Captain"] == True,
-        "Display Name"
-    ]
-    + " C"
 )
 
 
@@ -1209,9 +1574,7 @@ merged["Stability Score"] = (
 
 
 merged["Floor Score"] = (
-    merged[
-        "Floor Rate % (FPT<8)"
-    ]
+    merged["Floor Rate % (FPT<8)"]
     .apply(
         lambda value:
         linear_score(
@@ -1354,9 +1717,35 @@ merged["Europe Experience"] = (
 )
 
 
-merged["Experience Score"] = (
+merged["Experience Adjustment"] = (
+    merged["Experience Name"]
+    .map(
+        EXPERIENCE_ADJUSTMENT
+    )
+    .fillna(0)
+)
+
+
+merged["Base Experience Score"] = (
     merged["NBA Experience"]
     + merged["Europe Experience"]
+)
+
+
+merged["Experience Score"] = (
+    merged["Base Experience Score"]
+    + merged["Experience Adjustment"]
+)
+
+
+# Keep score inside 0-10
+
+merged["Experience Score"] = (
+    merged["Experience Score"]
+    .clip(
+        lower=0,
+        upper=10
+    )
 )
 
 
@@ -1369,10 +1758,7 @@ merged["Is Experience Player"] = (
 
 
 # =========================================================
-# LABELS
-# IMPORTANT:
-# Normal historical players such as Sasha / Elijah
-# receive NO experience label.
+# EXPERIENCE LABELS
 # =========================================================
 
 def get_labels(row):
@@ -1385,13 +1771,14 @@ def get_labels(row):
 
     labels = []
 
-    if nba == 0 and europe == 0:
+    if (
+        nba == 0
+        and europe == 0
+    ):
 
-        labels.append(
+        return [
             "Not Expected to Play"
-        )
-
-        return labels
+        ]
 
     if nba >= 4:
 
@@ -1476,7 +1863,7 @@ def experience_rating(row):
         row["Experience Score"]
     )
 
-    if experience == 0:
+    if experience <= 0:
         return 0.0
 
     rating = (
@@ -1508,14 +1895,10 @@ def final_rating(row):
     if not pd.isna(
         row["Historical Rating"]
     ):
-        return row[
-            "Historical Rating"
-        ]
+        return row["Historical Rating"]
 
     if row["Is Experience Player"]:
-        return row[
-            "Experience Rating"
-        ]
+        return row["Experience Rating"]
 
     return pd.NA
 
@@ -1561,6 +1944,41 @@ def rating_display(value):
     return f"{value:.2f}"
 
 
+# =========================================================
+# PLAYER NAME HTML + CAPTAIN C
+# =========================================================
+
+def player_name_html(row):
+
+    name = html.escape(
+        str(
+            row["Display Name"]
+        )
+    )
+
+    if row["Captain"]:
+
+        return (
+            name
+            + '<span class="captain-badge">C</span>'
+        )
+
+    return name
+
+
+# Plain text version for comparison table
+
+def player_name_text(row):
+
+    return str(
+        row["Display Name"]
+    )
+
+
+# =========================================================
+# EXPERIENCE LABEL HTML
+# =========================================================
+
 def labels_html(labels):
 
     if len(labels) == 0:
@@ -1574,21 +1992,29 @@ def labels_html(labels):
 
         if label == "Not Expected to Play":
 
-            css_class = "badge-zero"
+            css_class = (
+                "badge-zero"
+            )
 
         elif label.startswith("High"):
 
-            css_class = "badge-high"
+            css_class = (
+                "badge-high"
+            )
 
         else:
 
-            css_class = "badge-low"
+            css_class = (
+                "badge-low"
+            )
 
         result += (
             '<span class="badge '
             + css_class
             + '">'
-            + html.escape(label)
+            + html.escape(
+                label
+            )
             + '</span>'
         )
 
@@ -1604,7 +2030,7 @@ def labels_html(labels):
 tab_database, tab_compare = st.tabs(
     [
         "🏀  PLAYER DATABASE",
-        "⚔️  HEAD-TO-HEAD"
+        "⚔️  HEAD-TO-HEAD COMPARISON"
     ]
 )
 
@@ -1616,7 +2042,9 @@ tab_database, tab_compare = st.tabs(
 with tab_database:
 
     st.markdown(
-        '<div class="section-title">Player Database</div>',
+        '<div class="section-title">'
+        'Player Database'
+        '</div>',
         unsafe_allow_html=True
     )
 
@@ -1637,9 +2065,7 @@ with tab_database:
 
 
     teams = sorted(
-        merged[
-            "Current Team"
-        ]
+        merged["Current Team"]
         .dropna()
         .unique()
         .tolist()
@@ -1655,9 +2081,7 @@ with tab_database:
 
 
     positions = sorted(
-        merged[
-            "Position"
-        ]
+        merged["Position"]
         .dropna()
         .unique()
         .tolist()
@@ -1673,15 +2097,11 @@ with tab_database:
 
 
     minimum_price = float(
-        merged[
-            "Price"
-        ].min()
+        merged["Price"].min()
     )
 
     maximum_price = float(
-        merged[
-            "Price"
-        ].max()
+        merged["Price"].max()
     )
 
 
@@ -1703,9 +2123,7 @@ with tab_database:
     if search:
 
         filtered = filtered[
-            filtered[
-                "Display Name"
-            ]
+            filtered["Display Name"]
             .str.contains(
                 search,
                 case=False,
@@ -1717,9 +2135,7 @@ with tab_database:
     if len(team_filter) > 0:
 
         filtered = filtered[
-            filtered[
-                "Current Team"
-            ]
+            filtered["Current Team"]
             .isin(
                 team_filter
             )
@@ -1729,9 +2145,7 @@ with tab_database:
     if len(position_filter) > 0:
 
         filtered = filtered[
-            filtered[
-                "Position"
-            ]
+            filtered["Position"]
             .isin(
                 position_filter
             )
@@ -1787,11 +2201,7 @@ with tab_database:
             '<tr>'
 
             '<td class="player-cell">'
-            + html.escape(
-                str(
-                    row["Player"]
-                )
-            )
+            + player_name_html(row)
             + '</td>'
 
             '<td>'
@@ -1819,9 +2229,7 @@ with tab_database:
 
             '<td>'
             + display_number(
-                row[
-                    "Overall Avg FPT"
-                ],
+                row["Overall Avg FPT"],
                 2
             )
             + '</td>'
@@ -1835,26 +2243,20 @@ with tab_database:
 
             '<td>'
             + display_number(
-                row[
-                    "FPT per Minute"
-                ],
+                row["FPT per Minute"],
                 2
             )
             + '</td>'
 
             '<td>'
             + display_integer(
-                row[
-                    "Games Played"
-                ]
+                row["Games Played"]
             )
             + '</td>'
 
             '<td class="rating-cell">'
             + rating_display(
-                row[
-                    "Yaya Rating"
-                ]
+                row["Yaya Rating"]
             )
             + '</td>'
 
@@ -1882,15 +2284,15 @@ with tab_database:
 with tab_compare:
 
     st.markdown(
-        '<div class="section-title">Head-to-Head Comparison</div>',
+        '<div class="section-title">'
+        'Head-to-Head Comparison'
+        '</div>',
         unsafe_allow_html=True
     )
 
 
     player_names = sorted(
-        merged[
-            "Display Name"
-        ]
+        merged["Display Name"]
         .dropna()
         .tolist()
     )
@@ -1939,38 +2341,30 @@ with tab_compare:
 
     with select1:
 
-        player1_name = (
-            st.selectbox(
-                "Player 1",
-                player_names,
-                index=player1_default
-            )
+        player1_name = st.selectbox(
+            "Player 1",
+            player_names,
+            index=player1_default
         )
 
 
     with select2:
 
-        player2_name = (
-            st.selectbox(
-                "Player 2",
-                player_names,
-                index=player2_default
-            )
+        player2_name = st.selectbox(
+            "Player 2",
+            player_names,
+            index=player2_default
         )
 
 
     p1 = merged[
-        merged[
-            "Display Name"
-        ]
+        merged["Display Name"]
         == player1_name
     ].iloc[0]
 
 
     p2 = merged[
-        merged[
-            "Display Name"
-        ]
+        merged["Display Name"]
         == player2_name
     ].iloc[0]
 
@@ -1988,11 +2382,7 @@ with tab_compare:
         '<div class="compare-card">'
 
         '<div class="compare-name">'
-        + html.escape(
-            str(
-                p1["Player"]
-            )
-        )
+        + player_name_html(p1)
         + '</div>'
 
         '<div class="compare-meta">'
@@ -2016,9 +2406,7 @@ with tab_compare:
 
         '<div class="compare-rating">'
         + rating_display(
-            p1[
-                "Yaya Rating"
-            ]
+            p1["Yaya Rating"]
         )
         + '</div>'
 
@@ -2027,9 +2415,7 @@ with tab_compare:
         '</div>'
 
         + labels_html(
-            p1[
-                "Experience Labels"
-            ]
+            p1["Experience Labels"]
         )
 
         + '</div>'
@@ -2052,11 +2438,7 @@ with tab_compare:
         '<div class="compare-card">'
 
         '<div class="compare-name">'
-        + html.escape(
-            str(
-                p2["Player"]
-            )
-        )
+        + player_name_html(p2)
         + '</div>'
 
         '<div class="compare-meta">'
@@ -2080,9 +2462,7 @@ with tab_compare:
 
         '<div class="compare-rating">'
         + rating_display(
-            p2[
-                "Yaya Rating"
-            ]
+            p2["Yaya Rating"]
         )
         + '</div>'
 
@@ -2091,9 +2471,7 @@ with tab_compare:
         '</div>'
 
         + labels_html(
-            p2[
-                "Experience Labels"
-            ]
+            p2["Experience Labels"]
         )
 
         + '</div>'
@@ -2121,19 +2499,15 @@ with tab_compare:
             )
 
             new_team = str(
-                player[
-                    "Current Team"
-                ]
+                player["Current Team"]
             )
 
-            warning = (
+            team_warning = (
                 '<div class="yellow-warning">'
                 '⚠️ <b>'
                 + html.escape(
                     str(
-                        player[
-                            "Display Name"
-                        ]
+                        player["Display Name"]
                     )
                 )
                 + '</b> changed teams: '
@@ -2150,52 +2524,46 @@ with tab_compare:
             )
 
             st.markdown(
-                warning,
+                team_warning,
                 unsafe_allow_html=True
             )
 
 
         if (
-            not player[
-                "Has Historical Data"
-            ]
-            and player[
-                "Is Experience Player"
-            ]
+            not player["Has Historical Data"]
+            and player["Is Experience Player"]
         ):
 
-            warning = (
+            experience_warning = (
                 '<div class="yellow-warning">'
                 '⚠️ <b>'
                 + html.escape(
                     str(
-                        player[
-                            "Display Name"
-                        ]
+                        player["Display Name"]
                     )
                 )
                 + '</b> does not have sufficient historical Fantasy data. '
                 + 'The Yaya Rating is currently based on experience, '
-                + 'price and projected team role.'
+                + 'current price and projected team role.'
                 + '</div>'
             )
 
             st.markdown(
-                warning,
+                experience_warning,
                 unsafe_allow_html=True
             )
 
 
     # =====================================================
-    # COMPARISON TABLE
+    # H2H COMPARISON TABLE
     # =====================================================
 
     comparison_rows = [
 
         (
             "Name",
-            p1["Player"],
-            p2["Player"]
+            player_name_text(p1),
+            player_name_text(p2)
         ),
 
         (
@@ -2225,15 +2593,11 @@ with tab_compare:
         (
             "Overall Avg FPT",
             display_number(
-                p1[
-                    "Overall Avg FPT"
-                ],
+                p1["Overall Avg FPT"],
                 2
             ),
             display_number(
-                p2[
-                    "Overall Avg FPT"
-                ],
+                p2["Overall Avg FPT"],
                 2
             )
         ),
@@ -2253,15 +2617,11 @@ with tab_compare:
         (
             "FPT/Min",
             display_number(
-                p1[
-                    "FPT per Minute"
-                ],
+                p1["FPT per Minute"],
                 2
             ),
             display_number(
-                p2[
-                    "FPT per Minute"
-                ],
+                p2["FPT per Minute"],
                 2
             )
         ),
@@ -2269,42 +2629,34 @@ with tab_compare:
         (
             "Games",
             display_integer(
-                p1[
-                    "Games Played"
-                ]
+                p1["Games Played"]
             ),
             display_integer(
-                p2[
-                    "Games Played"
-                ]
+                p2["Games Played"]
             )
         ),
 
         (
             "Yaya Rating",
             rating_display(
-                p1[
-                    "Yaya Rating"
-                ]
+                p1["Yaya Rating"]
             ),
             rating_display(
-                p2[
-                    "Yaya Rating"
-                ]
+                p2["Yaya Rating"]
             )
         )
     ]
 
 
     comparison_html = (
-        '<div class="table-wrap" '
-        'style="margin-top:20px; max-height:none;">'
-
-        '<table class="yaya-table">'
+        '<div class="h2h-wrap">'
+        '<table class="h2h-table">'
 
         '<thead>'
         '<tr>'
+
         '<th>Category</th>'
+
         '<th>'
         + html.escape(
             str(
@@ -2312,6 +2664,7 @@ with tab_compare:
             )
         )
         + '</th>'
+
         '<th>'
         + html.escape(
             str(
@@ -2319,6 +2672,7 @@ with tab_compare:
             )
         )
         + '</th>'
+
         '</tr>'
         '</thead>'
 
@@ -2328,30 +2682,27 @@ with tab_compare:
 
     for category, value1, value2 in comparison_rows:
 
-        class1 = ""
-        class2 = ""
-
         if category == "Yaya Rating":
 
-            class1 = (
-                "rating-cell"
-            )
+            class1 = "h2h-rating"
+            class2 = "h2h-rating"
 
-            class2 = (
-                "rating-cell"
-            )
+        else:
+
+            class1 = ""
+            class2 = ""
 
 
         comparison_html += (
             '<tr>'
 
-            '<td><b>'
+            '<td>'
             + html.escape(
                 str(
                     category
                 )
             )
-            + '</b></td>'
+            + '</td>'
 
             '<td class="'
             + class1
