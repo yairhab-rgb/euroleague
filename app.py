@@ -1,4 +1,3 @@
-```python
 import pandas as pd
 import streamlit as st
 
@@ -1204,4 +1203,4 @@ with tab_db:
         use_container_width=True,
         hide_index=True
     )
-```
+
