@@ -2,6 +2,7 @@ import pandas as pd
 import streamlit as st
 import unicodedata
 import re
+import html
 
 
 # ==================================================
@@ -22,187 +23,342 @@ st.set_page_config(
 st.markdown("""
 <style>
 
-/* --------------------------------------------------
-   MAIN PAGE
--------------------------------------------------- */
+/* ==================================================
+   GLOBAL
+================================================== */
 
 .stApp {
     background:
         radial-gradient(
-            circle at 80% 5%,
-            rgba(40, 227, 159, 0.10),
-            transparent 28%
+            circle at 78% 4%,
+            rgba(31, 224, 154, 0.11),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 95% 40%,
+            rgba(31, 224, 154, 0.05),
+            transparent 30%
         ),
         linear-gradient(
             135deg,
-            #070b10 0%,
-            #0b1118 55%,
-            #07100f 100%
+            #05090d 0%,
+            #081017 52%,
+            #06110f 100%
         );
 
-    color: #F5F7FA;
+    color: #f5f8fa;
 }
 
 
 .block-container {
-    max-width: 1450px;
-    padding-top: 2rem;
+    max-width: 1500px;
+    padding-top: 1.4rem;
     padding-bottom: 3rem;
 }
 
 
-/* --------------------------------------------------
+/* ==================================================
    FONT
--------------------------------------------------- */
+================================================== */
 
 html,
 body,
-[class*="css"] {
+div,
+span,
+p,
+input,
+button,
+select,
+textarea {
     font-family:
+        "Segoe UI",
         Arial,
         Helvetica,
         sans-serif;
 }
 
 
-/* --------------------------------------------------
+/* ==================================================
    HERO
--------------------------------------------------- */
+================================================== */
 
 .hero {
+    position: relative;
 
-    padding: 38px 42px;
+    overflow: hidden;
 
-    margin-bottom: 28px;
+    min-height: 280px;
 
-    background:
-        radial-gradient(
-            circle at 85% 30%,
-            rgba(40, 227, 159, 0.10),
-            transparent 30%
-        ),
-        linear-gradient(
-            110deg,
-            rgba(15, 23, 32, 0.98),
-            rgba(8, 28, 24, 0.94)
-        );
+    padding:
+        42px 46px;
+
+    margin-bottom:
+        24px;
 
     border:
-        1px solid #263842;
+        1px solid #233944;
 
     border-radius:
         18px;
 
+    background:
+        radial-gradient(
+            circle at 70% 70%,
+            rgba(31, 224, 154, 0.13),
+            transparent 32%
+        ),
+        linear-gradient(
+            110deg,
+            rgba(8, 15, 21, 0.99),
+            rgba(7, 28, 24, 0.96)
+        );
+
     box-shadow:
-        0 15px 40px
-        rgba(0, 0, 0, 0.30);
+        0 18px 45px rgba(0, 0, 0, 0.30);
+}
+
+
+/* basketball-court style decoration */
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    width: 520px;
+    height: 300px;
+
+    right: -60px;
+    bottom: -130px;
+
+    border:
+        2px solid rgba(40, 227, 159, 0.10);
+
+    border-radius:
+        50%;
+
+    transform:
+        rotate(-8deg);
+}
+
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 420px;
+    height: 2px;
+
+    right: 30px;
+    bottom: 75px;
+
+    background:
+        rgba(40, 227, 159, 0.10);
+
+    transform:
+        rotate(-8deg);
+}
+
+
+.hero-content {
+    position: relative;
+    z-index: 2;
 }
 
 
 .hero-title {
+    margin-bottom:
+        10px;
 
-    font-size: 58px;
+    font-size:
+        64px;
 
-    font-weight: 900;
+    line-height:
+        1;
 
-    line-height: 1;
+    font-weight:
+        900;
 
-    margin-bottom: 12px;
-
-    letter-spacing: -2px;
+    letter-spacing:
+        -2.5px;
 }
 
 
 .hero-yaya {
-    color: #FFFFFF;
+    color:
+        #ffffff;
 }
 
 
 .hero-rating {
-
-    color: #28e39f;
+    color:
+        #27e5a1;
 
     text-shadow:
-        0 0 25px
-        rgba(40, 227, 159, 0.20);
+        0 0 30px rgba(39, 229, 161, 0.18);
 }
 
 
 .hero-subtitle {
+    margin-bottom:
+        20px;
 
-    font-size: 22px;
+    color:
+        #f3f7f9;
 
-    font-weight: 700;
+    font-size:
+        22px;
 
-    color: #dce5eb;
-
-    margin-bottom: 22px;
+    font-weight:
+        750;
 }
 
 
 .hero-text {
+    max-width:
+        900px;
 
-    color: #aebbc5;
+    color:
+        #bac7cf;
 
-    font-size: 16px;
+    font-size:
+        16px;
 
-    line-height: 1.8;
-
-    max-width: 950px;
+    line-height:
+        1.75;
 }
 
 
-/* --------------------------------------------------
-   HEADINGS
--------------------------------------------------- */
+.hero-side-text {
+    position:
+        absolute;
 
-h1,
-h2,
-h3 {
+    right:
+        55px;
 
-    color: #F5F7FA !important;
+    top:
+        48px;
+
+    z-index:
+        2;
+
+    text-align:
+        right;
+
+    color:
+        #9df8d8;
+
+    font-size:
+        13px;
+
+    line-height:
+        1.8;
+
+    letter-spacing:
+        3px;
 }
 
 
-.section-description {
+/* ==================================================
+   GLOBAL WARNING
+================================================== */
 
-    color: #9baab5;
+.global-warning {
+    position: relative;
 
-    margin-top: -8px;
+    z-index: 2;
 
-    margin-bottom: 22px;
+    margin-top:
+        26px;
 
-    font-size: 15px;
-}
+    padding:
+        13px 16px;
 
+    max-width:
+        940px;
 
-/* --------------------------------------------------
-   TABS
--------------------------------------------------- */
-
-button[data-baseweb="tab"] {
-
-    background-color:
-        #111922;
+    border:
+        1px solid rgba(255, 201, 71, 0.52);
 
     border-radius:
         10px;
 
-    padding:
-        12px 25px;
+    background:
+        rgba(255, 193, 7, 0.09);
 
-    margin-right:
+    color:
+        #ffd86b;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.55;
+}
+
+
+/* ==================================================
+   HEADINGS
+================================================== */
+
+h1,
+h2,
+h3 {
+    color:
+        #f5f8fa !important;
+}
+
+
+.section-description {
+    margin-top:
+        -7px;
+
+    margin-bottom:
+        24px;
+
+    color:
+        #9aabb6;
+
+    font-size:
+        15px;
+}
+
+
+/* ==================================================
+   TABS
+================================================== */
+
+div[data-baseweb="tab-list"] {
+    gap:
         8px;
 
+    border-bottom:
+        1px solid #142029;
+}
+
+
+button[data-baseweb="tab"] {
+    min-width:
+        170px;
+
+    padding:
+        12px 20px;
+
     border:
-        1px solid #273540;
+        1px solid #22333d;
+
+    border-radius:
+        9px 9px 0 0;
+
+    background:
+        #0e171e;
 }
 
 
 button[data-baseweb="tab"] p {
-
     font-size:
-        16px;
+        15px;
 
     font-weight:
         700;
@@ -210,95 +366,283 @@ button[data-baseweb="tab"] p {
 
 
 button[data-baseweb="tab"][aria-selected="true"] {
-
-    background-color:
-        #12392f;
-
     border:
-        1px solid #28e39f;
+        1px solid #27e5a1;
+
+    border-bottom-color:
+        #27e5a1;
+
+    background:
+        linear-gradient(
+            180deg,
+            #12382f,
+            #0e221e
+        );
 }
 
 
-/* --------------------------------------------------
-   TEXT INPUT
--------------------------------------------------- */
+button[data-baseweb="tab"][aria-selected="true"] p {
+    color:
+        #2ce6a4 !important;
+}
+
+
+/* ==================================================
+   INPUTS
+================================================== */
 
 div[data-baseweb="input"] {
-
-    background-color:
-        #101821 !important;
-
     border:
-        1px solid #2a3945 !important;
+        1px solid #2a3b45 !important;
 
     border-radius:
-        10px !important;
+        9px !important;
+
+    background:
+        #101a22 !important;
 }
 
 
 div[data-baseweb="input"] input {
-
     color:
         white !important;
+
+    background:
+        transparent !important;
 }
 
 
-/* --------------------------------------------------
-   SELECT BOX
--------------------------------------------------- */
+div[data-baseweb="input"]:focus-within {
+    border-color:
+        #27e5a1 !important;
+
+    box-shadow:
+        0 0 0 1px rgba(39, 229, 161, 0.15);
+}
+
+
+/* ==================================================
+   SELECT BOXES
+================================================== */
 
 div[data-baseweb="select"] > div {
+    border:
+        1px solid #2a3b45 !important;
 
-    background-color:
-        #101821 !important;
+    border-radius:
+        9px !important;
+
+    background:
+        #101a22 !important;
 
     color:
         white !important;
-
-    border:
-        1px solid #2a3945 !important;
-
-    border-radius:
-        10px !important;
 }
 
 
 div[data-baseweb="select"] span {
-
     color:
-        #F5F7FA !important;
+        #f4f7f8 !important;
 }
 
 
-/* --------------------------------------------------
-   DATABASE
--------------------------------------------------- */
+/* ==================================================
+   DATABASE CARD
+================================================== */
 
-[data-testid="stDataFrame"] {
+.database-card {
+    margin-top:
+        18px;
 
     border:
-        1px solid #263540;
+        1px solid #263943;
 
     border-radius:
-        14px;
+        16px;
 
     overflow:
         hidden;
 
+    background:
+        linear-gradient(
+            135deg,
+            #0d171e,
+            #0a1218
+        );
+
     box-shadow:
-        0 10px 25px
-        rgba(0, 0, 0, 0.18);
+        0 14px 32px rgba(0, 0, 0, 0.25);
 }
 
 
-/* --------------------------------------------------
-   HEAD TO HEAD TABLE
--------------------------------------------------- */
+.database-scroll {
+    max-height:
+        660px;
+
+    overflow:
+        auto;
+}
+
+
+/* ==================================================
+   DATABASE TABLE
+================================================== */
+
+.database-table {
+    width:
+        100%;
+
+    min-width:
+        1050px;
+
+    border-collapse:
+        collapse;
+}
+
+
+.database-table thead th {
+    position:
+        sticky;
+
+    top:
+        0;
+
+    z-index:
+        5;
+
+    padding:
+        15px 14px;
+
+    border-bottom:
+        1px solid #29404b;
+
+    background:
+        #101d25;
+
+    color:
+        #a8bac5;
+
+    text-align:
+        left;
+
+    font-size:
+        12px;
+
+    font-weight:
+        800;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        0.7px;
+}
+
+
+.database-table tbody td {
+    padding:
+        14px;
+
+    border-bottom:
+        1px solid #192832;
+
+    color:
+        #dce6eb;
+
+    font-size:
+        14px;
+}
+
+
+.database-table tbody tr {
+    transition:
+        0.15s ease;
+}
+
+
+.database-table tbody tr:hover {
+    background:
+        rgba(40, 227, 159, 0.055);
+}
+
+
+.database-table tbody tr:last-child td {
+    border-bottom:
+        none;
+}
+
+
+.db-player {
+    color:
+        white !important;
+
+    font-weight:
+        750;
+}
+
+
+.db-rating {
+    color:
+        #2ce6a4 !important;
+
+    font-weight:
+        900;
+
+    font-size:
+        16px !important;
+}
+
+
+.db-price {
+    font-weight:
+        700;
+
+    color:
+        #e9f1f4 !important;
+}
+
+
+/* ==================================================
+   DATABASE INFO BAR
+================================================== */
+
+.database-info {
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
+
+    padding:
+        13px 16px;
+
+    border-top:
+        1px solid #263943;
+
+    background:
+        #0d161d;
+
+    color:
+        #798b96;
+
+    font-size:
+        13px;
+}
+
+
+/* ==================================================
+   HEAD TO HEAD
+================================================== */
 
 .h2h-wrapper {
+    margin-top:
+        25px;
 
     border:
-        1px solid #293943;
+        1px solid #29404b;
 
     border-radius:
         18px;
@@ -306,24 +650,19 @@ div[data-baseweb="select"] span {
     overflow:
         hidden;
 
-    margin-top:
-        24px;
-
     background:
         linear-gradient(
             135deg,
-            rgba(16, 24, 33, 0.99),
-            rgba(9, 20, 25, 0.99)
+            #0d1820,
+            #091217
         );
 
     box-shadow:
-        0 15px 35px
-        rgba(0, 0, 0, 0.28);
+        0 16px 38px rgba(0, 0, 0, 0.28);
 }
 
 
 .h2h-table {
-
     width:
         100%;
 
@@ -336,19 +675,18 @@ div[data-baseweb="select"] span {
 
 
 .h2h-table th {
-
     padding:
         28px 18px;
+
+    border-bottom:
+        1px solid #2a3f49;
 
     background:
         linear-gradient(
             180deg,
-            #121d26,
-            #0e171e
+            #12212a,
+            #0d171d
         );
-
-    border-bottom:
-        1px solid #2a3943;
 
     text-align:
         center;
@@ -356,41 +694,41 @@ div[data-baseweb="select"] span {
 
 
 .player-name {
+    color:
+        #ffffff;
 
     font-size:
-        27px;
+        28px;
 
     font-weight:
         900;
-
-    color:
-        white;
 }
 
 
 .vs {
-
     width:
-        18%;
-
-    font-size:
-        17px;
+        17%;
 
     color:
         #28e39f;
 
+    font-size:
+        17px;
+
     font-weight:
         900;
+
+    text-transform:
+        uppercase;
 }
 
 
 .h2h-table td {
-
     padding:
-        20px 18px;
+        21px 18px;
 
     border-bottom:
-        1px solid #22303a;
+        1px solid #20313a;
 
     text-align:
         center;
@@ -401,19 +739,20 @@ div[data-baseweb="select"] span {
 
 
 .h2h-table tr:last-child td {
-
     border-bottom:
         none;
 }
 
 
 .stat-name {
+    background:
+        rgba(255,255,255,0.014);
 
     color:
-        #93a5b1;
+        #91a6b1;
 
     font-size:
-        13px !important;
+        12px !important;
 
     font-weight:
         800;
@@ -422,17 +761,13 @@ div[data-baseweb="select"] span {
         uppercase;
 
     letter-spacing:
-        0.8px;
-
-    background:
-        rgba(255, 255, 255, 0.015);
+        0.9px;
 }
 
 
 .stat-value {
-
     color:
-        #eef3f6;
+        #e8eff2;
 
     font-weight:
         700;
@@ -440,65 +775,89 @@ div[data-baseweb="select"] span {
 
 
 .winner {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(35, 190, 126, 0.08),
+            rgba(35, 190, 126, 0.17)
+        );
 
     color:
-        #28e39f !important;
+        #32e7a7 !important;
 
     font-weight:
         900 !important;
-
-    background-color:
-        rgba(40, 227, 159, 0.07);
 }
 
 
 .rating-value {
+    color:
+        #32e7a7 !important;
 
     font-size:
         27px !important;
-
-    color:
-        #28e39f !important;
 
     font-weight:
         900 !important;
 }
 
 
-/* --------------------------------------------------
-   STATUS MESSAGES
--------------------------------------------------- */
+/* ==================================================
+   YELLOW WARNINGS
+================================================== */
 
-div[data-testid="stAlert"] {
+.yellow-warning {
+    margin-top:
+        16px;
+
+    padding:
+        13px 15px;
+
+    border:
+        1px solid rgba(255, 201, 71, 0.48);
 
     border-radius:
-        12px;
+        10px;
+
+    background:
+        rgba(255, 193, 7, 0.09);
+
+    color:
+        #ffd86b;
+
+    font-size:
+        14px;
+
+    line-height:
+        1.5;
 }
 
 
-/* --------------------------------------------------
+/* ==================================================
    FOOTER
--------------------------------------------------- */
+================================================== */
 
 .footer {
+    margin-top:
+        42px;
+
+    padding-top:
+        20px;
+
+    padding-bottom:
+        10px;
+
+    border-top:
+        1px solid #17242c;
+
+    color:
+        #667a86;
 
     text-align:
         center;
 
-    color:
-        #697883;
-
-    margin-top:
-        40px;
-
-    padding-top:
-        22px;
-
-    padding-bottom:
-        15px;
-
-    border-top:
-        1px solid #1d2931;
+    font-size:
+        13px;
 }
 
 </style>
@@ -506,7 +865,7 @@ div[data-testid="stAlert"] {
 
 
 # ==================================================
-# LOAD FILES
+# LOAD DATA
 # ==================================================
 
 old_df = pd.read_csv(
@@ -523,119 +882,59 @@ new_df = pd.read_csv(
 # ==================================================
 
 TEAM_NAMES = {
-
     "OLY": "Olympiacos",
-
     "EFS": "Anadolu Efes",
-
     "CZV": "Crvena Zvezda",
-
     "HTA": "Hapoel Tel Aviv",
-
     "ZAL": "Zalgiris Kaunas",
-
     "VBC": "Valencia",
-
     "MTA": "Maccabi Tel Aviv",
-
     "PBB": "Paris Basketball",
-
     "PAO": "Panathinaikos",
-
     "RMB": "Real Madrid",
-
     "DUB": "Dubai Basketball",
-
     "FBT": "Fenerbahce",
-
     "MIL": "Milano",
-
     "PAR": "Partizan",
-
     "BAR": "Barcelona",
-
     "ASV": "ASVEL",
-
     "BAY": "Bayern Munich",
-
     "VIR": "Virtus Bologna",
-
     "KBA": "Baskonia",
-
     "MON": "AS Monaco"
 }
 
 
 # ==================================================
-# OLD TEAM NAME -> CURRENT TEAM CODE
+# OLD TEAM -> CURRENT TEAM CODE
 # ==================================================
 
 OLD_TEAM_TO_CODE = {
-
-    "Olympiacos Piraeus":
-        "OLY",
-
-    "Anadolu Efes Istanbul":
-        "EFS",
-
-    "Crvena Zvezda Meridianbet Belgrade":
-        "CZV",
-
-    "Hapoel IBI Tel Aviv":
-        "HTA",
-
-    "Zalgiris Kaunas":
-        "ZAL",
-
-    "Valencia Basket":
-        "VBC",
-
-    "Maccabi Rapyd Tel Aviv":
-        "MTA",
-
-    "Paris Basketball":
-        "PBB",
-
-    "Panathinaikos AKTOR Athens":
-        "PAO",
-
-    "Real Madrid":
-        "RMB",
-
-    "Dubai Basketball":
-        "DUB",
-
-    "Fenerbahce Beko Istanbul":
-        "FBT",
-
-    "EA7 Emporio Armani Milan":
-        "MIL",
-
-    "Partizan Mozzart Bet Belgrade":
-        "PAR",
-
-    "FC Barcelona":
-        "BAR",
-
-    "LDLC ASVEL Villeurbanne":
-        "ASV",
-
-    "FC Bayern Munich":
-        "BAY",
-
-    "Virtus Bologna":
-        "VIR",
-
-    "Baskonia Vitoria-Gasteiz":
-        "KBA",
-
-    "AS Monaco":
-        "MON"
+    "Olympiacos Piraeus": "OLY",
+    "Anadolu Efes Istanbul": "EFS",
+    "Crvena Zvezda Meridianbet Belgrade": "CZV",
+    "Hapoel IBI Tel Aviv": "HTA",
+    "Zalgiris Kaunas": "ZAL",
+    "Valencia Basket": "VBC",
+    "Maccabi Rapyd Tel Aviv": "MTA",
+    "Paris Basketball": "PBB",
+    "Panathinaikos AKTOR Athens": "PAO",
+    "Real Madrid": "RMB",
+    "Dubai Basketball": "DUB",
+    "Fenerbahce Beko Istanbul": "FBT",
+    "EA7 Emporio Armani Milan": "MIL",
+    "Partizan Mozzart Bet Belgrade": "PAR",
+    "FC Barcelona": "BAR",
+    "LDLC ASVEL Villeurbanne": "ASV",
+    "FC Bayern Munich": "BAY",
+    "Virtus Bologna": "VIR",
+    "Baskonia Vitoria-Gasteiz": "KBA",
+    "AS Monaco": "MON"
 }
 
 
 # ==================================================
-# NORMALIZE PLAYER NAMES
+# NORMALIZE NAMES
 # ==================================================
 
 def normalize_name(value):
@@ -653,9 +952,7 @@ def normalize_name(value):
     text = "".join(
         character
         for character in text
-        if not unicodedata.combining(
-            character
-        )
+        if not unicodedata.combining(character)
     )
 
     text = re.sub(
@@ -684,17 +981,8 @@ new_df["Name_Key"] = (
 
 
 # ==================================================
-# MANUAL NAME ALIASES
+# MANUAL ALIASES
 # ==================================================
-
-# If we find a player whose name is written
-# differently in the two files, add him here.
-#
-# Example:
-#
-# NAME_ALIASES = {
-#     "new name": "old name"
-# }
 
 NAME_ALIASES = {
 
@@ -706,19 +994,15 @@ normalized_aliases = {}
 
 for new_name in NAME_ALIASES:
 
-    old_name = (
-        NAME_ALIASES[new_name]
-    )
-
     normalized_aliases[
         normalize_name(new_name)
     ] = normalize_name(
-        old_name
+        NAME_ALIASES[new_name]
     )
 
 
 # ==================================================
-# FIND PLAYER IN OLD DATA
+# FIND OLD PLAYER
 # ==================================================
 
 def find_old_player(new_row):
@@ -736,7 +1020,6 @@ def find_old_player(new_row):
 
 
     if len(matches) == 1:
-
         return matches.iloc[0]
 
 
@@ -757,7 +1040,6 @@ def find_old_player(new_row):
 
 
         if len(matches) == 1:
-
             return matches.iloc[0]
 
 
@@ -765,7 +1047,7 @@ def find_old_player(new_row):
 
 
 # ==================================================
-# BUILD CURRENT PLAYER DATABASE
+# BUILD CURRENT DATABASE
 # ==================================================
 
 rows = []
@@ -790,11 +1072,9 @@ for index in range(
     )
 
 
-    team_name = (
-        TEAM_NAMES.get(
-            team_code,
-            team_code
-        )
+    team_name = TEAM_NAMES.get(
+        team_code,
+        team_code
     )
 
 
@@ -803,10 +1083,6 @@ for index in range(
         errors="coerce"
     )
 
-
-    # ----------------------------------------------
-    # PLAYER EXISTS IN OLD DATABASE
-    # ----------------------------------------------
 
     if old_player is not None:
 
@@ -893,10 +1169,6 @@ for index in range(
         }
 
 
-    # ----------------------------------------------
-    # NEW PLAYER
-    # ----------------------------------------------
-
     else:
 
         row = {
@@ -957,7 +1229,7 @@ df = pd.DataFrame(
 
 
 # ==================================================
-# CONVERT NUMERIC COLUMNS
+# NUMERIC COLUMNS
 # ==================================================
 
 numeric_columns = [
@@ -1002,7 +1274,7 @@ df["Minutes"] = (
 
 
 # ==================================================
-# GENERAL SCORE FUNCTION
+# SCORE FUNCTION
 # ==================================================
 
 def calculate_score(
@@ -1015,12 +1287,10 @@ def calculate_score(
 
 
     if value <= points[0][0]:
-
         return points[0][1]
 
 
     if value >= points[-1][0]:
-
         return points[-1][1]
 
 
@@ -1049,21 +1319,15 @@ def calculate_score(
 
                 +
 
-                (
-                    value - x1
-                )
+                (value - x1)
 
                 *
 
-                (
-                    y2 - y1
-                )
+                (y2 - y1)
 
                 /
 
-                (
-                    x2 - x1
-                )
+                (x2 - x1)
 
             )
 
@@ -1075,7 +1339,7 @@ def calculate_score(
 
 
 # ==================================================
-# PRODUCTION SCORE
+# PRODUCTION
 # ==================================================
 
 PRODUCTION_POINTS = [
@@ -1112,7 +1376,7 @@ df["Production Score"] = (
 
 
 # ==================================================
-# VALUE FOR PRICE
+# VALUE
 # ==================================================
 
 df["Value Ratio"] = (
@@ -1164,7 +1428,7 @@ df["Value Score"] = (
 
 
 # ==================================================
-# STABILITY SCORE
+# STABILITY
 # ==================================================
 
 STABILITY_POINTS = [
@@ -1203,7 +1467,7 @@ df["Stability Score"] = (
 
 
 # ==================================================
-# FLOOR SCORE
+# FLOOR
 # ==================================================
 
 FLOOR_POINTS = [
@@ -1242,7 +1506,7 @@ df["Floor Score"] = (
 
 
 # ==================================================
-# PLAYING TIME SCORE
+# MINUTES
 # ==================================================
 
 MINUTES_POINTS = [
@@ -1277,7 +1541,7 @@ df["Minutes Score"] = (
 
 
 # ==================================================
-# EFFICIENCY SCORE
+# EFFICIENCY
 # ==================================================
 
 EFFICIENCY_POINTS = [
@@ -1312,7 +1576,7 @@ df["Efficiency Score"] = (
 
 
 # ==================================================
-# TEAM ROLE SCORE
+# TEAM ROLE
 # ==================================================
 
 df["Team Role Score"] = 0.0
@@ -1323,7 +1587,6 @@ for team_code in (
     .dropna()
     .unique()
 ):
-
 
     team_players = df[
         df["Team Code"]
@@ -1339,7 +1602,6 @@ for team_code in (
         .dropna()
         .unique()
     ):
-
 
         group = team_players[
             team_players[
@@ -1357,7 +1619,6 @@ for team_code in (
 
 
         if len(group) == 0:
-
             continue
 
 
@@ -1370,9 +1631,7 @@ for team_code in (
 
 
         unique_prices = sorted(
-            group[
-                "Price"
-            ].unique(),
+            group["Price"].unique(),
             reverse=True
         )
 
@@ -1381,7 +1640,6 @@ for team_code in (
 
 
         for price in unique_prices:
-
 
             same_price = group[
                 group["Price"]
@@ -1393,17 +1651,6 @@ for team_code in (
             amount = len(
                 same_price
             )
-
-
-            # Example:
-            #
-            # Price 15 -> rank 1
-            #
-            # Price 12 -> ranks 2 and 3
-            # Price 12 -> ranks 2 and 3
-            #
-            # Both players receive
-            # the score of rank 3.
 
 
             last_position = (
@@ -1441,11 +1688,6 @@ for team_code in (
                 role_score = 0
 
 
-            # Very cheap players should not
-            # receive major Team Role points
-            # just because their position group
-            # is small.
-
             if price < 8:
 
                 role_score = 0
@@ -1463,7 +1705,7 @@ for team_code in (
 
 
 # ==================================================
-# CAPTAIN OPTION
+# CAPTAIN
 # ==================================================
 
 df["Captain Option"] = (
@@ -1494,7 +1736,6 @@ df["Captain Option"] = (
 # ==================================================
 
 def calculate_yaya_rating(row):
-
 
     required_values = [
 
@@ -1528,23 +1769,7 @@ def calculate_yaya_rating(row):
     for value in required_values:
 
         if pd.isna(value):
-
             return pd.NA
-
-
-    # ----------------------------------------------
-    # YAYA RATING FORMULA
-    #
-    # Production      25%
-    # Value           20%
-    # Team Role       25%
-    # Stability        6%
-    # Floor            4%
-    # Playing Time    10%
-    # Efficiency      10%
-    #
-    # TOTAL          100%
-    # ----------------------------------------------
 
 
     rating = (
@@ -1599,12 +1824,7 @@ def calculate_yaya_rating(row):
     )
 
 
-    # ----------------------------------------------
-    # TEAM CHANGE PENALTY
-    #
-    # Player who moved to a new team
-    # loses 6% of his final rating.
-    # ----------------------------------------------
+    # New-team penalty
 
     if row["Team Changed"]:
 
@@ -1628,7 +1848,7 @@ df["Yaya Rating"] = df.apply(
 
 
 # ==================================================
-# PLAYER DISPLAY NAME
+# DISPLAY NAME
 # ==================================================
 
 def display_name(row):
@@ -1637,11 +1857,6 @@ def display_name(row):
         row["Full Name"]
     )
 
-
-    # C = Captain Option
-    #
-    # This does NOT count as another
-    # displayed statistic.
 
     if row["Captain Option"]:
 
@@ -1662,7 +1877,7 @@ df["Display Name"] = df.apply(
 
 
 # ==================================================
-# FORMAT NUMBERS
+# FORMAT FUNCTIONS
 # ==================================================
 
 def format_number(
@@ -1671,9 +1886,7 @@ def format_number(
 ):
 
     if pd.isna(value):
-
         return "N/A"
-
 
     return (
         f"{value:.{decimals}f}"
@@ -1683,12 +1896,20 @@ def format_number(
 def format_games(value):
 
     if pd.isna(value):
-
         return "N/A"
-
 
     return str(
         int(value)
+    )
+
+
+def safe_text(value):
+
+    if pd.isna(value):
+        return "N/A"
+
+    return html.escape(
+        str(value)
     )
 
 
@@ -1696,12 +1917,9 @@ def format_games(value):
 # HERO
 # ==================================================
 
-# IMPORTANT:
-# HTML is deliberately kept without indentation
-# so Streamlit does not display it as a code block.
-
 hero_html = """
 <div class="hero">
+<div class="hero-content">
 <div class="hero-title">
 <span class="hero-yaya">Yaya's</span>
 <span class="hero-rating">Rating</span>
@@ -1711,6 +1929,16 @@ hero_html = """
 Yaya's Rating is a fantasy-focused player rating built to identify the most valuable EuroLeague players.<br>
 The score combines production, efficiency, consistency, playing time, price value and the player's role within his team.<br>
 Go beyond the basic Fantasy average and find the players who can give you the edge.
+</div>
+<div class="global-warning">
+⚠️ Past performance is only a reference point. Historical Fantasy numbers do not guarantee how a player will perform in the upcoming season.
+</div>
+</div>
+<div class="hero-side-text">
+PLAY<br>
+ANALYZE<br>
+COMPARE<br>
+WIN
 </div>
 </div>
 """
@@ -1750,21 +1978,21 @@ with database_tab:
 
     st.markdown(
         '<div class="section-description">'
-        'Search and explore EuroLeague players '
-        'and their Yaya Rating.'
-        '</div>',
+        "Search and explore EuroLeague players "
+        "with their key Fantasy statistics and Yaya Rating."
+        "</div>",
         unsafe_allow_html=True
     )
 
 
-    # ----------------------------------------------
-    # SEARCH + FILTERS
-    # ----------------------------------------------
+    # ==================================================
+    # FILTERS
+    # ==================================================
 
     search_col, team_col, position_col = (
         st.columns(
             [
-                2.5,
+                2.4,
                 1,
                 1
             ]
@@ -1777,7 +2005,7 @@ with database_tab:
         search = st.text_input(
             "Search",
             placeholder=
-                "Search player...",
+                "Search for a player...",
             label_visibility=
                 "collapsed"
         )
@@ -1828,10 +2056,6 @@ with database_tab:
             )
         )
 
-
-    # ----------------------------------------------
-    # FILTER DATABASE
-    # ----------------------------------------------
 
     filtered_df = (
         df.copy()
@@ -1888,57 +2112,11 @@ with database_tab:
         )
 
 
-    # ----------------------------------------------
-    # EXACTLY 8 DISPLAYED FIELDS
-    # ----------------------------------------------
+    # Highest rating first
 
-    database = filtered_df[
-        [
-
-            "Display Name",
-
-            "Team",
-
-            "Position",
-
-            "Overall Avg FPT",
-
-            "Minutes",
-
-            "FPT per Minute",
-
-            "Games Played",
-
-            "Yaya Rating"
-
-        ]
-    ].copy()
-
-
-    database = database.rename(
-        columns={
-
-            "Display Name":
-                "Player",
-
-            "Position":
-                "Pos",
-
-            "Overall Avg FPT":
-                "Avg FPT",
-
-            "FPT per Minute":
-                "FPT/Min",
-
-            "Games Played":
-                "Games"
-
-        }
-    )
-
-
-    database = (
-        database.sort_values(
+    filtered_df = (
+        filtered_df
+        .sort_values(
             "Yaya Rating",
             ascending=False,
             na_position="last"
@@ -1946,88 +2124,119 @@ with database_tab:
     )
 
 
-    # ----------------------------------------------
-    # DATABASE TABLE
-    # ----------------------------------------------
+    # ==================================================
+    # CUSTOM DARK DATABASE TABLE
+    # ==================================================
 
-    st.dataframe(
-
-        database,
-
-        use_container_width=True,
-
-        hide_index=True,
-
-        height=650,
-
-        column_config={
+    database_rows = ""
 
 
-            "Player":
-
-                st.column_config.TextColumn(
-                    "Player",
-                    width="large"
-                ),
+    ranking_number = 1
 
 
-            "Team":
+    for index in range(
+        len(filtered_df)
+    ):
 
-                st.column_config.TextColumn(
-                    "Team",
-                    width="medium"
-                ),
-
-
-            "Pos":
-
-                st.column_config.TextColumn(
-                    "Pos",
-                    width="small"
-                ),
+        player = (
+            filtered_df.iloc[index]
+        )
 
 
-            "Avg FPT":
+        database_rows += (
+            "<tr>"
 
-                st.column_config.NumberColumn(
-                    "Avg FPT",
-                    format="%.2f"
-                ),
+            f'<td>{ranking_number}</td>'
+
+            f'<td class="db-player">'
+            f'{safe_text(player["Display Name"])}'
+            f'</td>'
+
+            f'<td>'
+            f'{safe_text(player["Team"])}'
+            f'</td>'
+
+            f'<td>'
+            f'{safe_text(player["Position"])}'
+            f'</td>'
+
+            f'<td class="db-price">'
+            f'{format_number(player["Price"], 1)}'
+            f'</td>'
+
+            f'<td>'
+            f'{format_number(player["Overall Avg FPT"], 2)}'
+            f'</td>'
+
+            f'<td>'
+            f'{format_number(player["Minutes"], 1)}'
+            f'</td>'
+
+            f'<td>'
+            f'{format_number(player["FPT per Minute"], 2)}'
+            f'</td>'
+
+            f'<td>'
+            f'{format_games(player["Games Played"])}'
+            f'</td>'
+
+            f'<td class="db-rating">'
+            f'{format_number(player["Yaya Rating"], 2)}'
+            f'</td>'
+
+            "</tr>"
+        )
 
 
-            "Minutes":
-
-                st.column_config.NumberColumn(
-                    "Minutes",
-                    format="%.1f"
-                ),
+        ranking_number += 1
 
 
-            "FPT/Min":
+    database_html = (
+        '<div class="database-card">'
+        '<div class="database-scroll">'
+        '<table class="database-table">'
 
-                st.column_config.NumberColumn(
-                    "FPT/Min",
-                    format="%.2f"
-                ),
+        '<thead>'
+        '<tr>'
+
+        '<th>#</th>'
+        '<th>Player</th>'
+        '<th>Team</th>'
+        '<th>Position</th>'
+        '<th>Price</th>'
+        '<th>Avg FPT</th>'
+        '<th>Minutes</th>'
+        '<th>FPT / Min</th>'
+        '<th>Games</th>'
+        '<th>Yaya Rating</th>'
+
+        '</tr>'
+        '</thead>'
+
+        '<tbody>'
+
+        +
+
+        database_rows
+
+        +
+
+        '</tbody>'
+        '</table>'
+        '</div>'
+
+        '<div class="database-info">'
+        f'<span>Showing {len(filtered_df)} players</span>'
+        '<span>Sorted by Yaya Rating</span>'
+        '</div>'
+
+        '</div>'
+    )
 
 
-            "Games":
-
-                st.column_config.NumberColumn(
-                    "Games",
-                    format="%d"
-                ),
-
-
-            "Yaya Rating":
-
-                st.column_config.NumberColumn(
-                    "Yaya Rating",
-                    format="%.2f"
-                )
-
-        }
-
+    st.markdown(
+        database_html,
+        unsafe_allow_html=True
     )
 
 
@@ -2045,15 +2254,11 @@ with h2h_tab:
 
     st.markdown(
         '<div class="section-description">'
-        'Select two players and compare them side by side.'
-        '</div>',
+        "Compare two EuroLeague Fantasy players side by side."
+        "</div>",
         unsafe_allow_html=True
     )
 
-
-    # ----------------------------------------------
-    # PLAYER LIST
-    # ----------------------------------------------
 
     player_names = sorted(
         df[
@@ -2064,7 +2269,43 @@ with h2h_tab:
     )
 
 
-    player1_col, middle_col, player2_col = (
+    # ==================================================
+    # DEFAULT PLAYERS
+    # ==================================================
+
+    player1_default = 0
+
+    player2_default = 0
+
+
+    if "Sasha Vezenkov" in player_names:
+
+        player1_default = (
+            player_names.index(
+                "Sasha Vezenkov"
+            )
+        )
+
+
+    if "Elijah Bryant" in player_names:
+
+        player2_default = (
+            player_names.index(
+                "Elijah Bryant"
+            )
+        )
+
+
+    elif len(player_names) > 1:
+
+        player2_default = 1
+
+
+    # ==================================================
+    # PLAYER SELECTORS
+    # ==================================================
+
+    player1_col, center_col, player2_col = (
         st.columns(
             [
                 1,
@@ -2075,31 +2316,18 @@ with h2h_tab:
     )
 
 
-    # ----------------------------------------------
-    # PLAYER 1
-    # ----------------------------------------------
-
     with player1_col:
 
         player1_name = (
             st.selectbox(
                 "Player 1",
                 player_names,
-                key="player1"
+                index=
+                    player1_default,
+                key=
+                    "player1"
             )
         )
-
-
-    # ----------------------------------------------
-    # PLAYER 2
-    # ----------------------------------------------
-
-    second_index = 0
-
-
-    if len(player_names) > 1:
-
-        second_index = 1
 
 
     with player2_col:
@@ -2108,36 +2336,30 @@ with h2h_tab:
             st.selectbox(
                 "Player 2",
                 player_names,
-                index=second_index,
-                key="player2"
+                index=
+                    player2_default,
+                key=
+                    "player2"
             )
         )
 
 
-    # ----------------------------------------------
-    # GET PLAYER DATA
-    # ----------------------------------------------
-
     player1 = df[
-        df[
-            "Full Name"
-        ]
+        df["Full Name"]
         ==
         player1_name
     ].iloc[0]
 
 
     player2 = df[
-        df[
-            "Full Name"
-        ]
+        df["Full Name"]
         ==
         player2_name
     ].iloc[0]
 
 
     # ==================================================
-    # COMPARISON FUNCTIONS
+    # WINNER
     # ==================================================
 
     def winner_class(
@@ -2145,7 +2367,6 @@ with h2h_tab:
         value2,
         side
     ):
-
 
         if (
             pd.isna(value1)
@@ -2182,9 +2403,9 @@ with h2h_tab:
         return "stat-value"
 
 
-    # ----------------------------------------------
-    # CREATE ONE COMPARISON ROW
-    # ----------------------------------------------
+    # ==================================================
+    # COMPARISON ROW
+    # ==================================================
 
     def comparison_row(
         value1,
@@ -2193,7 +2414,6 @@ with h2h_tab:
         decimals=1,
         rating=False
     ):
-
 
         left_class = (
             winner_class(
@@ -2215,16 +2435,11 @@ with h2h_tab:
 
         if rating:
 
-            left_class = (
-                left_class
-                +
+            left_class += (
                 " rating-value"
             )
 
-
-            right_class = (
-                right_class
-                +
+            right_class += (
                 " rating-value"
             )
 
@@ -2246,28 +2461,38 @@ with h2h_tab:
 
 
         return (
-            f'<tr>'
-            f'<td class="{left_class}">{left_value}</td>'
-            f'<td class="stat-name">{label}</td>'
-            f'<td class="{right_class}">{right_value}</td>'
-            f'</tr>'
+            "<tr>"
+
+            f'<td class="{left_class}">'
+            f'{left_value}'
+            f'</td>'
+
+            '<td class="stat-name">'
+            f'{label}'
+            '</td>'
+
+            f'<td class="{right_class}">'
+            f'{right_value}'
+            f'</td>'
+
+            "</tr>"
         )
 
 
-    # ----------------------------------------------
-    # PLAYER DISPLAY NAMES
-    # ----------------------------------------------
-
     player1_display = (
-        display_name(
-            player1
+        safe_text(
+            display_name(
+                player1
+            )
         )
     )
 
 
     player2_display = (
-        display_name(
-            player2
+        safe_text(
+            display_name(
+                player2
+            )
         )
     )
 
@@ -2276,15 +2501,14 @@ with h2h_tab:
     # HEAD TO HEAD TABLE
     # ==================================================
 
-    # No indentation is used in the HTML.
-    # This prevents Streamlit from showing
-    # the HTML as a code block.
-
     table_html = (
+
         '<div class="h2h-wrapper">'
+
         '<table class="h2h-table">'
 
         '<thead>'
+
         '<tr>'
 
         '<th>'
@@ -2300,21 +2524,52 @@ with h2h_tab:
         '</th>'
 
         '</tr>'
+
         '</thead>'
 
         '<tbody>'
 
         '<tr>'
-        f'<td class="stat-value">{player1["Team"]}</td>'
-        '<td class="stat-name">Team</td>'
-        f'<td class="stat-value">{player2["Team"]}</td>'
+
+        f'<td class="stat-value">'
+        f'{safe_text(player1["Team"])}'
+        '</td>'
+
+        '<td class="stat-name">'
+        'Team'
+        '</td>'
+
+        f'<td class="stat-value">'
+        f'{safe_text(player2["Team"])}'
+        '</td>'
+
         '</tr>'
 
+
         '<tr>'
-        f'<td class="stat-value">{player1["Position"]}</td>'
-        '<td class="stat-name">Position</td>'
-        f'<td class="stat-value">{player2["Position"]}</td>'
+
+        f'<td class="stat-value">'
+        f'{safe_text(player1["Position"])}'
+        '</td>'
+
+        '<td class="stat-name">'
+        'Position'
+        '</td>'
+
+        f'<td class="stat-value">'
+        f'{safe_text(player2["Position"])}'
+        '</td>'
+
         '</tr>'
+
+        +
+
+        comparison_row(
+            player1["Price"],
+            "Price",
+            player2["Price"],
+            1
+        )
 
         +
 
@@ -2332,13 +2587,9 @@ with h2h_tab:
         +
 
         comparison_row(
-            player1[
-                "Minutes"
-            ],
+            player1["Minutes"],
             "Minutes",
-            player2[
-                "Minutes"
-            ],
+            player2["Minutes"],
             1
         )
 
@@ -2385,7 +2636,9 @@ with h2h_tab:
         +
 
         '</tbody>'
+
         '</table>'
+
         '</div>'
     )
 
@@ -2397,36 +2650,34 @@ with h2h_tab:
 
 
     # ==================================================
-    # PLAYER STATUS
+    # WARNINGS
     # ==================================================
 
-    status1, status2 = (
+    warning_col1, warning_col2 = (
         st.columns(2)
     )
 
 
-    # ----------------------------------------------
-    # PLAYER 1 STATUS
-    # ----------------------------------------------
-
-    with status1:
+    with warning_col1:
 
 
         if player1[
             "Is New Player"
         ]:
 
-            st.info(
-
-                player1[
-                    "Full Name"
-                ]
-
+            st.markdown(
+                '<div class="yellow-warning">'
+                '⚠️ '
                 +
-
-                " is a new player. "
-                "Historical data is not available yet."
-
+                safe_text(
+                    player1[
+                        "Full Name"
+                    ]
+                )
+                +
+                ' is a new player. Historical EuroLeague data is not available yet.'
+                '</div>',
+                unsafe_allow_html=True
             )
 
 
@@ -2434,65 +2685,58 @@ with h2h_tab:
             "Team Changed"
         ]:
 
-            st.warning(
-
-                "⚠️ "
-
+            st.markdown(
+                '<div class="yellow-warning">'
+                '⚠️ '
                 +
-
-                player1[
-                    "Full Name"
-                ]
-
+                safe_text(
+                    player1[
+                        "Full Name"
+                    ]
+                )
                 +
-
-                " changed teams: "
-
+                ' changed teams: '
                 +
-
-                str(
+                safe_text(
                     player1[
                         "Old Team"
                     ]
                 )
-
                 +
-
-                " → "
-
+                ' → '
                 +
-
-                str(
+                safe_text(
                     player1[
                         "Team"
                     ]
                 )
-
+                +
+                '. Historical numbers should be interpreted with extra caution.'
+                '</div>',
+                unsafe_allow_html=True
             )
 
 
-    # ----------------------------------------------
-    # PLAYER 2 STATUS
-    # ----------------------------------------------
-
-    with status2:
+    with warning_col2:
 
 
         if player2[
             "Is New Player"
         ]:
 
-            st.info(
-
-                player2[
-                    "Full Name"
-                ]
-
+            st.markdown(
+                '<div class="yellow-warning">'
+                '⚠️ '
                 +
-
-                " is a new player. "
-                "Historical data is not available yet."
-
+                safe_text(
+                    player2[
+                        "Full Name"
+                    ]
+                )
+                +
+                ' is a new player. Historical EuroLeague data is not available yet.'
+                '</div>',
+                unsafe_allow_html=True
             )
 
 
@@ -2500,40 +2744,35 @@ with h2h_tab:
             "Team Changed"
         ]:
 
-            st.warning(
-
-                "⚠️ "
-
+            st.markdown(
+                '<div class="yellow-warning">'
+                '⚠️ '
                 +
-
-                player2[
-                    "Full Name"
-                ]
-
+                safe_text(
+                    player2[
+                        "Full Name"
+                    ]
+                )
                 +
-
-                " changed teams: "
-
+                ' changed teams: '
                 +
-
-                str(
+                safe_text(
                     player2[
                         "Old Team"
                     ]
                 )
-
                 +
-
-                " → "
-
+                ' → '
                 +
-
-                str(
+                safe_text(
                     player2[
                         "Team"
                     ]
                 )
-
+                +
+                '. Historical numbers should be interpreted with extra caution.'
+                '</div>',
+                unsafe_allow_html=True
             )
 
 
@@ -2541,14 +2780,9 @@ with h2h_tab:
 # FOOTER
 # ==================================================
 
-footer_html = (
+st.markdown(
     '<div class="footer">'
     "Yaya's Rating • EuroLeague Fantasy Analytics"
-    '</div>'
-)
-
-
-st.markdown(
-    footer_html,
+    '</div>',
     unsafe_allow_html=True
 )
