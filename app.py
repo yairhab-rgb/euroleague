@@ -12,7 +12,8 @@ import html
 st.set_page_config(
     page_title="Yaya's Rating",
     page_icon="🏀",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
 
@@ -24,54 +25,39 @@ st.markdown("""
 <style>
 
 /* ==================================================
-   GLOBAL
+   GENERAL
 ================================================== */
 
 .stApp {
     background:
         radial-gradient(
-            circle at 78% 4%,
-            rgba(31, 224, 154, 0.11),
-            transparent 25%
-        ),
-        radial-gradient(
-            circle at 95% 40%,
-            rgba(31, 224, 154, 0.05),
-            transparent 30%
+            circle at 78% 0%,
+            rgba(20, 211, 144, 0.12),
+            transparent 27%
         ),
         linear-gradient(
             135deg,
             #05090d 0%,
-            #081017 52%,
-            #06110f 100%
+            #081018 55%,
+            #07130f 100%
         );
 
-    color: #f5f8fa;
+    color: #f7f9fb;
 }
 
 
 .block-container {
     max-width: 1500px;
-    padding-top: 1.4rem;
+    padding-top: 1.5rem;
     padding-bottom: 3rem;
 }
 
 
-/* ==================================================
-   FONT
-================================================== */
-
 html,
 body,
-div,
-span,
-p,
-input,
-button,
-select,
-textarea {
+[class*="css"] {
     font-family:
-        "Segoe UI",
+        Inter,
         Arial,
         Helvetica,
         sans-serif;
@@ -83,56 +69,62 @@ textarea {
 ================================================== */
 
 .hero {
+
     position: relative;
 
     overflow: hidden;
 
-    min-height: 280px;
-
     padding:
-        42px 46px;
+        48px 50px;
 
     margin-bottom:
-        24px;
+        25px;
 
     border:
-        1px solid #233944;
+        1px solid #223943;
 
     border-radius:
-        18px;
+        20px;
 
     background:
         radial-gradient(
-            circle at 70% 70%,
-            rgba(31, 224, 154, 0.13),
-            transparent 32%
+            circle at 75% 40%,
+            rgba(31, 220, 150, 0.18),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 95% 0%,
+            rgba(255, 255, 255, 0.06),
+            transparent 19%
         ),
         linear-gradient(
-            110deg,
-            rgba(8, 15, 21, 0.99),
-            rgba(7, 28, 24, 0.96)
+            115deg,
+            rgba(8, 16, 23, 0.99) 0%,
+            rgba(9, 29, 27, 0.97) 72%,
+            rgba(7, 39, 29, 0.96) 100%
         );
 
     box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.30);
+        0 18px 50px
+        rgba(0, 0, 0, 0.35);
 }
 
 
-/* basketball-court style decoration */
+.hero:after {
 
-.hero::after {
     content: "";
 
     position: absolute;
 
-    width: 520px;
-    height: 300px;
+    right: -70px;
+    bottom: -110px;
 
-    right: -60px;
-    bottom: -130px;
+    width: 520px;
+    height: 280px;
 
     border:
-        2px solid rgba(40, 227, 159, 0.10);
+        2px solid
+        rgba(53, 229, 164, 0.12);
 
     border-radius:
         50%;
@@ -142,147 +134,110 @@ textarea {
 }
 
 
-.hero::before {
-    content: "";
-
-    position: absolute;
-
-    width: 420px;
-    height: 2px;
-
-    right: 30px;
-    bottom: 75px;
-
-    background:
-        rgba(40, 227, 159, 0.10);
-
-    transform:
-        rotate(-8deg);
-}
-
-
-.hero-content {
-    position: relative;
-    z-index: 2;
-}
-
-
 .hero-title {
-    margin-bottom:
-        10px;
+
+    position: relative;
+
+    z-index: 2;
 
     font-size:
-        64px;
-
-    line-height:
-        1;
+        66px;
 
     font-weight:
         900;
 
+    line-height:
+        0.95;
+
     letter-spacing:
-        -2.5px;
+        -3px;
+
+    margin-bottom:
+        13px;
 }
 
 
-.hero-yaya {
-    color:
-        #ffffff;
+.hero-white {
+    color: white;
 }
 
 
-.hero-rating {
+.hero-green {
+
     color:
-        #27e5a1;
+        #25e3a0;
 
     text-shadow:
-        0 0 30px rgba(39, 229, 161, 0.18);
+        0 0 35px
+        rgba(37, 227, 160, 0.18);
 }
 
 
 .hero-subtitle {
-    margin-bottom:
-        20px;
+
+    position: relative;
+
+    z-index: 2;
 
     color:
-        #f3f7f9;
+        #f2f6f8;
 
     font-size:
         22px;
 
     font-weight:
-        750;
+        800;
+
+    margin-bottom:
+        18px;
 }
 
 
-.hero-text {
-    max-width:
-        900px;
+.hero-description {
+
+    position: relative;
+
+    z-index: 2;
 
     color:
-        #bac7cf;
+        #b5c3cc;
 
     font-size:
-        16px;
+        15px;
 
     line-height:
         1.75;
-}
 
-
-.hero-side-text {
-    position:
-        absolute;
-
-    right:
-        55px;
-
-    top:
-        48px;
-
-    z-index:
-        2;
-
-    text-align:
-        right;
-
-    color:
-        #9df8d8;
-
-    font-size:
-        13px;
-
-    line-height:
-        1.8;
-
-    letter-spacing:
-        3px;
+    max-width:
+        880px;
 }
 
 
 /* ==================================================
-   GLOBAL WARNING
+   WARNING
 ================================================== */
 
-.global-warning {
+.warning-box {
+
     position: relative;
 
     z-index: 2;
 
     margin-top:
-        26px;
+        22px;
 
     padding:
         13px 16px;
 
     max-width:
-        940px;
-
-    border:
-        1px solid rgba(255, 201, 71, 0.52);
+        900px;
 
     border-radius:
         10px;
+
+    border:
+        1px solid
+        rgba(255, 204, 70, 0.40);
 
     background:
         rgba(255, 193, 7, 0.09);
@@ -291,37 +246,36 @@ textarea {
         #ffd86b;
 
     font-size:
-        14px;
+        13px;
 
     line-height:
-        1.55;
+        1.5;
 }
 
 
-/* ==================================================
-   HEADINGS
-================================================== */
+.player-warning {
 
-h1,
-h2,
-h3 {
-    color:
-        #f5f8fa !important;
-}
-
-
-.section-description {
     margin-top:
-        -7px;
+        16px;
 
-    margin-bottom:
-        24px;
+    padding:
+        13px 16px;
+
+    border-radius:
+        11px;
+
+    border:
+        1px solid
+        rgba(255, 204, 70, 0.42);
+
+    background:
+        rgba(255, 193, 7, 0.10);
 
     color:
-        #9aabb6;
+        #ffd86b;
 
     font-size:
-        15px;
+        14px;
 }
 
 
@@ -330,33 +284,33 @@ h3 {
 ================================================== */
 
 div[data-baseweb="tab-list"] {
+
     gap:
-        8px;
+        6px;
 
     border-bottom:
-        1px solid #142029;
+        1px solid #14222b;
 }
 
 
 button[data-baseweb="tab"] {
-    min-width:
-        170px;
-
-    padding:
-        12px 20px;
-
-    border:
-        1px solid #22333d;
-
-    border-radius:
-        9px 9px 0 0;
 
     background:
-        #0e171e;
+        transparent;
+
+    padding:
+        13px 18px;
+
+    border-radius:
+        0;
+
+    border:
+        none;
 }
 
 
 button[data-baseweb="tab"] p {
+
     font-size:
         15px;
 
@@ -366,24 +320,61 @@ button[data-baseweb="tab"] p {
 
 
 button[data-baseweb="tab"][aria-selected="true"] {
-    border:
-        1px solid #27e5a1;
 
-    border-bottom-color:
-        #27e5a1;
-
-    background:
-        linear-gradient(
-            180deg,
-            #12382f,
-            #0e221e
-        );
+    border-bottom:
+        2px solid #28e39f;
 }
 
 
 button[data-baseweb="tab"][aria-selected="true"] p {
+
     color:
-        #2ce6a4 !important;
+        #28e39f !important;
+}
+
+
+/* ==================================================
+   TITLES
+================================================== */
+
+h1,
+h2,
+h3 {
+
+    color:
+        white !important;
+}
+
+
+.section-title {
+
+    font-size:
+        30px;
+
+    color:
+        white;
+
+    font-weight:
+        900;
+
+    margin-top:
+        16px;
+
+    margin-bottom:
+        3px;
+}
+
+
+.section-description {
+
+    color:
+        #9dafba;
+
+    font-size:
+        14px;
+
+    margin-bottom:
+        20px;
 }
 
 
@@ -392,70 +383,83 @@ button[data-baseweb="tab"][aria-selected="true"] p {
 ================================================== */
 
 div[data-baseweb="input"] {
+
+    background:
+        #0e1821 !important;
+
     border:
-        1px solid #2a3b45 !important;
+        1px solid #2b3e49 !important;
 
     border-radius:
         9px !important;
-
-    background:
-        #101a22 !important;
 }
 
 
 div[data-baseweb="input"] input {
+
     color:
         white !important;
-
-    background:
-        transparent !important;
 }
 
-
-div[data-baseweb="input"]:focus-within {
-    border-color:
-        #27e5a1 !important;
-
-    box-shadow:
-        0 0 0 1px rgba(39, 229, 161, 0.15);
-}
-
-
-/* ==================================================
-   SELECT BOXES
-================================================== */
 
 div[data-baseweb="select"] > div {
+
+    background:
+        #0e1821 !important;
+
     border:
-        1px solid #2a3b45 !important;
+        1px solid #2b3e49 !important;
+
+    color:
+        white !important;
 
     border-radius:
         9px !important;
-
-    background:
-        #101a22 !important;
-
-    color:
-        white !important;
 }
 
 
 div[data-baseweb="select"] span {
+
     color:
-        #f4f7f8 !important;
+        #eef4f7 !important;
+}
+
+
+div[data-baseweb="select"] svg {
+
+    fill:
+        #a8b9c4 !important;
+}
+
+
+label {
+
+    color:
+        #8fa2ae !important;
 }
 
 
 /* ==================================================
-   DATABASE CARD
+   PANEL
 ================================================== */
 
-.database-card {
+.dashboard-panel {
+
     margin-top:
-        18px;
+        16px;
+
+    padding:
+        0;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13, 24, 32, 0.98),
+            rgba(9, 20, 27, 0.98)
+        );
 
     border:
-        1px solid #263943;
+        1px solid #273b47;
 
     border-radius:
         16px;
@@ -463,24 +467,9 @@ div[data-baseweb="select"] span {
     overflow:
         hidden;
 
-    background:
-        linear-gradient(
-            135deg,
-            #0d171e,
-            #0a1218
-        );
-
     box-shadow:
-        0 14px 32px rgba(0, 0, 0, 0.25);
-}
-
-
-.database-scroll {
-    max-height:
-        660px;
-
-    overflow:
-        auto;
+        0 15px 35px
+        rgba(0, 0, 0, 0.24);
 }
 
 
@@ -488,42 +477,36 @@ div[data-baseweb="select"] span {
    DATABASE TABLE
 ================================================== */
 
-.database-table {
+.player-table {
+
     width:
         100%;
 
-    min-width:
-        1050px;
-
     border-collapse:
         collapse;
+
+    table-layout:
+        auto;
 }
 
 
-.database-table thead th {
-    position:
-        sticky;
-
-    top:
-        0;
-
-    z-index:
-        5;
-
-    padding:
-        15px 14px;
-
-    border-bottom:
-        1px solid #29404b;
+.player-table thead {
 
     background:
-        #101d25;
+        #101c25;
+}
 
-    color:
-        #a8bac5;
+
+.player-table th {
+
+    padding:
+        14px 13px;
 
     text-align:
         left;
+
+    color:
+        #9fb0bb;
 
     font-size:
         12px;
@@ -535,101 +518,134 @@ div[data-baseweb="select"] span {
         uppercase;
 
     letter-spacing:
-        0.7px;
+        0.55px;
+
+    border-bottom:
+        1px solid #2a3b46;
 }
 
 
-.database-table tbody td {
-    padding:
-        14px;
+.player-table td {
 
-    border-bottom:
-        1px solid #192832;
+    padding:
+        13px;
 
     color:
-        #dce6eb;
+        #dce5ea;
 
     font-size:
         14px;
+
+    border-bottom:
+        1px solid #182933;
 }
 
 
-.database-table tbody tr {
-    transition:
-        0.15s ease;
-}
+.player-table tr:hover td {
 
-
-.database-table tbody tr:hover {
     background:
-        rgba(40, 227, 159, 0.055);
+        rgba(40, 227, 159, 0.035);
 }
 
 
-.database-table tbody tr:last-child td {
+.player-table tr:last-child td {
+
     border-bottom:
         none;
 }
 
 
-.db-player {
-    color:
-        white !important;
+.player-cell {
 
     font-weight:
-        750;
+        800;
+
+    color:
+        white !important;
 }
 
 
-.db-rating {
+.rating-cell {
+
     color:
-        #2ce6a4 !important;
+        #28e39f !important;
 
     font-weight:
         900;
 
     font-size:
-        16px !important;
+        15px !important;
 }
 
 
-.db-price {
-    font-weight:
-        700;
+.price-cell {
 
     color:
-        #e9f1f4 !important;
+        #e4edf2 !important;
+
+    font-weight:
+        700;
+}
+
+
+.captain-mark {
+
+    display:
+        inline-block;
+
+    margin-left:
+        6px;
+
+    padding:
+        1px 6px;
+
+    border:
+        1px solid
+        rgba(255, 213, 79, 0.55);
+
+    border-radius:
+        5px;
+
+    color:
+        #ffd54f;
+
+    background:
+        rgba(255, 213, 79, 0.09);
+
+    font-size:
+        10px;
+
+    font-weight:
+        900;
 }
 
 
 /* ==================================================
-   DATABASE INFO BAR
+   TABLE INFO
 ================================================== */
 
-.database-info {
+.table-footer {
+
     display:
         flex;
 
     justify-content:
         space-between;
 
-    align-items:
-        center;
-
     padding:
-        13px 16px;
-
-    border-top:
-        1px solid #263943;
-
-    background:
-        #0d161d;
+        14px 16px;
 
     color:
-        #798b96;
+        #768a96;
 
     font-size:
-        13px;
+        12px;
+
+    background:
+        #0b151c;
+
+    border-top:
+        1px solid #22343f;
 }
 
 
@@ -637,65 +653,70 @@ div[data-baseweb="select"] span {
    HEAD TO HEAD
 ================================================== */
 
-.h2h-wrapper {
+.h2h-card {
+
     margin-top:
-        25px;
+        22px;
 
     border:
-        1px solid #29404b;
+        1px solid #2a3e49;
 
     border-radius:
-        18px;
+        17px;
 
     overflow:
         hidden;
 
     background:
         linear-gradient(
-            135deg,
-            #0d1820,
-            #091217
+            145deg,
+            #0d1922,
+            #09141b
         );
 
     box-shadow:
-        0 16px 38px rgba(0, 0, 0, 0.28);
+        0 15px 35px
+        rgba(0, 0, 0, 0.30);
 }
 
 
-.h2h-table {
-    width:
-        100%;
+.h2h-header {
 
-    border-collapse:
-        collapse;
+    display:
+        grid;
 
-    table-layout:
-        fixed;
-}
+    grid-template-columns:
+        1fr 140px 1fr;
 
-
-.h2h-table th {
-    padding:
-        28px 18px;
-
-    border-bottom:
-        1px solid #2a3f49;
+    align-items:
+        center;
 
     background:
         linear-gradient(
             180deg,
-            #12212a,
-            #0d171d
+            #111f29,
+            #0d1820
         );
 
-    text-align:
-        center;
+    border-bottom:
+        1px solid #293d48;
 }
 
 
-.player-name {
+.h2h-player {
+
+    text-align:
+        center;
+
+    padding:
+        29px 15px;
+}
+
+
+.h2h-player-name {
+
     color:
-        #ffffff;
+        white;
 
     font-size:
         28px;
@@ -705,131 +726,200 @@ div[data-baseweb="select"] span {
 }
 
 
-.vs {
-    width:
-        17%;
+.h2h-player-team {
+
+    color:
+        #8fa2ae;
+
+    font-size:
+        14px;
+
+    margin-top:
+        6px;
+}
+
+
+.h2h-vs {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    height:
+        100%;
 
     color:
         #28e39f;
 
     font-size:
-        17px;
+        18px;
+
+    font-weight:
+        900;
+
+    border-left:
+        1px solid #1c2d36;
+
+    border-right:
+        1px solid #1c2d36;
+}
+
+
+/* ==================================================
+   H2H ROW
+================================================== */
+
+.compare-row {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        1fr 140px 1fr;
+
+    min-height:
+        59px;
+
+    border-bottom:
+        1px solid #1e3039;
+}
+
+
+.compare-row:last-child {
+
+    border-bottom:
+        none;
+}
+
+
+.compare-value {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    align-items:
+        center;
+
+    color:
+        #eaf0f3;
+
+    font-size:
+        18px;
+
+    font-weight:
+        800;
+}
+
+
+.compare-label {
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    align-items:
+        center;
+
+    color:
+        #91a4af;
+
+    background:
+        rgba(255, 255, 255, 0.015);
+
+    border-left:
+        1px solid #1c2d36;
+
+    border-right:
+        1px solid #1c2d36;
+
+    font-size:
+        11px;
 
     font-weight:
         900;
 
     text-transform:
         uppercase;
-}
-
-
-.h2h-table td {
-    padding:
-        21px 18px;
-
-    border-bottom:
-        1px solid #20313a;
-
-    text-align:
-        center;
-
-    font-size:
-        19px;
-}
-
-
-.h2h-table tr:last-child td {
-    border-bottom:
-        none;
-}
-
-
-.stat-name {
-    background:
-        rgba(255,255,255,0.014);
-
-    color:
-        #91a6b1;
-
-    font-size:
-        12px !important;
-
-    font-weight:
-        800;
-
-    text-transform:
-        uppercase;
 
     letter-spacing:
-        0.9px;
+        0.7px;
 }
 
 
-.stat-value {
+.compare-winner {
+
     color:
-        #e8eff2;
+        #28e39f;
 
-    font-weight:
-        700;
-}
-
-
-.winner {
     background:
         linear-gradient(
             90deg,
-            rgba(35, 190, 126, 0.08),
-            rgba(35, 190, 126, 0.17)
+            rgba(40, 227, 159, 0.03),
+            rgba(40, 227, 159, 0.11)
         );
-
-    color:
-        #32e7a7 !important;
-
-    font-weight:
-        900 !important;
 }
 
 
-.rating-value {
+.yaya-big {
+
     color:
-        #32e7a7 !important;
+        #28e39f;
 
     font-size:
-        27px !important;
+        26px;
 
     font-weight:
-        900 !important;
+        900;
 }
 
 
 /* ==================================================
-   YELLOW WARNINGS
+   H2H BOTTOM CARD
 ================================================== */
 
-.yellow-warning {
+.edge-box {
+
     margin-top:
-        16px;
+        18px;
 
     padding:
-        13px 15px;
+        22px 25px;
 
     border:
-        1px solid rgba(255, 201, 71, 0.48);
+        1px solid
+        rgba(40, 227, 159, 0.25);
 
     border-radius:
-        10px;
+        13px;
 
     background:
-        rgba(255, 193, 7, 0.09);
+        linear-gradient(
+            100deg,
+            rgba(20, 87, 67, 0.20),
+            rgba(10, 30, 29, 0.25)
+        );
 
     color:
-        #ffd86b;
+        #d9e6e3;
 
     font-size:
-        14px;
+        16px;
 
-    line-height:
-        1.5;
+    font-style:
+        italic;
+
+    text-align:
+        center;
 }
 
 
@@ -837,27 +927,25 @@ div[data-baseweb="select"] span {
    FOOTER
 ================================================== */
 
-.footer {
+.site-footer {
+
     margin-top:
-        42px;
+        40px;
 
     padding-top:
         20px;
 
-    padding-bottom:
-        10px;
-
     border-top:
-        1px solid #17242c;
+        1px solid #17262e;
 
     color:
-        #667a86;
+        #687b86;
 
     text-align:
         center;
 
     font-size:
-        13px;
+        12px;
 }
 
 </style>
@@ -865,7 +953,7 @@ div[data-baseweb="select"] span {
 
 
 # ==================================================
-# LOAD DATA
+# LOAD FILES
 # ==================================================
 
 old_df = pd.read_csv(
@@ -882,6 +970,7 @@ new_df = pd.read_csv(
 # ==================================================
 
 TEAM_NAMES = {
+
     "OLY": "Olympiacos",
     "EFS": "Anadolu Efes",
     "CZV": "Crvena Zvezda",
@@ -905,36 +994,72 @@ TEAM_NAMES = {
 }
 
 
-# ==================================================
-# OLD TEAM -> CURRENT TEAM CODE
-# ==================================================
-
 OLD_TEAM_TO_CODE = {
-    "Olympiacos Piraeus": "OLY",
-    "Anadolu Efes Istanbul": "EFS",
-    "Crvena Zvezda Meridianbet Belgrade": "CZV",
-    "Hapoel IBI Tel Aviv": "HTA",
-    "Zalgiris Kaunas": "ZAL",
-    "Valencia Basket": "VBC",
-    "Maccabi Rapyd Tel Aviv": "MTA",
-    "Paris Basketball": "PBB",
-    "Panathinaikos AKTOR Athens": "PAO",
-    "Real Madrid": "RMB",
-    "Dubai Basketball": "DUB",
-    "Fenerbahce Beko Istanbul": "FBT",
-    "EA7 Emporio Armani Milan": "MIL",
-    "Partizan Mozzart Bet Belgrade": "PAR",
-    "FC Barcelona": "BAR",
-    "LDLC ASVEL Villeurbanne": "ASV",
-    "FC Bayern Munich": "BAY",
-    "Virtus Bologna": "VIR",
-    "Baskonia Vitoria-Gasteiz": "KBA",
-    "AS Monaco": "MON"
+
+    "Olympiacos Piraeus":
+        "OLY",
+
+    "Anadolu Efes Istanbul":
+        "EFS",
+
+    "Crvena Zvezda Meridianbet Belgrade":
+        "CZV",
+
+    "Hapoel IBI Tel Aviv":
+        "HTA",
+
+    "Zalgiris Kaunas":
+        "ZAL",
+
+    "Valencia Basket":
+        "VBC",
+
+    "Maccabi Rapyd Tel Aviv":
+        "MTA",
+
+    "Paris Basketball":
+        "PBB",
+
+    "Panathinaikos AKTOR Athens":
+        "PAO",
+
+    "Real Madrid":
+        "RMB",
+
+    "Dubai Basketball":
+        "DUB",
+
+    "Fenerbahce Beko Istanbul":
+        "FBT",
+
+    "EA7 Emporio Armani Milan":
+        "MIL",
+
+    "Partizan Mozzart Bet Belgrade":
+        "PAR",
+
+    "FC Barcelona":
+        "BAR",
+
+    "LDLC ASVEL Villeurbanne":
+        "ASV",
+
+    "FC Bayern Munich":
+        "BAY",
+
+    "Virtus Bologna":
+        "VIR",
+
+    "Baskonia Vitoria-Gasteiz":
+        "KBA",
+
+    "AS Monaco":
+        "MON"
 }
 
 
 # ==================================================
-# NORMALIZE NAMES
+# NORMALIZE NAME
 # ==================================================
 
 def normalize_name(value):
@@ -952,7 +1077,9 @@ def normalize_name(value):
     text = "".join(
         character
         for character in text
-        if not unicodedata.combining(character)
+        if not unicodedata.combining(
+            character
+        )
     )
 
     text = re.sub(
@@ -972,7 +1099,6 @@ old_df["Name_Key"] = (
     old_df["Full Name"]
     .apply(normalize_name)
 )
-
 
 new_df["Name_Key"] = (
     new_df["שם שחקן"]
@@ -995,9 +1121,13 @@ normalized_aliases = {}
 for new_name in NAME_ALIASES:
 
     normalized_aliases[
-        normalize_name(new_name)
+        normalize_name(
+            new_name
+        )
     ] = normalize_name(
-        NAME_ALIASES[new_name]
+        NAME_ALIASES[
+            new_name
+        ]
     )
 
 
@@ -1011,15 +1141,14 @@ def find_old_player(new_row):
         new_row["Name_Key"]
     )
 
-
     matches = old_df[
         old_df["Name_Key"]
         ==
         name_key
     ]
 
-
     if len(matches) == 1:
+
         return matches.iloc[0]
 
 
@@ -1031,15 +1160,14 @@ def find_old_player(new_row):
             ]
         )
 
-
         matches = old_df[
             old_df["Name_Key"]
             ==
             old_key
         ]
 
-
         if len(matches) == 1:
+
             return matches.iloc[0]
 
 
@@ -1061,22 +1189,22 @@ for index in range(
         new_df.iloc[index]
     )
 
-
-    old_player = find_old_player(
-        new_row
+    old_player = (
+        find_old_player(
+            new_row
+        )
     )
-
 
     team_code = str(
         new_row["שם קבוצה"]
     )
 
-
-    team_name = TEAM_NAMES.get(
-        team_code,
-        team_code
+    team_name = (
+        TEAM_NAMES.get(
+            team_code,
+            team_code
+        )
     )
-
 
     price = pd.to_numeric(
         new_row["מחיר"],
@@ -1090,14 +1218,12 @@ for index in range(
             old_player["Team"]
         )
 
-
         old_team_code = (
             OLD_TEAM_TO_CODE.get(
                 old_team,
                 old_team
             )
         )
-
 
         team_changed = (
             old_team_code
@@ -1220,7 +1346,9 @@ for index in range(
         }
 
 
-    rows.append(row)
+    rows.append(
+        row
+    )
 
 
 df = pd.DataFrame(
@@ -1313,26 +1441,29 @@ def calculate_score(
             x2
         ):
 
-            score = (
+            return (
 
                 y1
 
                 +
 
-                (value - x1)
+                (
+                    value - x1
+                )
 
                 *
 
-                (y2 - y1)
+                (
+                    y2 - y1
+                )
 
                 /
 
-                (x2 - x1)
+                (
+                    x2 - x1
+                )
 
             )
-
-
-            return score
 
 
     return pd.NA
@@ -1596,17 +1727,13 @@ for team_code in (
 
 
     for position in (
-        team_players[
-            "Position"
-        ]
+        team_players["Position"]
         .dropna()
         .unique()
     ):
 
         group = team_players[
-            team_players[
-                "Position"
-            ]
+            team_players["Position"]
             ==
             position
         ].copy()
@@ -1622,11 +1749,9 @@ for team_code in (
             continue
 
 
-        group = (
-            group.sort_values(
-                "Price",
-                ascending=False
-            )
+        group = group.sort_values(
+            "Price",
+            ascending=False
         )
 
 
@@ -1700,7 +1825,9 @@ for team_code in (
 
 
             position_number = (
-                last_position + 1
+                last_position
+                +
+                1
             )
 
 
@@ -1737,36 +1864,24 @@ df["Captain Option"] = (
 
 def calculate_yaya_rating(row):
 
-    required_values = [
+    required = [
 
-        row[
-            "Production Score"
-        ],
+        row["Production Score"],
 
-        row[
-            "Value Score"
-        ],
+        row["Value Score"],
 
-        row[
-            "Stability Score"
-        ],
+        row["Stability Score"],
 
-        row[
-            "Floor Score"
-        ],
+        row["Floor Score"],
 
-        row[
-            "Minutes Score"
-        ],
+        row["Minutes Score"],
 
-        row[
-            "Efficiency Score"
-        ]
+        row["Efficiency Score"]
 
     ]
 
 
-    for value in required_values:
+    for value in required:
 
         if pd.isna(value):
             return pd.NA
@@ -1774,58 +1889,43 @@ def calculate_yaya_rating(row):
 
     rating = (
 
-        row[
-            "Production Score"
-        ]
+        row["Production Score"]
         * 0.25
 
         +
 
-        row[
-            "Value Score"
-        ]
+        row["Value Score"]
         * 0.20
 
         +
 
-        row[
-            "Team Role Score"
-        ]
+        row["Team Role Score"]
         * 0.25
 
         +
 
-        row[
-            "Stability Score"
-        ]
+        row["Stability Score"]
         * 0.06
 
         +
 
-        row[
-            "Floor Score"
-        ]
+        row["Floor Score"]
         * 0.04
 
         +
 
-        row[
-            "Minutes Score"
-        ]
+        row["Minutes Score"]
         * 0.10
 
         +
 
-        row[
-            "Efficiency Score"
-        ]
+        row["Efficiency Score"]
         * 0.10
 
     )
 
 
-    # New-team penalty
-
+    # Player moved to a new team
     if row["Team Changed"]:
 
         rating = (
@@ -1843,35 +1943,6 @@ def calculate_yaya_rating(row):
 
 df["Yaya Rating"] = df.apply(
     calculate_yaya_rating,
-    axis=1
-)
-
-
-# ==================================================
-# DISPLAY NAME
-# ==================================================
-
-def display_name(row):
-
-    name = str(
-        row["Full Name"]
-    )
-
-
-    if row["Captain Option"]:
-
-        name = (
-            name
-            +
-            "  C"
-        )
-
-
-    return name
-
-
-df["Display Name"] = df.apply(
-    display_name,
     axis=1
 )
 
@@ -1903,7 +1974,7 @@ def format_games(value):
     )
 
 
-def safe_text(value):
+def clean_text(value):
 
     if pd.isna(value):
         return "N/A"
@@ -1913,32 +1984,45 @@ def safe_text(value):
     )
 
 
+def get_player_name_html(row):
+
+    name = clean_text(
+        row["Full Name"]
+    )
+
+    if row["Captain Option"]:
+
+        return (
+            name
+            +
+            '<span class="captain-mark">'
+            'C'
+            '</span>'
+        )
+
+    return name
+
+
 # ==================================================
 # HERO
 # ==================================================
 
 hero_html = """
 <div class="hero">
-<div class="hero-content">
 <div class="hero-title">
-<span class="hero-yaya">Yaya's</span>
-<span class="hero-rating">Rating</span>
+<span class="hero-white">Yaya's</span>
+<span class="hero-green"> Rating</span>
 </div>
-<div class="hero-subtitle">EuroLeague Fantasy Player Analytics</div>
-<div class="hero-text">
+<div class="hero-subtitle">
+EuroLeague Fantasy Player Analytics
+</div>
+<div class="hero-description">
 Yaya's Rating is a fantasy-focused player rating built to identify the most valuable EuroLeague players.<br>
 The score combines production, efficiency, consistency, playing time, price value and the player's role within his team.<br>
 Go beyond the basic Fantasy average and find the players who can give you the edge.
 </div>
-<div class="global-warning">
-⚠️ Past performance is only a reference point. Historical Fantasy numbers do not guarantee how a player will perform in the upcoming season.
-</div>
-</div>
-<div class="hero-side-text">
-PLAY<br>
-ANALYZE<br>
-COMPARE<br>
-WIN
+<div class="warning-box">
+⚠ Historical performance is an analytical reference only. Past results do not guarantee how a player will perform in the current or future season.
 </div>
 </div>
 """
@@ -1954,13 +2038,11 @@ st.markdown(
 # TABS
 # ==================================================
 
-database_tab, h2h_tab = (
-    st.tabs(
-        [
-            "📊 Player Database",
-            "⚔️ Head-to-Head"
-        ]
-    )
+database_tab, h2h_tab = st.tabs(
+    [
+        "📊 Player Database",
+        "⚔️ Head-to-Head"
+    ]
 )
 
 
@@ -1970,31 +2052,32 @@ database_tab, h2h_tab = (
 
 with database_tab:
 
-
-    st.header(
-        "Player Database"
+    st.markdown(
+        '<div class="section-title">'
+        'Player Database'
+        '</div>',
+        unsafe_allow_html=True
     )
-
 
     st.markdown(
         '<div class="section-description">'
-        "Search and explore EuroLeague players "
-        "with their key Fantasy statistics and Yaya Rating."
-        "</div>",
+        "Search and explore all EuroLeague players with their key Fantasy statistics and Yaya's Rating."
+        '</div>',
         unsafe_allow_html=True
     )
 
 
-    # ==================================================
+    # ----------------------------------------------
     # FILTERS
-    # ==================================================
+    # ----------------------------------------------
 
-    search_col, team_col, position_col = (
+    search_col, team_col, pos_col, show_col = (
         st.columns(
             [
                 2.4,
-                1,
-                1
+                0.95,
+                0.95,
+                0.65
             ]
         )
     )
@@ -2012,9 +2095,7 @@ with database_tab:
 
 
     team_options = sorted(
-        df[
-            "Team"
-        ]
+        df["Team"]
         .dropna()
         .unique()
     )
@@ -2035,15 +2116,13 @@ with database_tab:
 
 
     position_options = sorted(
-        df[
-            "Position"
-        ]
+        df["Position"]
         .dropna()
         .unique()
     )
 
 
-    with position_col:
+    with pos_col:
 
         selected_position = (
             st.selectbox(
@@ -2057,6 +2136,26 @@ with database_tab:
         )
 
 
+    with show_col:
+
+        show_amount = (
+            st.selectbox(
+                "Show",
+                [
+                    25,
+                    50,
+                    100,
+                    "All"
+                ],
+                index=1
+            )
+        )
+
+
+    # ----------------------------------------------
+    # FILTER PLAYERS
+    # ----------------------------------------------
+
     filtered_df = (
         df.copy()
     )
@@ -2064,18 +2163,16 @@ with database_tab:
 
     if search != "":
 
-        filtered_df = (
+        filtered_df = filtered_df[
             filtered_df[
-                filtered_df[
-                    "Full Name"
-                ]
-                .str.contains(
-                    search,
-                    case=False,
-                    na=False
-                )
+                "Full Name"
             ]
-        )
+            .str.contains(
+                search,
+                case=False,
+                na=False
+            )
+        ]
 
 
     if (
@@ -2084,15 +2181,13 @@ with database_tab:
         "All Teams"
     ):
 
-        filtered_df = (
+        filtered_df = filtered_df[
             filtered_df[
-                filtered_df[
-                    "Team"
-                ]
-                ==
-                selected_team
+                "Team"
             ]
-        )
+            ==
+            selected_team
+        ]
 
 
     if (
@@ -2101,22 +2196,17 @@ with database_tab:
         "All Positions"
     ):
 
-        filtered_df = (
+        filtered_df = filtered_df[
             filtered_df[
-                filtered_df[
-                    "Position"
-                ]
-                ==
-                selected_position
+                "Position"
             ]
-        )
+            ==
+            selected_position
+        ]
 
-
-    # Highest rating first
 
     filtered_df = (
-        filtered_df
-        .sort_values(
+        filtered_df.sort_values(
             "Yaya Rating",
             ascending=False,
             na_position="last"
@@ -2124,112 +2214,115 @@ with database_tab:
     )
 
 
-    # ==================================================
-    # CUSTOM DARK DATABASE TABLE
-    # ==================================================
-
-    database_rows = ""
+    total_players = len(
+        filtered_df
+    )
 
 
-    ranking_number = 1
+    if show_amount != "All":
 
+        shown_df = (
+            filtered_df.head(
+                show_amount
+            )
+        )
 
-    for index in range(
-        len(filtered_df)
-    ):
+    else:
 
-        player = (
-            filtered_df.iloc[index]
+        shown_df = (
+            filtered_df
         )
 
 
-        database_rows += (
-            "<tr>"
-
-            f'<td>{ranking_number}</td>'
-
-            f'<td class="db-player">'
-            f'{safe_text(player["Display Name"])}'
-            f'</td>'
-
-            f'<td>'
-            f'{safe_text(player["Team"])}'
-            f'</td>'
-
-            f'<td>'
-            f'{safe_text(player["Position"])}'
-            f'</td>'
-
-            f'<td class="db-price">'
-            f'{format_number(player["Price"], 1)}'
-            f'</td>'
-
-            f'<td>'
-            f'{format_number(player["Overall Avg FPT"], 2)}'
-            f'</td>'
-
-            f'<td>'
-            f'{format_number(player["Minutes"], 1)}'
-            f'</td>'
-
-            f'<td>'
-            f'{format_number(player["FPT per Minute"], 2)}'
-            f'</td>'
-
-            f'<td>'
-            f'{format_games(player["Games Played"])}'
-            f'</td>'
-
-            f'<td class="db-rating">'
-            f'{format_number(player["Yaya Rating"], 2)}'
-            f'</td>'
-
-            "</tr>"
-        )
-
-
-        ranking_number += 1
-
+    # ----------------------------------------------
+    # BUILD DARK DATABASE TABLE
+    # ----------------------------------------------
 
     database_html = (
-        '<div class="database-card">'
-        '<div class="database-scroll">'
-        '<table class="database-table">'
-
+        '<div class="dashboard-panel">'
+        '<table class="player-table">'
         '<thead>'
         '<tr>'
-
         '<th>#</th>'
         '<th>Player</th>'
         '<th>Team</th>'
-        '<th>Position</th>'
+        '<th>Pos</th>'
         '<th>Price</th>'
         '<th>Avg FPT</th>'
         '<th>Minutes</th>'
-        '<th>FPT / Min</th>'
+        '<th>FPT/Min</th>'
         '<th>Games</th>'
         '<th>Yaya Rating</th>'
-
         '</tr>'
         '</thead>'
-
         '<tbody>'
+    )
 
-        +
 
-        database_rows
+    row_number = 1
 
-        +
 
+    for index, row in (
+        shown_df.iterrows()
+    ):
+
+        database_html += (
+
+            '<tr>'
+
+            f'<td>{row_number}</td>'
+
+            '<td class="player-cell">'
+            f'{get_player_name_html(row)}'
+            '</td>'
+
+            '<td>'
+            f'{clean_text(row["Team"])}'
+            '</td>'
+
+            '<td>'
+            f'{clean_text(row["Position"])}'
+            '</td>'
+
+            '<td class="price-cell">'
+            f'{format_number(row["Price"], 1)}'
+            '</td>'
+
+            '<td>'
+            f'{format_number(row["Overall Avg FPT"], 2)}'
+            '</td>'
+
+            '<td>'
+            f'{format_number(row["Minutes"], 1)}'
+            '</td>'
+
+            '<td>'
+            f'{format_number(row["FPT per Minute"], 2)}'
+            '</td>'
+
+            '<td>'
+            f'{format_games(row["Games Played"])}'
+            '</td>'
+
+            '<td class="rating-cell">'
+            f'{format_number(row["Yaya Rating"], 2)}'
+            '</td>'
+
+            '</tr>'
+
+        )
+
+
+        row_number += 1
+
+
+    database_html += (
         '</tbody>'
         '</table>'
-        '</div>'
-
-        '<div class="database-info">'
-        f'<span>Showing {len(filtered_df)} players</span>'
+        '<div class="table-footer">'
+        f'<span>Showing {len(shown_df)} of {total_players} players</span>'
         '<span>Sorted by Yaya Rating</span>'
         '</div>'
-
         '</div>'
     )
 
@@ -2246,66 +2339,75 @@ with database_tab:
 
 with h2h_tab:
 
-
-    st.header(
-        "Head-to-Head Comparison"
+    st.markdown(
+        '<div class="section-title">'
+        'Head-to-Head Comparison'
+        '</div>',
+        unsafe_allow_html=True
     )
-
 
     st.markdown(
         '<div class="section-description">'
-        "Compare two EuroLeague Fantasy players side by side."
-        "</div>",
+        'Compare two EuroLeague Fantasy players side by side.'
+        '</div>',
         unsafe_allow_html=True
     )
 
 
+    # ----------------------------------------------
+    # PLAYER LIST
+    # ----------------------------------------------
+
     player_names = sorted(
-        df[
-            "Full Name"
-        ]
+        df["Full Name"]
         .dropna()
         .unique()
     )
 
 
-    # ==================================================
-    # DEFAULT PLAYERS
-    # ==================================================
+    def find_player_index(
+        wanted_name
+    ):
 
-    player1_default = 0
-
-    player2_default = 0
-
-
-    if "Sasha Vezenkov" in player_names:
-
-        player1_default = (
-            player_names.index(
-                "Sasha Vezenkov"
-            )
+        wanted_key = normalize_name(
+            wanted_name
         )
 
+        for i in range(
+            len(player_names)
+        ):
 
-    if "Elijah Bryant" in player_names:
+            if (
+                normalize_name(
+                    player_names[i]
+                )
+                ==
+                wanted_key
+            ):
 
-        player2_default = (
-            player_names.index(
-                "Elijah Bryant"
-            )
+                return i
+
+
+        return 0
+
+
+    # Sasha default
+    player1_default = (
+        find_player_index(
+            "Sasha Vezenkov"
         )
+    )
 
 
-    elif len(player_names) > 1:
+    # Elijah Bryant default
+    player2_default = (
+        find_player_index(
+            "Elijah Bryant"
+        )
+    )
 
-        player2_default = 1
 
-
-    # ==================================================
-    # PLAYER SELECTORS
-    # ==================================================
-
-    player1_col, center_col, player2_col = (
+    player1_col, space_col, player2_col = (
         st.columns(
             [
                 1,
@@ -2320,12 +2422,12 @@ with h2h_tab:
 
         player1_name = (
             st.selectbox(
-                "Player 1",
+                "Select Player 1",
                 player_names,
                 index=
                     player1_default,
                 key=
-                    "player1"
+                    "comparison_player_1"
             )
         )
 
@@ -2334,12 +2436,12 @@ with h2h_tab:
 
         player2_name = (
             st.selectbox(
-                "Player 2",
+                "Select Player 2",
                 player_names,
                 index=
                     player2_default,
                 key=
-                    "player2"
+                    "comparison_player_2"
             )
         )
 
@@ -2359,10 +2461,10 @@ with h2h_tab:
 
 
     # ==================================================
-    # WINNER
+    # WINNER FUNCTION
     # ==================================================
 
-    def winner_class(
+    def get_compare_class(
         value1,
         value2,
         side
@@ -2374,12 +2476,12 @@ with h2h_tab:
             pd.isna(value2)
         ):
 
-            return "stat-value"
+            return "compare-value"
 
 
         if value1 == value2:
 
-            return "stat-value"
+            return "compare-value"
 
 
         if (
@@ -2388,7 +2490,10 @@ with h2h_tab:
             value1 > value2
         ):
 
-            return "winner"
+            return (
+                "compare-value "
+                "compare-winner"
+            )
 
 
         if (
@@ -2397,260 +2502,264 @@ with h2h_tab:
             value2 > value1
         ):
 
-            return "winner"
+            return (
+                "compare-value "
+                "compare-winner"
+            )
 
 
-        return "stat-value"
+        return "compare-value"
 
 
     # ==================================================
     # COMPARISON ROW
     # ==================================================
 
-    def comparison_row(
+    def build_compare_row(
         value1,
         label,
         value2,
         decimals=1,
+        text_mode=False,
         rating=False
     ):
 
-        left_class = (
-            winner_class(
-                value1,
-                value2,
-                1
+        if text_mode:
+
+            left_class = (
+                "compare-value"
             )
-        )
+
+            right_class = (
+                "compare-value"
+            )
+
+            left_value = (
+                clean_text(
+                    value1
+                )
+            )
+
+            right_value = (
+                clean_text(
+                    value2
+                )
+            )
 
 
-        right_class = (
-            winner_class(
-                value1,
-                value2,
-                2
+        else:
+
+            left_class = (
+                get_compare_class(
+                    value1,
+                    value2,
+                    1
+                )
             )
-        )
+
+            right_class = (
+                get_compare_class(
+                    value1,
+                    value2,
+                    2
+                )
+            )
+
+            left_value = (
+                format_number(
+                    value1,
+                    decimals
+                )
+            )
+
+            right_value = (
+                format_number(
+                    value2,
+                    decimals
+                )
+            )
 
 
         if rating:
 
             left_class += (
-                " rating-value"
+                " yaya-big"
             )
 
             right_class += (
-                " rating-value"
+                " yaya-big"
             )
-
-
-        left_value = (
-            format_number(
-                value1,
-                decimals
-            )
-        )
-
-
-        right_value = (
-            format_number(
-                value2,
-                decimals
-            )
-        )
 
 
         return (
-            "<tr>"
 
-            f'<td class="{left_class}">'
+            '<div class="compare-row">'
+
+            f'<div class="{left_class}">'
             f'{left_value}'
-            f'</td>'
+            '</div>'
 
-            '<td class="stat-name">'
+            '<div class="compare-label">'
             f'{label}'
-            '</td>'
+            '</div>'
 
-            f'<td class="{right_class}">'
+            f'<div class="{right_class}">'
             f'{right_value}'
-            f'</td>'
+            '</div>'
 
-            "</tr>"
+            '</div>'
+
         )
-
-
-    player1_display = (
-        safe_text(
-            display_name(
-                player1
-            )
-        )
-    )
-
-
-    player2_display = (
-        safe_text(
-            display_name(
-                player2
-            )
-        )
-    )
 
 
     # ==================================================
-    # HEAD TO HEAD TABLE
+    # H2H CARD
     # ==================================================
 
-    table_html = (
+    h2h_html = (
 
-        '<div class="h2h-wrapper">'
+        '<div class="h2h-card">'
 
-        '<table class="h2h-table">'
+        '<div class="h2h-header">'
 
-        '<thead>'
+        '<div class="h2h-player">'
 
-        '<tr>'
+        '<div class="h2h-player-name">'
+        f'{get_player_name_html(player1)}'
+        '</div>'
 
-        '<th>'
-        f'<div class="player-name">{player1_display}</div>'
-        '</th>'
+        '<div class="h2h-player-team">'
+        f'{clean_text(player1["Team"])}'
+        '</div>'
 
-        '<th class="vs">'
+        '</div>'
+
+
+        '<div class="h2h-vs">'
         'VS'
-        '</th>'
-
-        '<th>'
-        f'<div class="player-name">{player2_display}</div>'
-        '</th>'
-
-        '</tr>'
-
-        '</thead>'
-
-        '<tbody>'
-
-        '<tr>'
-
-        f'<td class="stat-value">'
-        f'{safe_text(player1["Team"])}'
-        '</td>'
-
-        '<td class="stat-name">'
-        'Team'
-        '</td>'
-
-        f'<td class="stat-value">'
-        f'{safe_text(player2["Team"])}'
-        '</td>'
-
-        '</tr>'
+        '</div>'
 
 
-        '<tr>'
+        '<div class="h2h-player">'
 
-        f'<td class="stat-value">'
-        f'{safe_text(player1["Position"])}'
-        '</td>'
+        '<div class="h2h-player-name">'
+        f'{get_player_name_html(player2)}'
+        '</div>'
 
-        '<td class="stat-name">'
-        'Position'
-        '</td>'
+        '<div class="h2h-player-team">'
+        f'{clean_text(player2["Team"])}'
+        '</div>'
 
-        f'<td class="stat-value">'
-        f'{safe_text(player2["Position"])}'
-        '</td>'
+        '</div>'
 
-        '</tr>'
+
+        '</div>'
+
 
         +
 
-        comparison_row(
+        build_compare_row(
+            player1["Team"],
+            "Team",
+            player2["Team"],
+            text_mode=True
+        )
+
+
+        +
+
+        build_compare_row(
+            player1["Position"],
+            "Position",
+            player2["Position"],
+            text_mode=True
+        )
+
+
+        +
+
+        build_compare_row(
             player1["Price"],
             "Price",
             player2["Price"],
             1
         )
 
+
         +
 
-        comparison_row(
+        build_compare_row(
             player1[
                 "Overall Avg FPT"
             ],
-            "Overall Avg FPT",
+            "Avg FPT",
             player2[
                 "Overall Avg FPT"
             ],
             2
         )
 
+
         +
 
-        comparison_row(
+        build_compare_row(
             player1["Minutes"],
             "Minutes",
             player2["Minutes"],
             1
         )
 
+
         +
 
-        comparison_row(
+        build_compare_row(
             player1[
                 "FPT per Minute"
             ],
-            "FPT / Minute",
+            "FPT / Min",
             player2[
                 "FPT per Minute"
             ],
             2
         )
 
+
         +
 
-        comparison_row(
-            player1[
-                "Games Played"
-            ],
+        build_compare_row(
+            player1["Games Played"],
             "Games",
-            player2[
-                "Games Played"
-            ],
+            player2["Games Played"],
             0
         )
 
+
         +
 
-        comparison_row(
-            player1[
-                "Yaya Rating"
-            ],
+        build_compare_row(
+            player1["Yaya Rating"],
             "Yaya Rating",
-            player2[
-                "Yaya Rating"
-            ],
+            player2["Yaya Rating"],
             2,
-            True
+            rating=True
         )
 
+
         +
 
-        '</tbody>'
-
-        '</table>'
-
         '</div>'
+
     )
 
 
     st.markdown(
-        table_html,
+        h2h_html,
         unsafe_allow_html=True
     )
 
 
     # ==================================================
-    # WARNINGS
+    # PLAYER WARNINGS
     # ==================================================
 
     warning_col1, warning_col2 = (
@@ -2660,120 +2769,80 @@ with h2h_tab:
 
     with warning_col1:
 
+        if player1["Is New Player"]:
 
-        if player1[
-            "Is New Player"
-        ]:
+            warning_html = (
+                '<div class="player-warning">'
+                '⚠ '
+                f'{clean_text(player1["Full Name"])} '
+                'is a new player and does not yet have historical EuroLeague data.'
+                '</div>'
+            )
 
             st.markdown(
-                '<div class="yellow-warning">'
-                '⚠️ '
-                +
-                safe_text(
-                    player1[
-                        "Full Name"
-                    ]
-                )
-                +
-                ' is a new player. Historical EuroLeague data is not available yet.'
-                '</div>',
+                warning_html,
                 unsafe_allow_html=True
             )
 
 
-        elif player1[
-            "Team Changed"
-        ]:
+        elif player1["Team Changed"]:
+
+            warning_html = (
+                '<div class="player-warning">'
+                '⚠ '
+                f'{clean_text(player1["Full Name"])} '
+                'changed teams. Historical statistics were recorded with '
+                f'{clean_text(player1["Old Team"])}.'
+                '</div>'
+            )
 
             st.markdown(
-                '<div class="yellow-warning">'
-                '⚠️ '
-                +
-                safe_text(
-                    player1[
-                        "Full Name"
-                    ]
-                )
-                +
-                ' changed teams: '
-                +
-                safe_text(
-                    player1[
-                        "Old Team"
-                    ]
-                )
-                +
-                ' → '
-                +
-                safe_text(
-                    player1[
-                        "Team"
-                    ]
-                )
-                +
-                '. Historical numbers should be interpreted with extra caution.'
-                '</div>',
+                warning_html,
                 unsafe_allow_html=True
             )
 
 
     with warning_col2:
 
+        if player2["Is New Player"]:
 
-        if player2[
-            "Is New Player"
-        ]:
+            warning_html = (
+                '<div class="player-warning">'
+                '⚠ '
+                f'{clean_text(player2["Full Name"])} '
+                'is a new player and does not yet have historical EuroLeague data.'
+                '</div>'
+            )
 
             st.markdown(
-                '<div class="yellow-warning">'
-                '⚠️ '
-                +
-                safe_text(
-                    player2[
-                        "Full Name"
-                    ]
-                )
-                +
-                ' is a new player. Historical EuroLeague data is not available yet.'
-                '</div>',
+                warning_html,
                 unsafe_allow_html=True
             )
 
 
-        elif player2[
-            "Team Changed"
-        ]:
+        elif player2["Team Changed"]:
+
+            warning_html = (
+                '<div class="player-warning">'
+                '⚠ '
+                f'{clean_text(player2["Full Name"])} '
+                'changed teams. Historical statistics were recorded with '
+                f'{clean_text(player2["Old Team"])}.'
+                '</div>'
+            )
 
             st.markdown(
-                '<div class="yellow-warning">'
-                '⚠️ '
-                +
-                safe_text(
-                    player2[
-                        "Full Name"
-                    ]
-                )
-                +
-                ' changed teams: '
-                +
-                safe_text(
-                    player2[
-                        "Old Team"
-                    ]
-                )
-                +
-                ' → '
-                +
-                safe_text(
-                    player2[
-                        "Team"
-                    ]
-                )
-                +
-                '. Historical numbers should be interpreted with extra caution.'
-                '</div>',
+                warning_html,
                 unsafe_allow_html=True
             )
+
+
+    st.markdown(
+        '<div class="edge-box">'
+        '“Different players. Same goal. Find the edge.”'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 
 # ==================================================
@@ -2781,8 +2850,8 @@ with h2h_tab:
 # ==================================================
 
 st.markdown(
-    '<div class="footer">'
-    "Yaya's Rating • EuroLeague Fantasy Analytics"
+    '<div class="site-footer">'
+    "Yaya's Rating • EuroLeague Fantasy Player Analytics"
     '</div>',
     unsafe_allow_html=True
 )
