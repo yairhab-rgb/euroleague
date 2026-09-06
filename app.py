@@ -1,1206 +1,1217 @@
 import pandas as pd
 import streamlit as st
+import unicodedata
+import re
 
+
+# --------------------------------------------------
+# PAGE SETTINGS
+# --------------------------------------------------
 
 st.set_page_config(
-    page_title="EuroLeague Fantasy Dashboard",
+    page_title="EuroLeague Fantasy",
     page_icon="🏀",
     layout="wide"
 )
 
 
-# ---------------------------------------------------------
-# עיצוב
-# ---------------------------------------------------------
+# --------------------------------------------------
+# LOAD FILES
+# --------------------------------------------------
 
-st.markdown(
-    """
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    .stApp {
-        background-color: #f8f9fa;
-        color: #212529;
-        font-family: 'Inter', sans-serif;
-    }
-
-    section[data-testid="stSidebar"] {
-        display: none !important;
-    }
-
-    .main-title {
-        font-weight: 700;
-        color: #00b4d8;
-        font-size: 2.2rem;
-        margin-bottom: 20px;
-        letter-spacing: -0.5px;
-    }
-
-    div[data-testid="stMetric"] {
-        background: #ffffff;
-        padding: 16px;
-        border-radius: 12px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
-
-    div[data-testid="stMetric"] label {
-        color: #64748b !important;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-
-    div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-        color: #0f172a !important;
-        font-weight: 700;
-        font-size: 1.7rem;
-    }
-
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-    }
-
-    .stTabs [data-baseweb="tab"] {
-        background-color: #edf2f7;
-        border-radius: 8px 8px 0px 0px;
-        padding: 10px 20px;
-        font-weight: 600;
-        color: #4a5568;
-    }
-
-    .stTabs [aria-selected="true"] {
-        background-color: #00b4d8 !important;
-        color: white !important;
-    }
-
-    .warning-badge {
-        background-color: #fff3cd;
-        color: #856404;
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid #ffeeba;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-
-    .new-player-badge {
-        background-color: #d1ecf1;
-        color: #0c5460;
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid #bee5eb;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+old_df = pd.read_csv("fantasy_euroleague_stats.csv")
+new_df = pd.read_csv("new.csv")
 
 
-# ---------------------------------------------------------
-# טעינת הקבצים
-# ---------------------------------------------------------
+# --------------------------------------------------
+# TEAM CODES
+# --------------------------------------------------
 
-@st.cache_data
-def load_data():
+# This dictionary explains what every team abbreviation
+# in new.csv means.
 
-    old_df = pd.read_csv("fantasy_euroleague_stats.csv")
-    new_df = pd.read_csv("new.csv")
-
-    return old_df, new_df
-
-
-df_old, df_new = load_data()
-
-
-# ---------------------------------------------------------
-# ניקוי שמות עמודות
-# ---------------------------------------------------------
-
-df_old.columns = (
-    df_old.columns
-    .str.strip()
-    .str.replace("\ufeff", "")
-)
-
-df_new.columns = (
-    df_new.columns
-    .str.strip()
-    .str.replace("\ufeff", "")
-)
+TEAM_NAMES = {
+    "OLY": "Olympiacos Piraeus",
+    "EFS": "Anadolu Efes Istanbul",
+    "CZV": "Crvena Zvezda Meridianbet Belgrade",
+    "HTA": "Hapoel IBI Tel Aviv",
+    "ZAL": "Zalgiris Kaunas",
+    "VBC": "Valencia Basket",
+    "MTA": "Maccabi Rapyd Tel Aviv",
+    "PBB": "Paris Basketball",
+    "PAO": "Panathinaikos AKTOR Athens",
+    "RMB": "Real Madrid",
+    "DUB": "Dubai Basketball",
+    "FBT": "Fenerbahce Beko Istanbul",
+    "MIL": "EA7 Emporio Armani Milan",
+    "PAR": "Partizan Mozzart Bet Belgrade",
+    "BAR": "FC Barcelona",
+    "ASV": "LDLC ASVEL Villeurbanne",
+    "BJK": "Besiktas",
+    "BAY": "FC Bayern Munich",
+    "VIR": "Virtus Bologna",
+    "KBA": "Baskonia Vitoria-Gasteiz"
+}
 
 
-# ---------------------------------------------------------
-# בדיקת עמודות
-# ---------------------------------------------------------
+# Reverse dictionary:
+# full old team name -> new abbreviation
 
-required_old_columns = [
-    "Full Name",
-    "Team",
-    "Position"
-]
-
-required_new_columns = [
-    "שם שחקן",
-    "שם קבוצה",
-    "עמדה",
-    "מחיר"
-]
-
-
-for column in required_old_columns:
-
-    if column not in df_old.columns:
-
-        st.error(
-            "לא נמצאה העמודה "
-            + column
-            + " בקובץ הישן."
-        )
-
-        st.stop()
+OLD_TEAM_TO_CODE = {
+    "Baskonia Vitoria-Gasteiz": "KBA",
+    "Crvena Zvezda Meridianbet Belgrade": "CZV",
+    "FC Barcelona": "BAR",
+    "Partizan Mozzart Bet Belgrade": "PAR",
+    "Real Madrid": "RMB",
+    "Hapoel IBI Tel Aviv": "HTA",
+    "Valencia Basket": "VBC",
+    "Dubai Basketball": "DUB",
+    "FC Bayern Munich": "BAY",
+    "Virtus Bologna": "VIR",
+    "Olympiacos Piraeus": "OLY",
+    "Anadolu Efes Istanbul": "EFS",
+    "Panathinaikos AKTOR Athens": "PAO",
+    "EA7 Emporio Armani Milan": "MIL",
+    "Fenerbahce Beko Istanbul": "FBT",
+    "Paris Basketball": "PBB",
+    "LDLC ASVEL Villeurbanne": "ASV",
+    "Zalgiris Kaunas": "ZAL",
+    "AS Monaco": "MON",
+    "Maccabi Rapyd Tel Aviv": "MTA"
+}
 
 
-for column in required_new_columns:
+# --------------------------------------------------
+# NAME CLEANING
+# --------------------------------------------------
 
-    if column not in df_new.columns:
-
-        st.error(
-            "לא נמצאה העמודה "
-            + column
-            + " בקובץ new.csv."
-        )
-
-        st.stop()
-
-
-# ---------------------------------------------------------
-# ניקוי טקסט
-# ---------------------------------------------------------
-
-def clean_text(value):
+def normalize_name(value):
 
     if pd.isna(value):
-
         return ""
 
-    value = str(value)
+    text = str(value).lower()
 
-    value = value.strip().lower()
+    # Remove accents:
+    # example: Corbalán -> corbalan
+    text = unicodedata.normalize("NFKD", text)
 
-    value = value.replace(".", "")
-    value = value.replace(",", "")
-    value = value.replace("'", "")
-    value = value.replace("-", " ")
+    text = "".join(
+        character
+        for character in text
+        if not unicodedata.combining(character)
+    )
 
-    return value
+    # Remove punctuation
+    text = re.sub(
+        r"[^a-z0-9\s]",
+        " ",
+        text
+    )
 
+    # Remove extra spaces
+    text = " ".join(text.split())
 
-# ---------------------------------------------------------
-# יצירת שם מלא נקי
-# ---------------------------------------------------------
-
-def clean_full_name(name):
-
-    name = clean_text(name)
-
-    return " ".join(name.split())
-
-
-# ---------------------------------------------------------
-# יצירת Initial + שם משפחה
-# ---------------------------------------------------------
-
-def get_name_key(name):
-
-    name = clean_full_name(name)
-
-    if name == "":
-
-        return ""
-
-    parts = name.split()
-
-    initial = parts[0][0]
-
-    last_name = parts[-1]
-
-    return initial + "_" + last_name
+    return text
 
 
-# ---------------------------------------------------------
-# יצירת המפתחות בקובץ הישן
-# ---------------------------------------------------------
-
-df_old["Full_Name_Key"] = (
-    df_old["Full Name"]
-    .apply(clean_full_name)
-)
-
-df_old["Name_Key"] = (
-    df_old["Full Name"]
-    .apply(get_name_key)
-)
+old_df["Name_Key"] = old_df["Full Name"].apply(normalize_name)
+new_df["Name_Key"] = new_df["שם שחקן"].apply(normalize_name)
 
 
-# ---------------------------------------------------------
-# יצירת המפתחות בקובץ החדש
-# ---------------------------------------------------------
+# --------------------------------------------------
+# MANUAL NAME ALIASES
+# --------------------------------------------------
 
-df_new["Full_Name_Key"] = (
-    df_new["שם שחקן"]
-    .apply(clean_full_name)
-)
-
-df_new["Name_Key"] = (
-    df_new["שם שחקן"]
-    .apply(get_name_key)
-)
-
-
-# ---------------------------------------------------------
-# הסרת שורות שאינן שחקנים
-# ---------------------------------------------------------
-
-df_new = df_new[
-    df_new["שם שחקן"].notna()
-].copy()
-
-df_new = df_new[
-    df_new["שם שחקן"]
-    .astype(str)
-    .str.lower()
-    != "head coach"
-].copy()
-
-
-# ---------------------------------------------------------
-# פונקציה למציאת שחקן בקובץ הישן
+# If in the future one player has a slightly different
+# name in the two files, we can add him here.
 #
-# שלב 1:
-# שם מלא
+# Format:
 #
-# שלב 2:
-# Initial + שם משפחה
+# "name in new.csv": "name in old csv"
 #
-# שלב 3:
-# אם יש יותר משחקן אחד:
-# משתמשים בקבוצה
+# Example:
 #
-# אם עדיין אין התאמה:
-# לא מנחשים
-# ---------------------------------------------------------
+# NAME_ALIASES = {
+#     "example new name": "example old name"
+# }
+
+NAME_ALIASES = {
+
+}
+
+
+# Normalize aliases
+normalized_aliases = {}
+
+for new_name in NAME_ALIASES:
+
+    old_name = NAME_ALIASES[new_name]
+
+    normalized_aliases[
+        normalize_name(new_name)
+    ] = normalize_name(old_name)
+
+
+# --------------------------------------------------
+# MATCH OLD PLAYER
+# --------------------------------------------------
 
 def find_old_player(new_row):
 
-    new_full_name = new_row["Full_Name_Key"]
     new_name_key = new_row["Name_Key"]
-    new_team = clean_text(
-        new_row["שם קבוצה"]
-    )
 
-
-    # -----------------------------------------------------
-    # שלב 1 - התאמה לפי שם מלא
-    # -----------------------------------------------------
-
-    full_name_candidates = df_old[
-        df_old["Full_Name_Key"]
-        == new_full_name
+    # First try exact full-name match
+    matches = old_df[
+        old_df["Name_Key"] == new_name_key
     ]
 
+    if len(matches) == 1:
+        return matches.iloc[0]
 
-    if len(full_name_candidates) == 1:
+    # If an alias exists, try it
+    if new_name_key in normalized_aliases:
 
-        return "MATCH", full_name_candidates.index[0]
+        old_name_key = normalized_aliases[new_name_key]
 
-
-    if len(full_name_candidates) > 1:
-
-        team_candidates = full_name_candidates[
-            full_name_candidates["Team"]
-            .apply(clean_text)
-            == new_team
+        alias_matches = old_df[
+            old_df["Name_Key"] == old_name_key
         ]
 
-        if len(team_candidates) == 1:
+        if len(alias_matches) == 1:
+            return alias_matches.iloc[0]
 
-            return (
-                "MATCH",
-                team_candidates.index[0]
-            )
-
-        return (
-            "AMBIGUOUS",
-            full_name_candidates.index.tolist()
-        )
-
-
-    # -----------------------------------------------------
-    # שלב 2 - Initial + שם משפחה
-    # -----------------------------------------------------
-
-    name_candidates = df_old[
-        df_old["Name_Key"]
-        == new_name_key
-    ]
-
-
-    if len(name_candidates) == 0:
-
-        return "NEW_PLAYER", None
-
-
-    # יש התאמה אחת בלבד
-    if len(name_candidates) == 1:
-
-        return (
-            "MATCH",
-            name_candidates.index[0]
-        )
-
-
-    # -----------------------------------------------------
-    # שלב 3 - יש כמה שחקנים עם אותו Initial
-    # ושם משפחה
-    # -----------------------------------------------------
-
-    team_candidates = name_candidates[
-        name_candidates["Team"]
-        .apply(clean_text)
-        == new_team
-    ]
-
-
-    if len(team_candidates) == 1:
-
-        return (
-            "MATCH",
-            team_candidates.index[0]
-        )
-
-
-    # -----------------------------------------------------
-    # לא ניתן לזהות בוודאות
-    # -----------------------------------------------------
-
-    return (
-        "AMBIGUOUS",
-        name_candidates.index.tolist()
-    )
-
-
-# ---------------------------------------------------------
-# התאמת כל השחקנים
-# ---------------------------------------------------------
-
-ambiguous_players = []
-
-matched_indexes = []
-
-
-for _, new_row in df_new.iterrows():
-
-    result, old_index = find_old_player(
-        new_row
-    )
-
-    if result == "MATCH":
-
-        matched_indexes.append(old_index)
-
-    elif result == "AMBIGUOUS":
-
-        ambiguous_players.append(
-            {
-                "name": new_row["שם שחקן"],
-                "team": new_row["שם קבוצה"],
-                "indexes": old_index
-            }
-        )
-
-
-# ---------------------------------------------------------
-# טיפול בהתאמות לא חד משמעיות
-# ---------------------------------------------------------
-
-if len(ambiguous_players) > 0:
-
-    st.error(
-        "⚠️ נמצאו שחקנים שלא ניתן לזהות בוודאות."
-    )
-
-    st.write(
-        "הקוד לא מנחש במקרים כאלה."
-    )
-
-    for item in ambiguous_players:
-
-        st.write(
-            "שחקן: "
-            + str(item["name"])
-            + " | קבוצה: "
-            + str(item["team"])
-        )
-
-        for index in item["indexes"]:
-
-            st.write(
-                "→ "
-                + str(df_old.loc[index, "Full Name"])
-                + " | "
-                + str(df_old.loc[index, "Team"])
-            )
-
-    st.stop()
-
-
-# ---------------------------------------------------------
-# בניית בסיס הנתונים החדש
-#
-# חשוב:
-# אנחנו עוברים על new.csv
-# ולכן רק שחקנים שקיימים בו ייכנסו לאתר.
-# ---------------------------------------------------------
-
-new_data = []
-
-
-for _, new_row in df_new.iterrows():
-
-    result, old_index = find_old_player(
-        new_row
-    )
-
-
-    # -----------------------------------------------------
-    # שחקן שקיים גם בקובץ הישן
-    # -----------------------------------------------------
-
-    if result == "MATCH":
-
-        old_row = df_old.loc[
-            old_index
-        ].copy()
-
-
-        old_team = str(
-            old_row["Team"]
-        ).strip()
-
-
-        new_team = str(
-            new_row["שם קבוצה"]
-        ).strip()
-
-
-        # האם הקבוצה השתנתה?
-        team_changed = (
-            clean_text(old_team)
-            != clean_text(new_team)
-        )
-
-
-        # -------------------------------------------------
-        # new.csv קובע:
-        #
-        # שם
-        # קבוצה
-        # עמדה
-        # מחיר
-        # -------------------------------------------------
-
-        old_row["Full Name"] = (
-            new_row["שם שחקן"]
-        )
-
-        old_row["Team"] = new_team
-
-        old_row["Position"] = (
-            new_row["עמדה"]
-        )
-
-
-        old_row["Price_Clean"] = (
-            pd.to_numeric(
-                new_row["מחיר"],
-                errors="coerce"
-            )
-        )
-
-
-        old_row["Team_Changed"] = (
-            team_changed
-        )
-
-
-        old_row["Is_New_Player"] = False
-
-
-        new_data.append(
-            old_row
-        )
-
-
-    # -----------------------------------------------------
-    # שחקן חדש
-    # -----------------------------------------------------
-
-    elif result == "NEW_PLAYER":
-
-        new_player = {}
-
-
-        # מידע נוכחי
-        new_player["Full Name"] = (
-            new_row["שם שחקן"]
-        )
-
-        new_player["Team"] = (
-            new_row["שם קבוצה"]
-        )
-
-        new_player["Position"] = (
-            new_row["עמדה"]
-        )
-
-        new_player["Price_Clean"] = (
-            pd.to_numeric(
-                new_row["מחיר"],
-                errors="coerce"
-            )
-        )
-
-
-        # -------------------------------------------------
-        # אין עדיין נתוני עבר
-        # -------------------------------------------------
-
-        new_player["Overall Avg FPT"] = pd.NA
-        new_player["Home Avg FPT"] = pd.NA
-        new_player["Away Avg FPT"] = pd.NA
-        new_player["FPT Std Dev"] = pd.NA
-        new_player["Floor Rate % (FPT<8)"] = pd.NA
-        new_player["Ceiling Rate % (FPT>=20)"] = pd.NA
-        new_player["Total Minutes"] = pd.NA
-        new_player["FPT per Minute"] = pd.NA
-        new_player["Games Played"] = pd.NA
-
-
-        # שחקן חדש
-        new_player["Team_Changed"] = False
-        new_player["Is_New_Player"] = True
-
-
-        new_data.append(
-            pd.Series(new_player)
-        )
-
-
-# ---------------------------------------------------------
-# יצירת DataFrame סופי
-# ---------------------------------------------------------
-
-df = pd.DataFrame(
-    new_data
-)
-
-
-# ---------------------------------------------------------
-# פונקציה לזיהוי עמודה
-# ---------------------------------------------------------
-
-def find_col(dataset, keywords):
-
-    for col in dataset.columns:
-
-        match = True
-
-        for keyword in keywords:
-
-            if keyword.lower() not in col.lower():
-
-                match = False
-
-        if match:
-
-            return col
-
+    # No safe match
     return None
 
 
-# ---------------------------------------------------------
-# פונקציה לנתונים מספריים
-# ---------------------------------------------------------
+# --------------------------------------------------
+# BUILD CURRENT PLAYER DATABASE
+# --------------------------------------------------
 
-def get_num_series(dataset, col_name):
+rows = []
 
-    if (
-        col_name
-        and col_name in dataset.columns
-    ):
+for index in range(len(new_df)):
 
-        return pd.to_numeric(
-            dataset[col_name],
-            errors="coerce"
+    new_row = new_df.iloc[index]
+
+    old_player = find_old_player(new_row)
+
+    new_team_code = str(
+        new_row["שם קבוצה"]
+    )
+
+    new_team_name = TEAM_NAMES.get(
+        new_team_code,
+        new_team_code
+    )
+
+    # ----------------------------------------------
+    # EXISTING PLAYER
+    # ----------------------------------------------
+
+    if old_player is not None:
+
+        old_team_name = old_player["Team"]
+
+        old_team_code = OLD_TEAM_TO_CODE.get(
+            old_team_name,
+            old_team_name
         )
 
-    return pd.Series(
-        [pd.NA] * len(dataset),
-        index=dataset.index
+        team_changed = (
+            old_team_code != new_team_code
+        )
+
+        row = {
+            "Full Name": new_row["שם שחקן"],
+            "Team": new_team_name,
+            "Team Code": new_team_code,
+            "Position": new_row["עמדה"],
+            "Price": pd.to_numeric(
+                new_row["מחיר"],
+                errors="coerce"
+            ),
+
+            "Overall Avg FPT":
+                old_player["Overall Avg FPT"],
+
+            "Home Avg FPT":
+                old_player["Home Avg FPT"],
+
+            "Away Avg FPT":
+                old_player["Away Avg FPT"],
+
+            "FPT Std Dev":
+                old_player["FPT Std Dev"],
+
+            "Floor Rate % (FPT<8)":
+                old_player["Floor Rate % (FPT<8)"],
+
+            "Ceiling Rate % (FPT>=20)":
+                old_player["Ceiling Rate % (FPT>=20)"],
+
+            "Total Minutes":
+                old_player["Total Minutes"],
+
+            "FPT per Minute":
+                old_player["FPT per Minute"],
+
+            "Games Played":
+                old_player["Games Played"],
+
+            "Old Team":
+                old_team_name,
+
+            "Team Changed":
+                team_changed,
+
+            "Is New Player":
+                False
+        }
+
+    # ----------------------------------------------
+    # COMPLETELY NEW PLAYER
+    # ----------------------------------------------
+
+    else:
+
+        row = {
+            "Full Name": new_row["שם שחקן"],
+            "Team": new_team_name,
+            "Team Code": new_team_code,
+            "Position": new_row["עמדה"],
+            "Price": pd.to_numeric(
+                new_row["מחיר"],
+                errors="coerce"
+            ),
+
+            "Overall Avg FPT": pd.NA,
+            "Home Avg FPT": pd.NA,
+            "Away Avg FPT": pd.NA,
+            "FPT Std Dev": pd.NA,
+            "Floor Rate % (FPT<8)": pd.NA,
+            "Ceiling Rate % (FPT>=20)": pd.NA,
+            "Total Minutes": pd.NA,
+            "FPT per Minute": pd.NA,
+            "Games Played": pd.NA,
+
+            "Old Team": pd.NA,
+
+            "Team Changed": False,
+
+            "Is New Player": True
+        }
+
+    rows.append(row)
+
+
+df = pd.DataFrame(rows)
+
+
+# --------------------------------------------------
+# CONVERT STAT COLUMNS TO NUMBERS
+# --------------------------------------------------
+
+numeric_columns = [
+    "Price",
+    "Overall Avg FPT",
+    "Home Avg FPT",
+    "Away Avg FPT",
+    "FPT Std Dev",
+    "Floor Rate % (FPT<8)",
+    "Ceiling Rate % (FPT>=20)",
+    "Total Minutes",
+    "FPT per Minute",
+    "Games Played"
+]
+
+
+for column in numeric_columns:
+
+    df[column] = pd.to_numeric(
+        df[column],
+        errors="coerce"
     )
 
 
-# ---------------------------------------------------------
-# עמודות סטטיסטיקה
-# ---------------------------------------------------------
+# --------------------------------------------------
+# MINUTES PER GAME
+# --------------------------------------------------
 
-player_col = "Full Name"
-
-col_team = "Team"
-
-col_pos = "Position"
-
-col_overall = find_col(
-    df,
-    ["overall", "avg", "pts"]
-)
-
-col_mins = find_col(
-    df,
-    ["min"]
-)
-
-col_per_min = find_col(
-    df,
-    ["per minute"]
-)
-
-col_games = find_col(
-    df,
-    ["games", "played", "gp"]
+df["Minutes Per Game"] = (
+    df["Total Minutes"]
+    /
+    df["Games Played"]
 )
 
 
-# ---------------------------------------------------------
-# נתונים מספריים
-# ---------------------------------------------------------
+# --------------------------------------------------
+# SCORE CALCULATION
+# --------------------------------------------------
 
-val_overall = get_num_series(
-    df,
-    col_overall
-)
+def calculate_score(value, points):
 
-val_per_min = get_num_series(
-    df,
-    col_per_min
-)
+    if pd.isna(value):
+        return pd.NA
 
-val_games = get_num_series(
-    df,
-    col_games
-)
+    # Below minimum
+    if value <= points[0][0]:
+        return points[0][1]
 
-val_mins = get_num_series(
-    df,
-    col_mins
-)
+    # Above maximum
+    if value >= points[-1][0]:
+        return points[-1][1]
+
+    # Linear interpolation
+    for i in range(len(points) - 1):
+
+        x1 = points[i][0]
+        y1 = points[i][1]
+
+        x2 = points[i + 1][0]
+        y2 = points[i + 1][1]
+
+        if x1 <= value <= x2:
+
+            score = (
+                y1
+                +
+                (value - x1)
+                *
+                (y2 - y1)
+                /
+                (x2 - x1)
+            )
+
+            return score
+
+    return pd.NA
 
 
-# ---------------------------------------------------------
-# Yaya Rating
-#
-# כרגע נשארת הנוסחה המקורית.
-# שחקנים חדשים מקבלים N/A.
-# ---------------------------------------------------------
+# --------------------------------------------------
+# PRODUCTION SCORE
+# --------------------------------------------------
 
-df["Yaya Rating"] = pd.NA
+PRODUCTION_POINTS = [
+    (0, 0),
+    (5, 2.5),
+    (8, 4.5),
+    (11, 6.5),
+    (14, 8),
+    (17, 9),
+    (20, 10)
+]
 
 
-historical_players = (
-    df["Is_New_Player"] == False
-)
-
-
-if historical_players.any():
-
-    historical_overall = (
-        val_overall[
-            historical_players
-        ].fillna(0)
+df["Production Score"] = df[
+    "Overall Avg FPT"
+].apply(
+    lambda x: calculate_score(
+        x,
+        PRODUCTION_POINTS
     )
+)
 
-    historical_per_min = (
-        val_per_min[
-            historical_players
-        ].fillna(0)
+
+# --------------------------------------------------
+# VALUE FOR PRICE
+# --------------------------------------------------
+
+df["Value Ratio"] = (
+    df["Overall Avg FPT"]
+    /
+    df["Price"]
+)
+
+
+VALUE_POINTS = [
+    (0.50, 0),
+    (0.60, 1),
+    (0.70, 2),
+    (0.80, 3),
+    (0.90, 4),
+    (1.00, 5),
+    (1.10, 6.5),
+    (1.20, 8),
+    (1.30, 9),
+    (1.40, 10)
+]
+
+
+df["Value Score"] = df[
+    "Value Ratio"
+].apply(
+    lambda x: calculate_score(
+        x,
+        VALUE_POINTS
     )
+)
 
-    historical_price = (
-        df.loc[
-            historical_players,
-            "Price_Clean"
+
+# --------------------------------------------------
+# STABILITY SCORE
+# Lower standard deviation = better
+# --------------------------------------------------
+
+STABILITY_POINTS = [
+    (3, 10),
+    (4, 9),
+    (5, 8),
+    (6, 6.5),
+    (7, 5),
+    (8, 3.5),
+    (9, 2),
+    (10, 0)
+]
+
+
+df["Stability Score"] = df[
+    "FPT Std Dev"
+].apply(
+    lambda x: calculate_score(
+        x,
+        STABILITY_POINTS
+    )
+)
+
+
+# --------------------------------------------------
+# FLOOR SCORE
+# Lower Floor Rate = better
+# --------------------------------------------------
+
+FLOOR_POINTS = [
+    (0, 10),
+    (10, 10),
+    (20, 8.5),
+    (30, 7),
+    (40, 5.5),
+    (50, 4),
+    (60, 2.5),
+    (75, 0)
+]
+
+
+df["Floor Score"] = df[
+    "Floor Rate % (FPT<8)"
+].apply(
+    lambda x: calculate_score(
+        x,
+        FLOOR_POINTS
+    )
+)
+
+
+# --------------------------------------------------
+# PLAYING TIME SCORE
+# --------------------------------------------------
+
+MINUTES_POINTS = [
+    (8, 1),
+    (12, 3),
+    (16, 5),
+    (20, 7),
+    (24, 9),
+    (28, 10)
+]
+
+
+df["Minutes Score"] = df[
+    "Minutes Per Game"
+].apply(
+    lambda x: calculate_score(
+        x,
+        MINUTES_POINTS
+    )
+)
+
+
+# --------------------------------------------------
+# EFFICIENCY SCORE
+# --------------------------------------------------
+
+EFFICIENCY_POINTS = [
+    (0.20, 1),
+    (0.30, 3),
+    (0.40, 5),
+    (0.50, 7),
+    (0.65, 9),
+    (0.80, 10)
+]
+
+
+df["Efficiency Score"] = df[
+    "FPT per Minute"
+].apply(
+    lambda x: calculate_score(
+        x,
+        EFFICIENCY_POINTS
+    )
+)
+
+
+# --------------------------------------------------
+# TEAM ROLE SCORE
+# --------------------------------------------------
+
+df["Team Role Score"] = 0.0
+
+
+for team_code in df["Team Code"].dropna().unique():
+
+    team_players = df[
+        df["Team Code"] == team_code
+    ]
+
+    for position in team_players["Position"].dropna().unique():
+
+        group = team_players[
+            team_players["Position"] == position
+        ].copy()
+
+        group = group[
+            group["Price"].notna()
         ]
-        .fillna(10)
-    )
 
+        if len(group) == 0:
+            continue
 
-    safe_price = (
-        historical_price
-        .replace(0, 1.0)
-    )
-
-
-    efficiency = (
-        historical_overall
-        / safe_price
-    )
-
-
-    max_eff = efficiency.max()
-
-
-    if (
-        pd.isna(max_eff)
-        or max_eff <= 0
-    ):
-
-        max_eff = 1.0
-
-
-    raw_ratings = (
-        (historical_overall * 1.2)
-        +
-        (historical_per_min * 15)
-        +
-        (
-            (efficiency / max_eff)
-            * 25
+        # Sort highest price first
+        group = group.sort_values(
+            "Price",
+            ascending=False
         )
+
+        unique_prices = sorted(
+            group["Price"].unique(),
+            reverse=True
+        )
+
+        position_number = 1
+
+        for price in unique_prices:
+
+            same_price_players = group[
+                group["Price"] == price
+            ]
+
+            amount_same_price = len(
+                same_price_players
+            )
+
+            # Example:
+            #
+            # 14.0 -> position 1
+            # 12.0 -> positions 2 and 3
+            #
+            # Both 12.0 players receive the score
+            # of position 3.
+
+            last_position = (
+                position_number
+                +
+                amount_same_price
+                -
+                1
+            )
+
+            if last_position == 1:
+                role_score = 10
+
+            elif last_position == 2:
+                role_score = 7
+
+            elif last_position == 3:
+                role_score = 4
+
+            else:
+                role_score = 0
+
+            # Player must cost at least 8
+            # to receive Team Role points.
+
+            if price < 8:
+                role_score = 0
+
+            player_indexes = (
+                same_price_players.index
+            )
+
+            df.loc[
+                player_indexes,
+                "Team Role Score"
+            ] = role_score
+
+            position_number = (
+                last_position + 1
+            )
+
+
+# --------------------------------------------------
+# CAPTAIN OPTION
+# --------------------------------------------------
+
+df["Captain Option"] = (
+    (
+        df["Floor Rate % (FPT<8)"] <= 10
+    )
+    &
+    (
+        df["Ceiling Rate % (FPT>=20)"] > 40
+    )
+)
+
+
+# --------------------------------------------------
+# FINAL YAYA RATING
+# --------------------------------------------------
+
+def calculate_yaya_rating(row):
+
+    needed_values = [
+        row["Production Score"],
+        row["Value Score"],
+        row["Stability Score"],
+        row["Floor Score"],
+        row["Minutes Score"],
+        row["Efficiency Score"]
+    ]
+
+    for value in needed_values:
+
+        if pd.isna(value):
+            return pd.NA
+
+    rating = (
+        row["Production Score"] * 0.30
+        +
+        row["Value Score"] * 0.25
+        +
+        row["Stability Score"] * 0.09
+        +
+        row["Floor Score"] * 0.06
+        +
+        row["Minutes Score"] * 0.10
+        +
+        row["Efficiency Score"] * 0.10
+        +
+        row["Team Role Score"] * 0.10
     )
 
-
-    max_raw = raw_ratings.max()
-
-
-    if (
-        pd.notna(max_raw)
-        and max_raw > 0
-    ):
-
-        df.loc[
-            historical_players,
-            "Yaya Rating"
-        ] = (
-            raw_ratings
-            / max_raw
-        ) * 9.8
+    return round(rating, 2)
 
 
-# ---------------------------------------------------------
-# מיון לפי שם
-# ---------------------------------------------------------
-
-df = df.sort_values(
-    "Full Name"
-).reset_index(
-    drop=True
+df["Yaya Rating"] = df.apply(
+    calculate_yaya_rating,
+    axis=1
 )
 
 
-# ---------------------------------------------------------
-# כותרת
-# ---------------------------------------------------------
+# --------------------------------------------------
+# PLAYER DISPLAY NAME
+# --------------------------------------------------
 
-st.markdown(
-    "<h1 class='main-title'>"
-    "🏀 EuroLeague Fantasy Analytics"
-    "</h1>",
-    unsafe_allow_html=True
+def player_display_name(row):
+
+    name = row["Full Name"]
+
+    if row["Captain Option"]:
+        name = name + "  C"
+
+    return name
+
+
+df["Player Display"] = df.apply(
+    player_display_name,
+    axis=1
 )
 
 
-# ---------------------------------------------------------
-# טאבים
-# ---------------------------------------------------------
+# --------------------------------------------------
+# FORMAT FUNCTION
+# --------------------------------------------------
 
-tab_h2h, tab_db = st.tabs(
+def format_value(value, decimals=2):
+
+    if pd.isna(value):
+        return "N/A"
+
+    number = pd.to_numeric(
+        value,
+        errors="coerce"
+    )
+
+    if pd.isna(number):
+        return str(value)
+
+    return f"{number:.{decimals}f}"
+
+
+# --------------------------------------------------
+# TITLE
+# --------------------------------------------------
+
+st.title("🏀 EuroLeague Fantasy Player Analytics")
+
+st.caption(
+    "Player comparison, fantasy value and Yaya Rating"
+)
+
+
+# --------------------------------------------------
+# TABS
+# --------------------------------------------------
+
+tab1, tab2 = st.tabs(
     [
-        "⚔️ Head-to-Head Comparison",
-        "📋 Player Database"
+        "⚔️ Head-to-Head",
+        "📊 Player Database"
     ]
 )
 
 
-# =========================================================
+# ==================================================
 # HEAD TO HEAD
-# =========================================================
+# ==================================================
 
-with tab_h2h:
+with tab1:
 
-    st.subheader(
-        "Head-to-Head Player Comparison"
+    st.header("Player Head-to-Head")
+
+    player_names = sorted(
+        df["Full Name"].dropna().unique()
     )
 
+    col1, col2 = st.columns(2)
 
-    players = sorted(
-        df[player_col]
-        .dropna()
-        .unique()
-        .tolist()
-    )
+    with col1:
 
-
-    if len(players) == 0:
-
-        st.error(
-            "לא נמצאו שחקנים."
+        player1_name = st.selectbox(
+            "Player 1",
+            player_names,
+            index=0
         )
 
-    else:
+    with col2:
 
-        col_select_a, col_select_b = (
-            st.columns(2)
-        )
+        default_index = 1
 
+        if len(player_names) < 2:
+            default_index = 0
 
-        with col_select_a:
-
-            player_a_name = st.selectbox(
-                "Player A",
-                players,
-                index=0,
-                key="player_a_select"
-            )
-
-
-        with col_select_b:
-
-            if len(players) > 1:
-
-                default_b_index = 1
-
-            else:
-
-                default_b_index = 0
-
-
-            player_b_name = st.selectbox(
-                "Player B",
-                players,
-                index=default_b_index,
-                key="player_b_select"
-            )
-
-
-        player_a = df[
-            df[player_col]
-            == player_a_name
-        ].iloc[0]
-
-
-        player_b = df[
-            df[player_col]
-            == player_b_name
-        ].iloc[0]
-
-
-        st.markdown("---")
-
-
-        # -------------------------------------------------
-        # אזהרת שינוי קבוצה
-        # -------------------------------------------------
-
-        if player_a["Team_Changed"]:
-
-            st.markdown(
-                f"""
-                <div class='warning-badge'>
-                ⚠️ Warning: {player_a_name} changed
-                teams compared to last year!
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-
-        if player_b["Team_Changed"]:
-
-            st.markdown(
-                f"""
-                <div class='warning-badge'>
-                ⚠️ Warning: {player_b_name} changed
-                teams compared to last year!
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-
-        # -------------------------------------------------
-        # סימון שחקן חדש
-        # -------------------------------------------------
-
-        if player_a["Is_New_Player"]:
-
-            st.markdown(
-                f"""
-                <div class='new-player-badge'>
-                ℹ️ {player_a_name} is a new player
-                with no historical data yet.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-
-        if player_b["Is_New_Player"]:
-
-            st.markdown(
-                f"""
-                <div class='new-player-badge'>
-                ℹ️ {player_b_name} is a new player
-                with no historical data yet.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-
-        # -------------------------------------------------
-        # מדדים
-        # -------------------------------------------------
-
-        METRICS = [
-
-            ("Team", col_team),
-
-            ("Position", col_pos),
-
-            ("Price", "Price_Clean"),
-
-            ("Total Avg Points", col_overall),
-
-            ("Minutes", col_mins),
-
-            ("Points per Minute", col_per_min),
-
-            ("Total Games", col_games),
-
-            ("Yaya Rating", "Yaya Rating")
-
-        ]
-
-
-        rating_a = player_a[
-            "Yaya Rating"
-        ]
-
-        rating_b = player_b[
-            "Yaya Rating"
-        ]
-
-
-        # -------------------------------------------------
-        # Rating cards
-        # -------------------------------------------------
-
-        col_m1, col_m2 = (
-            st.columns(2)
+        player2_name = st.selectbox(
+            "Player 2",
+            player_names,
+            index=default_index
         )
 
 
-        with col_m1:
+    player1 = df[
+        df["Full Name"] == player1_name
+    ].iloc[0]
 
-            if pd.isna(rating_a):
-
-                st.metric(
-                    f"Yaya Rating - {player_a_name}",
-                    "N/A"
-                )
-
-            else:
-
-                st.metric(
-                    f"Yaya Rating - {player_a_name}",
-                    f"{float(rating_a):.2f} / 9.8"
-                )
+    player2 = df[
+        df["Full Name"] == player2_name
+    ].iloc[0]
 
 
-        with col_m2:
-
-            if pd.isna(rating_b):
-
-                st.metric(
-                    f"Yaya Rating - {player_b_name}",
-                    "N/A"
-                )
-
-            else:
-
-                st.metric(
-                    f"Yaya Rating - {player_b_name}",
-                    f"{float(rating_b):.2f} / 9.8"
-                )
+    left, right = st.columns(2)
 
 
-        st.markdown("---")
+    # ----------------------------------------------
+    # PLAYER 1
+    # ----------------------------------------------
+
+    with left:
+
+        title1 = player1["Full Name"]
+
+        if player1["Captain Option"]:
+            title1 = title1 + "  🅲"
+
+        st.subheader(title1)
+
+        st.write(
+            f"**Team:** {player1['Team']}"
+        )
+
+        st.write(
+            f"**Position:** {player1['Position']}"
+        )
+
+        st.write(
+            f"**Price:** {format_value(player1['Price'], 1)}"
+        )
 
 
-        # -------------------------------------------------
-        # פורמט ערכים
-        # -------------------------------------------------
+        if player1["Is New Player"]:
 
-        def fmt(value, is_price=False):
-
-            if pd.isna(value):
-
-                return "N/A"
-
-
-            numeric_value = pd.to_numeric(
-                value,
-                errors="coerce"
+            st.info(
+                "New player – no historical EuroLeague data available."
             )
 
 
-            if pd.notna(numeric_value):
+        elif player1["Team Changed"]:
 
-                if is_price:
-
-                    return (
-                        f"{numeric_value:.1f} ₳"
-                    )
-
-                return (
-                    f"{numeric_value:.2f}"
-                )
-
-
-            return str(value)
+            st.warning(
+                "⚠️ Team changed: "
+                +
+                str(player1["Old Team"])
+                +
+                " → "
+                +
+                str(player1["Team"])
+            )
 
 
-        comparison_data = []
+        st.metric(
+            "Yaya Rating",
+            format_value(
+                player1["Yaya Rating"],
+                2
+            )
+        )
 
+        st.metric(
+            "Overall Avg FPT",
+            format_value(
+                player1["Overall Avg FPT"],
+                2
+            )
+        )
 
-        for label, col in METRICS:
+        st.metric(
+            "Games Played",
+            format_value(
+                player1["Games Played"],
+                0
+            )
+        )
 
-            if (
-                col
-                and col in df.columns
-            ):
+        st.metric(
+            "Home Avg FPT",
+            format_value(
+                player1["Home Avg FPT"],
+                2
+            )
+        )
 
-                is_price = (
-                    label == "Price"
-                )
+        st.metric(
+            "Away Avg FPT",
+            format_value(
+                player1["Away Avg FPT"],
+                2
+            )
+        )
 
+        st.metric(
+            "FPT per Minute",
+            format_value(
+                player1["FPT per Minute"],
+                2
+            )
+        )
 
-                comparison_data.append(
-                    {
-                        player_a_name:
-                            fmt(
-                                player_a[col],
-                                is_price
-                            ),
+        st.metric(
+            "Minutes per Game",
+            format_value(
+                player1["Minutes Per Game"],
+                1
+            )
+        )
 
-                        "Metric":
-                            label,
+        st.metric(
+            "Floor Rate",
+            format_value(
+                player1[
+                    "Floor Rate % (FPT<8)"
+                ],
+                1
+            )
+            + "%"
+            if not pd.isna(
+                player1[
+                    "Floor Rate % (FPT<8)"
+                ]
+            )
+            else "N/A"
+        )
 
-                        player_b_name:
-                            fmt(
-                                player_b[col],
-                                is_price
-                            )
-                    }
-                )
-
-
-        comp_df = pd.DataFrame(
-            comparison_data
+        st.metric(
+            "Ceiling Rate",
+            format_value(
+                player1[
+                    "Ceiling Rate % (FPT>=20)"
+                ],
+                1
+            )
+            + "%"
+            if not pd.isna(
+                player1[
+                    "Ceiling Rate % (FPT>=20)"
+                ]
+            )
+            else "N/A"
         )
 
 
-        st.dataframe(
-            comp_df,
-            use_container_width=True,
-            hide_index=True
+    # ----------------------------------------------
+    # PLAYER 2
+    # ----------------------------------------------
+
+    with right:
+
+        title2 = player2["Full Name"]
+
+        if player2["Captain Option"]:
+            title2 = title2 + "  🅲"
+
+        st.subheader(title2)
+
+        st.write(
+            f"**Team:** {player2['Team']}"
+        )
+
+        st.write(
+            f"**Position:** {player2['Position']}"
+        )
+
+        st.write(
+            f"**Price:** {format_value(player2['Price'], 1)}"
         )
 
 
-# =========================================================
+        if player2["Is New Player"]:
+
+            st.info(
+                "New player – no historical EuroLeague data available."
+            )
+
+
+        elif player2["Team Changed"]:
+
+            st.warning(
+                "⚠️ Team changed: "
+                +
+                str(player2["Old Team"])
+                +
+                " → "
+                +
+                str(player2["Team"])
+            )
+
+
+        st.metric(
+            "Yaya Rating",
+            format_value(
+                player2["Yaya Rating"],
+                2
+            )
+        )
+
+        st.metric(
+            "Overall Avg FPT",
+            format_value(
+                player2["Overall Avg FPT"],
+                2
+            )
+        )
+
+        st.metric(
+            "Games Played",
+            format_value(
+                player2["Games Played"],
+                0
+            )
+        )
+
+        st.metric(
+            "Home Avg FPT",
+            format_value(
+                player2["Home Avg FPT"],
+                2
+            )
+        )
+
+        st.metric(
+            "Away Avg FPT",
+            format_value(
+                player2["Away Avg FPT"],
+                2
+            )
+        )
+
+        st.metric(
+            "FPT per Minute",
+            format_value(
+                player2["FPT per Minute"],
+                2
+            )
+        )
+
+        st.metric(
+            "Minutes per Game",
+            format_value(
+                player2["Minutes Per Game"],
+                1
+            )
+        )
+
+        st.metric(
+            "Floor Rate",
+            format_value(
+                player2[
+                    "Floor Rate % (FPT<8)"
+                ],
+                1
+            )
+            + "%"
+            if not pd.isna(
+                player2[
+                    "Floor Rate % (FPT<8)"
+                ]
+            )
+            else "N/A"
+        )
+
+        st.metric(
+            "Ceiling Rate",
+            format_value(
+                player2[
+                    "Ceiling Rate % (FPT>=20)"
+                ],
+                1
+            )
+            + "%"
+            if not pd.isna(
+                player2[
+                    "Ceiling Rate % (FPT>=20)"
+                ]
+            )
+            else "N/A"
+        )
+
+
+# ==================================================
 # PLAYER DATABASE
-# =========================================================
+# ==================================================
 
-with tab_db:
+with tab2:
 
-    st.subheader(
-        "Player Database Overview (Prices & Value)"
+    st.header("Player Database")
+
+
+    search = st.text_input(
+        "Search player"
     )
 
 
-    db_cols_mapping = {
-
-        player_col:
-            "Player",
-
-        col_team:
-            "Team",
-
-        col_pos:
-            "Position",
-
-        "Price_Clean":
-            "Price",
-
-        col_overall:
-            "Total Avg Points",
-
-        col_mins:
-            "Minutes",
-
-        col_per_min:
-            "Points per Minute",
-
-        col_games:
-            "Total Games",
-
-        "Yaya Rating":
-            "Yaya Rating"
-
-    }
+    filtered_df = df.copy()
 
 
-    valid_db_cols = {}
+    if search != "":
+
+        filtered_df = filtered_df[
+            filtered_df["Full Name"]
+            .str.contains(
+                search,
+                case=False,
+                na=False
+            )
+        ]
 
 
-    for original_col, display_name in (
-        db_cols_mapping.items()
-    ):
-
-        if (
-            original_col
-            and original_col in df.columns
-        ):
-
-            valid_db_cols[
-                original_col
-            ] = display_name
+    team_options = sorted(
+        df["Team"].dropna().unique()
+    )
 
 
-    display_db = df[
-        list(
-            valid_db_cols.keys()
-        )
-    ].rename(
-        columns=valid_db_cols
+    selected_team = st.selectbox(
+        "Team",
+        ["All"] + team_options
+    )
+
+
+    if selected_team != "All":
+
+        filtered_df = filtered_df[
+            filtered_df["Team"]
+            ==
+            selected_team
+        ]
+
+
+    position_options = sorted(
+        df["Position"].dropna().unique()
+    )
+
+
+    selected_position = st.selectbox(
+        "Position",
+        ["All"] + position_options
+    )
+
+
+    if selected_position != "All":
+
+        filtered_df = filtered_df[
+            filtered_df["Position"]
+            ==
+            selected_position
+        ]
+
+
+    database_columns = [
+        "Player Display",
+        "Team",
+        "Position",
+        "Price",
+        "Yaya Rating",
+        "Overall Avg FPT",
+        "Games Played",
+        "Minutes Per Game",
+        "FPT per Minute",
+        "FPT Std Dev",
+        "Floor Rate % (FPT<8)",
+        "Ceiling Rate % (FPT>=20)"
+    ]
+
+
+    database = filtered_df[
+        database_columns
+    ].copy()
+
+
+    database = database.rename(
+        columns={
+            "Player Display": "Player",
+            "Floor Rate % (FPT<8)": "Floor %",
+            "Ceiling Rate % (FPT>=20)": "Ceiling %"
+        }
+    )
+
+
+    database = database.sort_values(
+        "Yaya Rating",
+        ascending=False,
+        na_position="last"
     )
 
 
     st.dataframe(
-        display_db,
+        database,
         use_container_width=True,
         hide_index=True
     )
 
+
+# --------------------------------------------------
+# FOOTER
+# --------------------------------------------------
+
+st.divider()
+
+st.caption(
+    "Yaya Rating – EuroLeague Fantasy Analysis"
+)
