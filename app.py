@@ -270,14 +270,17 @@ button[data-baseweb="tab"] {
 }
 
 
-/* force ALL text inside tabs to be visible */
+/* FORCE TAB FONT TO WHITE */
 
+button[data-baseweb="tab"],
 button[data-baseweb="tab"] *,
 button[data-baseweb="tab"] p,
 button[data-baseweb="tab"] span,
 button[data-baseweb="tab"] div {
 
     color: #ffffff !important;
+
+    fill: #ffffff !important;
 
     font-size: 25px !important;
 
@@ -319,6 +322,8 @@ button[data-baseweb="tab"][aria-selected="true"] {
     box-shadow:
         0 17px 45px rgba(0,255,125,.22),
         inset 0 0 35px rgba(255,255,255,.06) !important;
+
+    color: #ffffff !important;
 }
 
 
@@ -647,7 +652,7 @@ div[data-testid="stSlider"] label p {
 
 
 /* ======================================================
-   LABEL BADGES
+   EXPERIENCE BADGES
 ====================================================== */
 
 .badges-area {
@@ -748,34 +753,12 @@ div[data-testid="stSlider"] label p {
 }
 
 
-.h2h-table th {
-
-    background: #10251a;
-
-    color: #59f69c;
-
-    padding: 20px 12px;
-
-    text-align: center !important;
-
-    vertical-align: middle !important;
-
-    font-size: 17px;
-
-    font-weight: 950;
-
-    letter-spacing: .5px;
-
-    text-transform: uppercase;
-
-    border-bottom:
-        1px solid rgba(75,255,155,.22);
-}
+/* no header row anymore */
 
 
 .h2h-table td {
 
-    padding: 18px 12px;
+    padding: 19px 14px;
 
     text-align: center !important;
 
@@ -794,35 +777,50 @@ div[data-testid="stSlider"] label p {
 }
 
 
-/* Category column */
+/* LEFT PLAYER */
 
-.h2h-table th:first-child,
-.h2h-table td:first-child {
+.h2h-table td:nth-child(1) {
+
+    width: 37.5% !important;
+
+    text-align: right !important;
+
+    padding-right: 32px;
+
+    color: #edf5f0;
+}
+
+
+/* CATEGORY IN THE MIDDLE */
+
+.h2h-table td:nth-child(2) {
 
     width: 25% !important;
 
     text-align: center !important;
-}
-
-
-.h2h-table td:first-child {
 
     color: #6bf6a6;
 
     font-size: 17px;
 
     font-weight: 950;
+
+    background:
+        rgba(36,150,86,.055);
 }
 
 
-.h2h-table th:nth-child(2),
-.h2h-table th:nth-child(3),
-.h2h-table td:nth-child(2),
+/* RIGHT PLAYER */
+
 .h2h-table td:nth-child(3) {
 
     width: 37.5% !important;
 
-    text-align: center !important;
+    text-align: left !important;
+
+    padding-left: 32px;
+
+    color: #edf5f0;
 }
 
 
@@ -830,6 +828,13 @@ div[data-testid="stSlider"] label p {
 
     background:
         rgba(45,245,130,.05);
+}
+
+
+.h2h-table tr:hover td:nth-child(2) {
+
+    background:
+        rgba(45,245,130,.10);
 }
 
 
@@ -855,14 +860,13 @@ div[data-testid="stSlider"] label p {
     }
 
 
-    /* HERO */
-
     .hero {
 
         padding: 28px 22px;
 
         min-height: 250px;
     }
+
 
     .hero-title {
 
@@ -871,19 +875,18 @@ div[data-testid="stSlider"] label p {
         letter-spacing: -2px;
     }
 
+
     .hero-subtitle {
 
         font-size: 16px;
-
-        max-width: 100%;
     }
+
 
     .hero-explanation {
 
         font-size: 12px;
-
-        max-width: 100%;
     }
+
 
     .hero-words,
     .hero-circle,
@@ -893,8 +896,6 @@ div[data-testid="stSlider"] label p {
     }
 
 
-    /* TABS */
-
     div[data-baseweb="tab-list"] {
 
         gap: 8px !important;
@@ -902,6 +903,7 @@ div[data-testid="stSlider"] label p {
         padding-left: 0 !important;
         padding-right: 0 !important;
     }
+
 
     button[data-baseweb="tab"] {
 
@@ -916,6 +918,7 @@ div[data-testid="stSlider"] label p {
         border-radius: 15px !important;
     }
 
+
     button[data-baseweb="tab"] *,
     button[data-baseweb="tab"] p,
     button[data-baseweb="tab"] span {
@@ -928,8 +931,6 @@ div[data-testid="stSlider"] label p {
     }
 
 
-    /* H2H CARDS */
-
     .compare-card {
 
         padding: 15px;
@@ -937,15 +938,18 @@ div[data-testid="stSlider"] label p {
         min-height: 145px;
     }
 
+
     .compare-name {
 
         font-size: 20px;
     }
 
+
     .compare-meta {
 
         font-size: 12px;
     }
+
 
     .compare-rating {
 
@@ -955,12 +959,11 @@ div[data-testid="stSlider"] label p {
     }
 
 
-    /* H2H TABLE */
-
     .h2h-wrap {
 
         overflow-x: hidden;
     }
+
 
     .h2h-table {
 
@@ -971,16 +974,6 @@ div[data-testid="stSlider"] label p {
         table-layout: fixed;
     }
 
-    .h2h-table th {
-
-        padding: 10px 4px;
-
-        font-size: 10px;
-
-        letter-spacing: 0;
-
-        white-space: normal;
-    }
 
     .h2h-table td {
 
@@ -990,30 +983,42 @@ div[data-testid="stSlider"] label p {
 
         line-height: 1.25;
 
-        word-break: normal;
-
         overflow-wrap: anywhere;
     }
 
-    .h2h-table td:first-child {
+
+    .h2h-table td:nth-child(1) {
+
+        width: 35% !important;
+
+        text-align: right !important;
+
+        padding-right: 7px;
+    }
+
+
+    .h2h-table td:nth-child(2) {
+
+        width: 30% !important;
+
+        text-align: center !important;
 
         font-size: 10px;
 
-        width: 28% !important;
+        padding-left: 3px;
+        padding-right: 3px;
     }
 
-    .h2h-table th:first-child {
 
-        width: 28% !important;
-    }
-
-    .h2h-table th:nth-child(2),
-    .h2h-table th:nth-child(3),
-    .h2h-table td:nth-child(2),
     .h2h-table td:nth-child(3) {
 
-        width: 36% !important;
+        width: 35% !important;
+
+        text-align: left !important;
+
+        padding-left: 7px;
     }
+
 
     .h2h-rating {
 
@@ -1021,12 +1026,11 @@ div[data-testid="stSlider"] label p {
     }
 
 
-    /* PLAYER DATABASE */
-
     .yaya-table {
 
         font-size: 12px;
     }
+
 
     .yaya-table th {
 
@@ -1035,10 +1039,12 @@ div[data-testid="stSlider"] label p {
         font-size: 10px;
     }
 
+
     .yaya-table td {
 
         padding: 11px 8px;
     }
+
 
     .yaya-table th:first-child,
     .yaya-table td:first-child {
@@ -1212,7 +1218,6 @@ NBA_EXPERIENCE = {
 
     "MarJon Beauchamp": 3,
 
-    # corrected / added
     "Tyson Etienne": 2,
 
     "Keaton Wallace": 3,
@@ -1234,7 +1239,6 @@ NBA_EXPERIENCE = {
     "Jae Crowder": 5,
 
     "Tosan Evbuomwan": 3,
-
     "TyTy Washington Jr.": 3,
 
     "Mãozinha Pereira": 2,
@@ -1261,17 +1265,13 @@ NBA_EXPERIENCE = {
 
     "Patrick Baldwin Jr.": 3,
 
-    # manual decision
     "Max Shulga": 5,
 
     "Yvon Pons": 2,
-
     "Justin Minaya": 3,
 
     "Davion Mintz": 1,
-
     "Tyler Ennis": 3,
-
     "Nikola Djurisic": 1
 }
 
@@ -1281,10 +1281,6 @@ NBA_EXPERIENCE = {
 # =========================================================
 
 EUROPE_EXPERIENCE = {
-
-    # =============================
-    # HIGH EUROPEAN EXPERIENCE
-    # =============================
 
     "Guerschon Yabusele": 5,
     "Ante Zizic": 5,
@@ -1296,10 +1292,6 @@ EUROPE_EXPERIENCE = {
     "Mam Jaiteh": 5,
     "Sertaç Şanlı": 5,
 
-
-    # =============================
-    # EUROLEAGUE EXPERIENCE
-    # =============================
 
     "Jonas Valanciunas": 4,
     "Dario Saric": 4,
@@ -1313,8 +1305,10 @@ EUROPE_EXPERIENCE = {
     "Olek Balcerowski": 4,
 
     "Vitto Brown": 4,
-
     "Santi Yusta": 4,
+
+    # USER CORRECTION
+    "Yoan Makoundou": 4,
 
     "Agustin Ubal": 4,
     "Nobel Boungou-Colo": 4,
@@ -1326,10 +1320,6 @@ EUROPE_EXPERIENCE = {
     "Dimitris Moraitis": 4,
     "Oz Blayzer": 4,
 
-
-    # =============================
-    # LOW EUROPEAN EXPERIENCE
-    # =============================
 
     "Patty Mills": 3,
 
@@ -1373,16 +1363,13 @@ EUROPE_EXPERIENCE = {
     "Álvaro Cárdenas": 3,
     "Vojin Medarevic": 3,
 
-
-    # NEW USER CORRECTIONS
-
     "Marcus Carr": 1,
     "Eugene German": 1
 }
 
 
 # =========================================================
-# MANUAL TOTAL EXPERIENCE ADJUSTMENTS
+# MANUAL EXPERIENCE ADJUSTMENT
 # =========================================================
 
 EXPERIENCE_ADJUSTMENT = {
@@ -1392,14 +1379,6 @@ EXPERIENCE_ADJUSTMENT = {
 
     "Rokas Jokubaitis": 2,
     "Johannes Thiemann": 2
-}
-
-
-# These two should NOT receive the new-player system
-
-EXCLUDED_FROM_EXPERIENCE = {
-    "Yoan Makoundou",
-    "Jaron Blossomgame"
 }
 
 
@@ -1526,7 +1505,7 @@ merged["Team Changed"] = (
 
 
 # =========================================================
-# NUMERIC COLUMNS
+# NUMERIC
 # =========================================================
 
 numeric_columns = [
@@ -1581,7 +1560,7 @@ merged["Captain"] = (
 
 
 # =========================================================
-# INTERPOLATION
+# SCORE INTERPOLATION
 # =========================================================
 
 def linear_score(value, points):
@@ -1622,7 +1601,7 @@ def linear_score(value, points):
 
 
 # =========================================================
-# RATING SCALES
+# HISTORICAL RATING SCALES
 # =========================================================
 
 PRODUCTION_POINTS = [
@@ -1919,7 +1898,7 @@ merged["Experience Name"] = (
 
 
 # =========================================================
-# EXPERIENCE
+# EXPERIENCE SCORES
 # =========================================================
 
 merged["NBA Experience"] = (
@@ -1966,25 +1945,11 @@ merged["Experience Score"] = (
 
 
 # =========================================================
-# WHICH PLAYERS USE EXPERIENCE RATING?
-# =========================================================
-#
-# All players without historical Fantasy data automatically
-# enter this system, except the manual exclusions.
-#
+# ALL PLAYERS WITHOUT HISTORY USE EXPERIENCE SYSTEM
 # =========================================================
 
 merged["Use Experience Rating"] = (
-    (
-        ~merged["Has Historical Data"]
-    )
-    &
-    (
-        ~merged["Experience Name"]
-        .isin(
-            EXCLUDED_FROM_EXPERIENCE
-        )
-    )
+    ~merged["Has Historical Data"]
 )
 
 
@@ -2055,7 +2020,7 @@ merged["Experience Labels"] = (
 
 
 # =========================================================
-# PRICE / BUDGET SCORE
+# BUDGET SCORE
 # =========================================================
 
 def budget_score(price):
@@ -2100,12 +2065,12 @@ def experience_rating(row):
         return pd.NA
 
 
-    experience = row[
-        "Experience Score"
-    ]
+    experience = (
+        row[
+            "Experience Score"
+        ]
+    )
 
-
-    # Not expected to play
 
     if experience <= 0:
 
@@ -2202,7 +2167,7 @@ def rating_display(value):
 
 
 # =========================================================
-# NAME + CAPTAIN
+# PLAYER NAME HTML
 # =========================================================
 
 def player_name_html(row):
@@ -2314,15 +2279,29 @@ with tab_database:
     )
 
 
+    all_player_names = sorted(
+        merged[
+            "Display Name"
+        ]
+        .dropna()
+        .unique()
+        .tolist()
+    )
+
+
+    # =====================================================
+    # AUTOCOMPLETE PLAYER SEARCH
+    # =====================================================
+
     with filter1:
 
-        search = (
-            st.text_input(
-                "Search Player",
-                placeholder=(
-                    "Type a player name..."
-                )
-            )
+        selected_player = st.selectbox(
+            "Search Player",
+            options=[
+                ""
+            ] + all_player_names,
+            index=0,
+            placeholder="Start typing a player name..."
         )
 
 
@@ -2396,17 +2375,13 @@ with tab_database:
     )
 
 
-    if search:
+    if selected_player != "":
 
         filtered = filtered[
             filtered[
                 "Display Name"
             ]
-            .str.contains(
-                search,
-                case=False,
-                na=False
-            )
+            == selected_player
         ]
 
 
@@ -2917,49 +2892,54 @@ with tab_compare:
 
     # =====================================================
     # H2H TABLE
+    #
+    # NEW ORDER:
+    # PLAYER 1 | CATEGORY | PLAYER 2
+    #
+    # NO HEADER ROW
     # =====================================================
 
     comparison_rows = [
 
         (
+            p1[
+                "Display Name"
+            ],
             "Name",
-            p1[
-                "Display Name"
-            ],
             p2[
                 "Display Name"
             ]
         ),
 
         (
+            p1[
+                "Current Team"
+            ],
             "Team",
-            p1[
-                "Current Team"
-            ],
             p2[
                 "Current Team"
             ]
         ),
 
         (
+            p1[
+                "Position"
+            ],
             "Position",
-            p1[
-                "Position"
-            ],
             p2[
                 "Position"
             ]
         ),
 
         (
+            display_number(
+                p1[
+                    "Price"
+                ],
+                1
+            ),
             "Price",
             display_number(
-                p1[
-                    "Price"
-                ],
-                1
-            ),
-            display_number(
                 p2[
                     "Price"
                 ],
@@ -2968,14 +2948,14 @@ with tab_compare:
         ),
 
         (
+            display_number(
+                p1[
+                    "Overall Avg FPT"
+                ],
+                2
+            ),
             "Overall Avg FPT",
             display_number(
-                p1[
-                    "Overall Avg FPT"
-                ],
-                2
-            ),
-            display_number(
                 p2[
                     "Overall Avg FPT"
                 ],
@@ -2984,14 +2964,14 @@ with tab_compare:
         ),
 
         (
+            display_number(
+                p1[
+                    "Minutes"
+                ],
+                1
+            ),
             "Minutes",
             display_number(
-                p1[
-                    "Minutes"
-                ],
-                1
-            ),
-            display_number(
                 p2[
                     "Minutes"
                 ],
@@ -3000,14 +2980,14 @@ with tab_compare:
         ),
 
         (
+            display_number(
+                p1[
+                    "FPT per Minute"
+                ],
+                2
+            ),
             "FPT/Min",
             display_number(
-                p1[
-                    "FPT per Minute"
-                ],
-                2
-            ),
-            display_number(
                 p2[
                     "FPT per Minute"
                 ],
@@ -3016,13 +2996,13 @@ with tab_compare:
         ),
 
         (
+            display_integer(
+                p1[
+                    "Games Played"
+                ]
+            ),
             "Games",
             display_integer(
-                p1[
-                    "Games Played"
-                ]
-            ),
-            display_integer(
                 p2[
                     "Games Played"
                 ]
@@ -3030,12 +3010,12 @@ with tab_compare:
         ),
 
         (
-            "Yaya Rating",
             rating_display(
                 p1[
                     "Yaya Rating"
                 ]
             ),
+            "Yaya Rating",
             rating_display(
                 p2[
                     "Yaya Rating"
@@ -3048,42 +3028,13 @@ with tab_compare:
     comparison_html = (
         '<div class="h2h-wrap">'
         '<table class="h2h-table">'
-
-        '<thead>'
-        '<tr>'
-
-        '<th>Category</th>'
-
-        '<th>'
-        + html.escape(
-            str(
-                p1[
-                    "Display Name"
-                ]
-            )
-        )
-        + '</th>'
-
-        '<th>'
-        + html.escape(
-            str(
-                p2[
-                    "Display Name"
-                ]
-            )
-        )
-        + '</th>'
-
-        '</tr>'
-        '</thead>'
-
         '<tbody>'
     )
 
 
     for (
-        category,
         value1,
+        category,
         value2
     ) in comparison_rows:
 
@@ -3109,20 +3060,20 @@ with tab_compare:
         comparison_html += (
             '<tr>'
 
-            '<td>'
-            + html.escape(
-                str(
-                    category
-                )
-            )
-            + '</td>'
-
             '<td class="'
             + class1
             + '">'
             + html.escape(
                 str(
                     value1
+                )
+            )
+            + '</td>'
+
+            '<td>'
+            + html.escape(
+                str(
+                    category
                 )
             )
             + '</td>'
