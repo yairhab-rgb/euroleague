@@ -171,6 +171,21 @@ hr {
 }
 
 
+/* NEW: yellow warning shown directly below a rookie player card */
+.rookie-warning {
+    background: linear-gradient(90deg, rgba(255,196,0,0.11), rgba(255,196,0,0.035));
+    border: 1px solid rgba(255,204,0,0.30);
+    border-left: 4px solid #ffc928;
+    border-radius: 12px;
+    padding: 11px 14px;
+    color: #ffe48a;
+    margin-top: -10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+
 /* ==============================
    TABS - BIG + CENTERED
 ============================== */
@@ -957,7 +972,6 @@ merged = new_df.merge(
     suffixes=("", "_old")
 )
 
-
 merged["Name"] = merged["Current Name"]
 
 merged["Team"] = merged["Team Code"].map(
@@ -996,7 +1010,6 @@ for column in numeric_columns:
 merged["Has Historical Data"] = (
     merged["Overall Avg FPT"].notna()
 )
-
 
 merged["Team Changed"] = (
     merged["Has Historical Data"]
@@ -1162,7 +1175,6 @@ EFFICIENCY_POINTS = [
 ]
 
 
-# 50% Ceiling is already almost maximum
 CEILING_POINTS = [
     (0, 0),
     (10, 2),
@@ -1174,7 +1186,6 @@ CEILING_POINTS = [
 ]
 
 
-# Games volume / sample reliability
 GAMES_POINTS = [
     (5, 2),
     (10, 4),
@@ -1376,7 +1387,6 @@ experience_names = set(
     list(EXPERIENCE_ADJUSTMENT.keys())
 )
 
-
 experience_lookup = {}
 
 for experience_name in experience_names:
@@ -1450,10 +1460,17 @@ merged["Experience Adjustment"] = merged[
 )
 
 
+# =========================================================
+# NEW EXPERIENCE WEIGHTING
+# EuroLeague experience x1.40
+# NBA experience x0.75
+# Manual adjustment stays exactly as before
+# =========================================================
+
 merged["Experience Score"] = (
-    merged["NBA Experience"]
+    merged["NBA Experience"] * 0.75
     +
-    merged["European Experience"]
+    merged["European Experience"] * 1.40
     +
     merged["Experience Adjustment"]
 )
@@ -1592,8 +1609,6 @@ def experience_yaya_rating(row):
 
     experience = row["Experience Score"]
 
-    # User rule:
-    # no experience = rating 0
     if experience <= 0:
         return 0.0
 
@@ -1605,7 +1620,6 @@ def experience_yaya_rating(row):
         row["Budget Score"] * 0.15
     )
 
-    # 25% reduction for all manually / experience-rated players
     rating = rating * 0.75
 
     return round(
@@ -2150,6 +2164,25 @@ with h2h_tab:
             unsafe_allow_html=True
         )
 
+        # Rookie warning directly under Player 1
+        if not player_1["Has Historical Data"]:
+
+            rookie_warning_1 = (
+                '<div class="rookie-warning">'
+                '⚠️ <b>Rookie:</b> '
+                +
+                html.escape(str(player_1["Name"]))
+                +
+                ' has no previous EuroLeague Fantasy data, so the rating is based on '
+                'experience, current price and projected team role.'
+                '</div>'
+            )
+
+            st.markdown(
+                rookie_warning_1,
+                unsafe_allow_html=True
+            )
+
 
     with card_col2:
 
@@ -2194,9 +2227,28 @@ with h2h_tab:
             unsafe_allow_html=True
         )
 
+        # Rookie warning directly under Player 2
+        if not player_2["Has Historical Data"]:
+
+            rookie_warning_2 = (
+                '<div class="rookie-warning">'
+                '⚠️ <b>Rookie:</b> '
+                +
+                html.escape(str(player_2["Name"]))
+                +
+                ' has no previous EuroLeague Fantasy data, so the rating is based on '
+                'experience, current price and projected team role.'
+                '</div>'
+            )
+
+            st.markdown(
+                rookie_warning_2,
+                unsafe_allow_html=True
+            )
+
 
     # =====================================================
-    # WARNINGS
+    # TEAM CHANGE WARNINGS
     # =====================================================
 
     warning_messages = []
@@ -2206,7 +2258,8 @@ with h2h_tab:
         warning_messages.append(
             player_1["Name"]
             +
-            " changed teams and receives the 6% team-change adjustment."
+            " is playing for a new team this season. "
+            "His rating uses last season's performance from his previous team."
         )
 
 
@@ -2214,16 +2267,17 @@ with h2h_tab:
         warning_messages.append(
             player_2["Name"]
             +
-            " changed teams and receives the 6% team-change adjustment."
+            " is playing for a new team this season. "
+            "His rating uses last season's performance from his previous team."
         )
 
 
     if warning_messages:
 
         warning_html = (
-            '<div class="info-box">'
+            '<div class="info-box">⚠️ '
             +
-            " ⚠️ ".join(
+            "<br><br>⚠️ ".join(
                 html.escape(message)
                 for message in warning_messages
             )
