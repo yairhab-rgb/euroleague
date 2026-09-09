@@ -15,6 +15,28 @@ st.set_page_config(
     layout="wide"
 )
 
+# =========================================================
+# GOOGLE ANALYTICS
+# =========================================================
+
+st.html(
+    """
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KF7KQGVCZM"></script>
+
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag(){
+            dataLayer.push(arguments);
+        }
+
+        gtag('js', new Date());
+        gtag('config', 'G-KF7KQGVCZM');
+    </script>
+    """,
+    unsafe_allow_javascript=True
+)
+
 
 # =========================================================
 # CSS
