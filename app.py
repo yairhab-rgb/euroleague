@@ -20,9 +20,13 @@ st.set_page_config(
 # =========================================================
 
 google_analytics = st.components.v2.component(
+    "google_analytics",
     html="",
     js="""
+    export default function(component) {
+
         if (!document.getElementById("google-analytics-script")) {
+
             const script = document.createElement("script");
             script.id = "google-analytics-script";
             script.async = true;
@@ -36,13 +40,17 @@ google_analytics = st.components.v2.component(
             };
 
             window.gtag("js", new Date());
-            window.gtag("config", "G-KF7KQGVCZM");
+
+            window.gtag("config", "G-KF7KQGVCZM", {
+                page_title: document.title,
+                page_location: window.location.href
+            });
         }
+    }
     """
 )
 
 google_analytics()
-
 
 # =========================================================
 # CSS
