@@ -19,23 +19,29 @@ st.set_page_config(
 # GOOGLE ANALYTICS
 # =========================================================
 
-st.html(
-    """
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KF7KQGVCZM"></script>
+google_analytics = st.components.v2.component(
+    html="",
+    js="""
+        if (!document.getElementById("google-analytics-script")) {
+            const script = document.createElement("script");
+            script.id = "google-analytics-script";
+            script.async = true;
+            script.src = "https://www.googletagmanager.com/gtag/js?id=G-KF7KQGVCZM";
+            document.head.appendChild(script);
 
-    <script>
-        window.dataLayer = window.dataLayer || [];
+            window.dataLayer = window.dataLayer || [];
 
-        function gtag(){
-            dataLayer.push(arguments);
+            window.gtag = function() {
+                window.dataLayer.push(arguments);
+            };
+
+            window.gtag("js", new Date());
+            window.gtag("config", "G-KF7KQGVCZM");
         }
-
-        gtag('js', new Date());
-        gtag('config', 'G-KF7KQGVCZM');
-    </script>
-    """,
-    unsafe_allow_javascript=True
+    """
 )
+
+google_analytics()
 
 
 # =========================================================
