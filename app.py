@@ -30,7 +30,7 @@ google_analytics = st.components.v2.component(
             const script = document.createElement("script");
             script.id = "google-analytics-script";
             script.async = true;
-            script.src = "https://www.googletagmanager.com/gtag/js?id=G-KF7KQGVCZM";
+            script.src = "https://www.googletagmanager.com/gtag/js?id=G-94WZ8E7BME";
             document.head.appendChild(script);
 
             window.dataLayer = window.dataLayer || [];
