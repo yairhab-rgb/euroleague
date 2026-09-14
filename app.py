@@ -43,7 +43,8 @@ google_analytics = st.components.v2.component(
 
             window.gtag("config", "G-KF7KQGVCZM", {
                 page_title: document.title,
-                page_location: window.location.href
+                page_location: window.location.href,
+                debug_mode: true
             });
         }
     }
