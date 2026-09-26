@@ -1183,6 +1183,10 @@ merged = new_df.merge(
 
 merged["Name"] = merged["Current Name"]
 
+# Keep the original preseason price permanently for the historical baseline.
+# Live round prices may change later, but they must NOT rewrite the preseason rating.
+merged["Preseason Price"] = merged["Price"]
+
 merged["Team"] = merged["Team Code"].map(
     TEAM_NAMES
 ).fillna(merged["Team Code"])
@@ -1426,6 +1430,13 @@ PRODUCTION_POINTS = [
     (20, 10)
 ]
 
+# Current-season production is intentionally simpler:
+# 30 average FPT = 10/10, with a straight-line scale below it.
+CURRENT_PRODUCTION_POINTS = [
+    (0, 0),
+    (30, 10)
+]
+
 
 VALUE_POINTS = [
     (0.50, 0),
@@ -1523,7 +1534,7 @@ merged["Production Score"] = merged[
 merged["Value Ratio"] = (
     merged["Overall Avg FPT"]
     /
-    merged["Price"]
+    merged["Preseason Price"]
 )
 
 
@@ -1599,51 +1610,28 @@ merged["Games Score"] = merged[
 
 # =========================================================
 # TEAM ROLE
-# OUT players are excluded from the active hierarchy.
-# Their own Team Role Score is 0 while injured.
-# Everyone below them moves up automatically.
+# Two versions are kept:
+# 1) Baseline Team Role = frozen preseason hierarchy, used only for the
+#    historical/preseason rating. It never changes because of live prices
+#    or injuries.
+# 2) Team Role Score = live hierarchy, used for current app context and
+#    experience-based preseason ratings for players without history.
 # =========================================================
 
-merged["Role Rank"] = pd.NA
-
-active_for_role = (
-    (~merged["Injured"])
-    &
-    merged["Price"].notna()
-)
-
-merged.loc[
-    active_for_role,
-    "Role Rank"
-] = (
-    merged.loc[
-        active_for_role
-    ]
-    .groupby(
-        ["Team Code", "Position"]
-    )["Price"]
-    .rank(
-        method="max",
-        ascending=False
-    )
+# Frozen preseason hierarchy
+merged["Baseline Role Rank"] = (
+    merged
+    .groupby(["Team Code", "Position"])["Preseason Price"]
+    .rank(method="max", ascending=False)
 )
 
 
-def team_role_score(row):
+def role_score_from_price_and_rank(price, rank):
 
-    if row["Injured"]:
+    if pd.isna(price) or pd.isna(rank):
         return 0.0
 
-    price = row["Price"]
-    rank = row["Role Rank"]
-
-    if pd.isna(price):
-        return 0.0
-
-    if price < 8:
-        return 0.0
-
-    if pd.isna(rank):
+    if float(price) < 8:
         return 0.0
 
     if rank == 1:
@@ -1656,6 +1644,45 @@ def team_role_score(row):
         return 3.0
 
     return 0.0
+
+
+merged["Baseline Team Role Score"] = merged.apply(
+    lambda row: role_score_from_price_and_rank(
+        row["Preseason Price"],
+        row["Baseline Role Rank"]
+    ),
+    axis=1
+)
+
+
+# Live hierarchy: OUT players are excluded so healthy players below them move up.
+merged["Role Rank"] = pd.NA
+
+active_for_role = (
+    (~merged["Injured"])
+    &
+    merged["Price"].notna()
+)
+
+merged.loc[
+    active_for_role,
+    "Role Rank"
+] = (
+    merged.loc[active_for_role]
+    .groupby(["Team Code", "Position"])["Price"]
+    .rank(method="max", ascending=False)
+)
+
+
+def team_role_score(row):
+
+    if row["Injured"]:
+        return 0.0
+
+    return role_score_from_price_and_rank(
+        row["Price"],
+        row["Role Rank"]
+    )
 
 
 merged["Team Role Score"] = merged.apply(
@@ -1678,7 +1705,7 @@ def historical_yaya_rating(row):
         +
         row["Value Score"] * 0.27
         +
-        row["Team Role Score"] * 0.23
+        row["Baseline Team Role Score"] * 0.23
         +
         row["Stability Score"] * 0.05
         +
@@ -1975,7 +2002,7 @@ merged["Current Production Score"] = merged[
 ].apply(
     lambda x: interpolate_score(
         x,
-        PRODUCTION_POINTS
+        CURRENT_PRODUCTION_POINTS
     )
 )
 
@@ -2045,7 +2072,7 @@ def current_season_rating(row):
     # richer model (value, role, stability, minutes, efficiency, etc.).
     rating = interpolate_score(
         current_avg_fpt,
-        PRODUCTION_POINTS
+        CURRENT_PRODUCTION_POINTS
     )
 
     return round(
@@ -2118,13 +2145,11 @@ def choose_final_rating(row):
     if pd.isna(baseline):
         return current
 
-    # A 0 experience rating means we had no useful pre-season baseline.
-    # Once the player has real current-season data, use that data.
-    if (
-        not row["Has Historical Data"]
-        and
-        float(baseline) == 0
-    ):
+    # Players without historical EuroLeague data no longer carry an
+    # experience-heavy baseline once real season data exists. This prevents
+    # one new player from jumping to the very top because of the preseason
+    # experience formula. Their live rating is based on actual FPT only.
+    if not row["Has Historical Data"]:
         return current
 
     rating = (
