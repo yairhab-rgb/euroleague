@@ -2035,26 +2035,17 @@ merged["Current Games Score"] = merged[
 
 def current_season_rating(row):
 
-    if row["Current Season Games"] <= 0:
+    current_avg_fpt = row["Current Season Avg FPT"]
+
+    if pd.isna(current_avg_fpt) or row["Current Season Games"] <= 0:
         return pd.NA
 
-    # Reweighted version of the existing Yaya formula.
-    # Minutes and FPT/Min are not available in the official export,
-    # so their weight is redistributed across the available components.
-    rating = (
-        row["Current Production Score"] * 0.25
-        +
-        row["Current Value Score"] * 0.30
-        +
-        row["Team Role Score"] * 0.20
-        +
-        row["Current Stability Score"] * 0.08
-        +
-        row["Current Floor Score"] * 0.06
-        +
-        row["Current Ceiling Score"] * 0.07
-        +
-        row["Current Games Score"] * 0.04
+    # Current-season performance is intentionally based ONLY on actual
+    # Fantasy production. The historical/pre-season baseline keeps the
+    # richer model (value, role, stability, minutes, efficiency, etc.).
+    rating = interpolate_score(
+        current_avg_fpt,
+        PRODUCTION_POINTS
     )
 
     return round(
