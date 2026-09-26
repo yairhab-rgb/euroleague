@@ -1027,7 +1027,7 @@ def load_current_season_rounds():
     for file_path in glob.glob("round_*.xlsx"):
 
         match = re.search(
-            r"round_(\\d+)\\.xlsx$",
+            r"round_(\d+)\.xlsx$",
             os.path.basename(file_path),
             flags=re.IGNORECASE
         )
