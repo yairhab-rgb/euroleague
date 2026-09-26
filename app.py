@@ -3,6 +3,8 @@ import pandas as pd
 import unicodedata
 import re
 import html
+import glob
+import os
 
 
 # =========================================================
@@ -427,6 +429,24 @@ div[data-baseweb="input"] * {
 
 
 /* ==============================
+   INJURY BADGE
+============================== */
+
+.inj-badge {
+    display: inline-block;
+    margin-left: 7px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,72,72,0.14);
+    border: 1px solid rgba(255,72,72,0.48);
+    color: #ff7373 !important;
+    font-size: 10px;
+    font-weight: 950;
+    letter-spacing: 0.6px;
+    vertical-align: middle;
+}
+
+/* ==============================
    PLAYER CARDS
 ============================== */
 
@@ -714,9 +734,8 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
 st.markdown(
     '<div class="info-box">'
-    '⚠️ Pre-season ratings use previous EuroLeague Fantasy performance and current '
-    'roster/price information. Ratings will become more accurate as current-season '
-    'game data is added.'
+    '⚠️ Ratings now combine previous-season information with current-season Fantasy '
+    'performance. Current-season influence increases automatically as more games are played.'
     '</div>',
     unsafe_allow_html=True
 )
@@ -937,6 +956,49 @@ EXPERIENCE_ADJUSTMENT = {
 
 
 # =========================================================
+# INJURY STATUS
+# Managed from injuries.xlsx in the GitHub repository.
+# Required columns: Player, Status
+# Only Status == OUT is treated as injured. GTD / Doubt remain active.
+# =========================================================
+
+def load_injured_players():
+    injury_df = pd.read_excel("injuries.xlsx")
+
+    required_columns = {"Player", "Status"}
+
+    if not required_columns.issubset(set(injury_df.columns)):
+        st.error(
+            "injuries.xlsx must contain the columns: Player and Status."
+        )
+        st.stop()
+
+    injury_df = injury_df.copy()
+    injury_df["Player"] = injury_df["Player"].astype(str).str.strip()
+    injury_df["Status"] = (
+        injury_df["Status"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+    )
+
+    out_players = injury_df.loc[
+        injury_df["Status"] == "OUT",
+        "Player"
+    ].dropna().tolist()
+
+    return set(out_players)
+
+
+INJURED_PLAYERS = load_injured_players()
+
+INJURED_KEYS = {
+    apply_alias(normalize_name(name))
+    for name in INJURED_PLAYERS
+}
+
+
+# =========================================================
 # LOAD FILES
 # =========================================================
 
@@ -949,6 +1011,117 @@ new_df = pd.read_csv(
     "new.csv",
     encoding="utf-8-sig"
 )
+
+
+# =========================================================
+# LOAD CURRENT-SEASON ROUND FILES
+# Add files to the repository as:
+# round_1.xlsx, round_2.xlsx, round_3.xlsx, ...
+# They are automatically combined into one current season.
+# =========================================================
+
+def load_current_season_rounds():
+
+    round_files = []
+
+    for file_path in glob.glob("round_*.xlsx"):
+
+        match = re.search(
+            r"round_(\\d+)\\.xlsx$",
+            os.path.basename(file_path),
+            flags=re.IGNORECASE
+        )
+
+        if match:
+            round_files.append(
+                (
+                    int(match.group(1)),
+                    file_path
+                )
+            )
+
+    round_files.sort(
+        key=lambda item: item[0]
+    )
+
+    frames = []
+
+    for round_number, file_path in round_files:
+
+        round_df = pd.read_excel(file_path)
+
+        required_columns = {
+            "Name",
+            "Surname",
+            "Team",
+            "FPT",
+            "Quotation"
+        }
+
+        if not required_columns.issubset(
+            set(round_df.columns)
+        ):
+            continue
+
+        round_df = round_df.copy()
+
+        round_df["Round"] = round_number
+
+        round_df["Current Full Name"] = (
+            round_df["Name"]
+            .fillna("")
+            .astype(str)
+            .str.strip()
+            +
+            " "
+            +
+            round_df["Surname"]
+            .fillna("")
+            .astype(str)
+            .str.strip()
+        ).str.strip()
+
+        round_df["Name Key"] = (
+            round_df["Current Full Name"]
+            .apply(normalize_name)
+            .apply(apply_alias)
+        )
+
+        round_df["FPT"] = pd.to_numeric(
+            round_df["FPT"],
+            errors="coerce"
+        )
+
+        round_df["Quotation"] = pd.to_numeric(
+            round_df["Quotation"],
+            errors="coerce"
+        )
+
+        round_df["Team"] = (
+            round_df["Team"]
+            .astype(str)
+            .str.strip()
+        )
+
+        # A row counts as a played Fantasy game only when FPT exists.
+        round_df = round_df[
+            round_df["FPT"].notna()
+        ].copy()
+
+        frames.append(round_df)
+
+    if not frames:
+        return pd.DataFrame(), []
+
+    current_games = pd.concat(
+        frames,
+        ignore_index=True
+    )
+
+    return current_games, round_files
+
+
+current_games, loaded_round_files = load_current_season_rounds()
 
 
 # =========================================================
@@ -1013,6 +1186,107 @@ merged["Name"] = merged["Current Name"]
 merged["Team"] = merged["Team Code"].map(
     TEAM_NAMES
 ).fillna(merged["Team Code"])
+
+
+# =========================================================
+# CURRENT-SEASON AGGREGATES
+# =========================================================
+
+merged["Injured"] = merged["Name Key"].isin(
+    INJURED_KEYS
+)
+
+if not current_games.empty:
+
+    current_summary = (
+        current_games
+        .groupby("Name Key", as_index=False)
+        .agg(
+            **{
+                "Current Season Avg FPT": ("FPT", "mean"),
+                "Current Season Games": ("FPT", "count"),
+                "Current Season FPT Std Dev": ("FPT", "std"),
+                "Current Season Floor Rate": (
+                    "FPT",
+                    lambda values: (values < 8).mean() * 100
+                ),
+                "Current Season Ceiling Rate": (
+                    "FPT",
+                    lambda values: (values >= 20).mean() * 100
+                ),
+                "Latest Round Played": ("Round", "max"),
+            }
+        )
+    )
+
+    latest_rows = (
+        current_games
+        .sort_values(
+            ["Name Key", "Round"]
+        )
+        .groupby(
+            "Name Key",
+            as_index=False
+        )
+        .tail(1)[
+            [
+                "Name Key",
+                "Quotation",
+                "Team"
+            ]
+        ]
+        .rename(
+            columns={
+                "Quotation": "Latest Price",
+                "Team": "Latest Team Code"
+            }
+        )
+    )
+
+    current_summary = current_summary.merge(
+        latest_rows,
+        on="Name Key",
+        how="left"
+    )
+
+    merged = merged.merge(
+        current_summary,
+        on="Name Key",
+        how="left"
+    )
+
+    # The latest Fantasy quotation becomes the live price.
+    has_latest_price = (
+        merged["Latest Price"].notna()
+    )
+
+    merged.loc[
+        has_latest_price,
+        "Price"
+    ] = merged.loc[
+        has_latest_price,
+        "Latest Price"
+    ]
+
+else:
+
+    merged["Current Season Avg FPT"] = pd.NA
+    merged["Current Season Games"] = 0
+    merged["Current Season FPT Std Dev"] = pd.NA
+    merged["Current Season Floor Rate"] = pd.NA
+    merged["Current Season Ceiling Rate"] = pd.NA
+    merged["Latest Round Played"] = pd.NA
+    merged["Latest Price"] = pd.NA
+    merged["Latest Team Code"] = pd.NA
+
+
+merged["Current Season Games"] = (
+    pd.to_numeric(
+        merged["Current Season Games"],
+        errors="coerce"
+    )
+    .fillna(0)
+)
 
 
 # =========================================================
@@ -1325,10 +1599,27 @@ merged["Games Score"] = merged[
 
 # =========================================================
 # TEAM ROLE
+# OUT players are excluded from the active hierarchy.
+# Their own Team Role Score is 0 while injured.
+# Everyone below them moves up automatically.
 # =========================================================
 
-merged["Role Rank"] = (
-    merged.groupby(
+merged["Role Rank"] = pd.NA
+
+active_for_role = (
+    (~merged["Injured"])
+    &
+    merged["Price"].notna()
+)
+
+merged.loc[
+    active_for_role,
+    "Role Rank"
+] = (
+    merged.loc[
+        active_for_role
+    ]
+    .groupby(
         ["Team Code", "Position"]
     )["Price"]
     .rank(
@@ -1339,6 +1630,9 @@ merged["Role Rank"] = (
 
 
 def team_role_score(row):
+
+    if row["Injured"]:
+        return 0.0
 
     price = row["Price"]
     rank = row["Role Rank"]
@@ -1671,15 +1965,187 @@ merged["Experience Rating"] = merged.apply(
 
 
 # =========================================================
-# FINAL YAYA RATING
+# CURRENT-SEASON PERFORMANCE RATING
+# The exported Fantasy file has no minutes, so the current-season
+# layer uses only components that can be calculated reliably.
 # =========================================================
 
-def choose_final_rating(row):
+merged["Current Production Score"] = merged[
+    "Current Season Avg FPT"
+].apply(
+    lambda x: interpolate_score(
+        x,
+        PRODUCTION_POINTS
+    )
+)
+
+merged["Current Value Ratio"] = (
+    merged["Current Season Avg FPT"]
+    /
+    merged["Price"]
+)
+
+merged["Current Value Score"] = merged[
+    "Current Value Ratio"
+].apply(
+    lambda x: interpolate_score(
+        x,
+        VALUE_POINTS
+    )
+)
+
+merged["Current Stability Score"] = merged[
+    "Current Season FPT Std Dev"
+].apply(
+    lambda x: 5.0
+    if pd.isna(x)
+    else interpolate_score(
+        x,
+        STABILITY_POINTS
+    )
+)
+
+merged["Current Floor Score"] = merged[
+    "Current Season Floor Rate"
+].apply(
+    lambda x: interpolate_score(
+        x,
+        FLOOR_POINTS
+    )
+)
+
+merged["Current Ceiling Score"] = merged[
+    "Current Season Ceiling Rate"
+].apply(
+    lambda x: interpolate_score(
+        x,
+        CEILING_POINTS
+    )
+)
+
+merged["Current Games Score"] = merged[
+    "Current Season Games"
+].apply(
+    lambda x: interpolate_score(
+        x,
+        GAMES_POINTS
+    )
+)
+
+
+def current_season_rating(row):
+
+    if row["Current Season Games"] <= 0:
+        return pd.NA
+
+    # Reweighted version of the existing Yaya formula.
+    # Minutes and FPT/Min are not available in the official export,
+    # so their weight is redistributed across the available components.
+    rating = (
+        row["Current Production Score"] * 0.25
+        +
+        row["Current Value Score"] * 0.30
+        +
+        row["Team Role Score"] * 0.20
+        +
+        row["Current Stability Score"] * 0.08
+        +
+        row["Current Floor Score"] * 0.06
+        +
+        row["Current Ceiling Score"] * 0.07
+        +
+        row["Current Games Score"] * 0.04
+    )
+
+    return round(
+        rating,
+        2
+    )
+
+
+merged["Current Season Rating"] = merged.apply(
+    current_season_rating,
+    axis=1
+)
+
+
+def current_season_weight(games):
+
+    if pd.isna(games):
+        return 0.0
+
+    games = int(games)
+
+    weights = {
+        0: 0.00,
+        1: 0.15,
+        2: 0.25,
+        3: 0.35,
+        4: 0.45,
+        5: 0.55,
+        6: 0.65,
+        7: 0.75,
+        8: 0.85,
+    }
+
+    if games >= 9:
+        return 0.90
+
+    return weights.get(
+        games,
+        0.0
+    )
+
+
+def choose_baseline_rating(row):
 
     if row["Has Historical Data"]:
         return row["Historical Rating"]
 
     return row["Experience Rating"]
+
+
+merged["Baseline Rating"] = merged.apply(
+    choose_baseline_rating,
+    axis=1
+)
+
+
+def choose_final_rating(row):
+
+    baseline = row["Baseline Rating"]
+    current = row["Current Season Rating"]
+    games = row["Current Season Games"]
+
+    if pd.isna(current) or games <= 0:
+        return baseline
+
+    weight = current_season_weight(
+        games
+    )
+
+    if pd.isna(baseline):
+        return current
+
+    # A 0 experience rating means we had no useful pre-season baseline.
+    # Once the player has real current-season data, use that data.
+    if (
+        not row["Has Historical Data"]
+        and
+        float(baseline) == 0
+    ):
+        return current
+
+    rating = (
+        float(baseline) * (1 - weight)
+        +
+        float(current) * weight
+    )
+
+    return round(
+        rating,
+        2
+    )
 
 
 merged["Yaya Rating"] = merged.apply(
@@ -1749,14 +2215,15 @@ def player_name_html(row):
         str(row["Name"])
     )
 
-    if row["Captain"]:
-        return (
-            name
-            +
-            '<span class="captain-badge">C</span>'
-        )
+    badges = ""
 
-    return name
+    if row["Captain"]:
+        badges += '<span class="captain-badge">C</span>'
+
+    if row["Injured"]:
+        badges += '<span class="inj-badge">INJ</span>'
+
+    return name + badges
 
 
 def experience_badges_html(row):
@@ -1974,10 +2441,12 @@ with database_tab:
         '<th>Team</th>'
         '<th>Position</th>'
         '<th>Price</th>'
-        '<th>Overall Avg FPT</th>'
-        '<th>Minutes</th>'
-        '<th>FPT/Min</th>'
-        '<th>Games</th>'
+        '<th>Last Season Avg FPT</th>'
+        '<th>Current Season Avg FPT</th>'
+        '<th>Current Games</th>'
+        '<th>Last Season Minutes</th>'
+        '<th>Last Season FPT/Min</th>'
+        '<th>Last Season Games</th>'
         '<th>Yaya Rating</th>'
         '</tr>'
         '</thead>'
@@ -2014,6 +2483,21 @@ with database_tab:
             display_number(
                 row["Overall Avg FPT"],
                 1
+            )
+            +
+            '</td>'
+            '<td>'
+            +
+            display_number(
+                row["Current Season Avg FPT"],
+                1
+            )
+            +
+            '</td>'
+            '<td>'
+            +
+            display_integer(
+                row["Current Season Games"]
             )
             +
             '</td>'
@@ -2365,10 +2849,32 @@ with h2h_tab:
                 player_1["Overall Avg FPT"],
                 1
             ),
-            "Overall Avg FPT",
+            "Last Season Avg FPT",
             display_number(
                 player_2["Overall Avg FPT"],
                 1
+            ),
+            "higher"
+        ),
+        (
+            display_number(
+                player_1["Current Season Avg FPT"],
+                1
+            ),
+            "Current Season Avg FPT",
+            display_number(
+                player_2["Current Season Avg FPT"],
+                1
+            ),
+            "higher"
+        ),
+        (
+            display_integer(
+                player_1["Current Season Games"]
+            ),
+            "Current Season Games",
+            display_integer(
+                player_2["Current Season Games"]
             ),
             "higher"
         ),
@@ -2427,8 +2933,14 @@ with h2h_tab:
         if category == "Price":
             return row["Price"]
 
-        if category == "Overall Avg FPT":
+        if category == "Last Season Avg FPT":
             return row["Overall Avg FPT"]
+
+        if category == "Current Season Avg FPT":
+            return row["Current Season Avg FPT"]
+
+        if category == "Current Season Games":
+            return row["Current Season Games"]
 
         if category == "Minutes":
             return row["Minutes Per Game"]
