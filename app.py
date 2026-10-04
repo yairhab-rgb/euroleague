@@ -341,6 +341,35 @@ div[data-baseweb="input"] * {
 
 
 /* ==============================
+   SORTABLE FPT ALLOWED TABLE
+   Keep Streamlit sorting, but visually match the Player Database.
+============================== */
+
+div[data-testid="stDataFrame"] {
+    border: 1px solid rgba(53,255,152,0.16) !important;
+    border-radius: 18px !important;
+    overflow: hidden !important;
+    background: rgba(2,8,5,0.86) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.20) !important;
+}
+
+div[data-testid="stDataFrame"] [role="columnheader"] {
+    background: #0b2016 !important;
+    color: #35ff98 !important;
+    font-weight: 900 !important;
+}
+
+div[data-testid="stDataFrame"] [role="gridcell"] {
+    background: #06100b !important;
+    color: #eef6f1 !important;
+    border-color: rgba(255,255,255,0.055) !important;
+}
+
+div[data-testid="stDataFrame"] [role="row"]:hover [role="gridcell"] {
+    background: #0a1b12 !important;
+}
+
+/* ==============================
    DATABASE TABLE
 ============================== */
 
@@ -2544,13 +2573,11 @@ with database_tab:
         '<th>Name</th>'
         '<th>Team</th>'
         '<th>Position</th>'
-        '<th>Price</th>'
         '<th>Last Season Avg FPT</th>'
-        '<th>Current Season Avg FPT</th>'
-        '<th>Current Games</th>'
-        '<th>Last Season Minutes</th>'
         '<th>Last Season FPT/Min</th>'
         '<th>Last Season Games</th>'
+        '<th>Current Season Avg FPT</th>'
+        '<th>Current Games</th>'
         '<th>Yaya Rating</th>'
         '</tr>'
         '</thead>'
@@ -2579,36 +2606,8 @@ with database_tab:
             '</td>'
             '<td>'
             +
-            display_price(row["Price"])
-            +
-            '</td>'
-            '<td>'
-            +
             display_number(
                 row["Overall Avg FPT"],
-                1
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_number(
-                row["Current Season Avg FPT"],
-                1
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_integer(
-                row["Current Season Games"]
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_number(
-                row["Minutes Per Game"],
                 1
             )
             +
@@ -2625,6 +2624,21 @@ with database_tab:
             +
             display_integer(
                 row["Games Played"]
+            )
+            +
+            '</td>'
+            '<td>'
+            +
+            display_number(
+                row["Current Season Avg FPT"],
+                1
+            )
+            +
+            '</td>'
+            '<td>'
+            +
+            display_integer(
+                row["Current Season Games"]
             )
             +
             '</td>'
@@ -2725,17 +2739,9 @@ with fpt_allowed_tab:
                 .rename("ALL")
             )
 
-            games_count = (
-                allowed_games
-                .groupby("Opponent Team Code")["Round"]
-                .nunique()
-                .rename("Games")
-            )
-
             allowed_table = (
                 by_position
                 .join(overall_allowed)
-                .join(games_count)
                 .reset_index()
             )
 
@@ -2749,7 +2755,7 @@ with fpt_allowed_tab:
                 allowed_table[column] = allowed_table[column].round(1)
 
             allowed_table = (
-                allowed_table[["Team", "G", "F", "C", "ALL", "Games"]]
+                allowed_table[["Team", "G", "F", "C", "ALL"]]
                 .sort_values("C", ascending=False, na_position="last")
                 .reset_index(drop=True)
             )
@@ -2769,7 +2775,6 @@ with fpt_allowed_tab:
                     "F": st.column_config.NumberColumn("Forwards (F)", format="%.1f"),
                     "C": st.column_config.NumberColumn("Centers (C)", format="%.1f"),
                     "ALL": st.column_config.NumberColumn("All Players", format="%.1f"),
-                    "Games": st.column_config.NumberColumn("Games", format="%d"),
                 }
             )
 
