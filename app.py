@@ -1125,6 +1125,93 @@ current_games, loaded_round_files = load_current_season_rounds()
 
 
 # =========================================================
+# 2026-27 EUROLEAGUE SCHEDULE
+# Used to calculate Fantasy points allowed by opponent and position.
+# The schedule is fixed for the regular season, so only the round_x.xlsx
+# files need to be added each week.
+# =========================================================
+
+EUROLEAGUE_SCHEDULE = {
+    1: [("CZV", "ZAL"), ("DUB", "RMB"), ("HTA", "BAY"), ("BAR", "EFS"), ("KBA", "OLY"), ("ASV", "MTA"), ("PAO", "PBB"), ("BJK", "VBC"), ("FBT", "VIR"), ("PAR", "MIL")],
+    2: [("EFS", "RMB"), ("CZV", "HTA"), ("DUB", "BAR"), ("ZAL", "OLY"), ("VBC", "KBA"), ("MIL", "VIR"), ("FBT", "BAY"), ("PBB", "PAR"), ("MTA", "BJK"), ("PAO", "ASV")],
+    3: [("CZV", "EFS"), ("HTA", "RMB"), ("VIR", "OLY"), ("PBB", "ZAL"), ("BJK", "BAR"), ("ASV", "VBC"), ("KBA", "MIL"), ("BAY", "PAR"), ("FBT", "DUB"), ("PAO", "MTA")],
+    4: [("PBB", "ASV"), ("MTA", "MIL"), ("BAY", "VIR"), ("VBC", "HTA"), ("RMB", "PAR"), ("PAO", "FBT"), ("DUB", "CZV"), ("KBA", "BJK"), ("BAR", "ZAL"), ("OLY", "EFS")],
+    5: [("ASV", "CZV"), ("KBA", "DUB"), ("MIL", "RMB"), ("BAR", "MTA"), ("VBC", "OLY"), ("FBT", "ZAL"), ("PAR", "PAO"), ("HTA", "BJK"), ("EFS", "BAY"), ("PBB", "VIR")],
+    6: [("MIL", "DUB"), ("VBC", "MTA"), ("RMB", "ASV"), ("FBT", "PAR"), ("BJK", "BAY"), ("CZV", "PBB"), ("ZAL", "EFS"), ("BAR", "OLY"), ("VIR", "KBA"), ("PAO", "HTA")],
+    7: [("HTA", "VIR"), ("MTA", "RMB"), ("MIL", "BAR"), ("EFS", "BJK"), ("BAY", "DUB"), ("PAR", "CZV"), ("PAO", "KBA"), ("ZAL", "ASV"), ("PBB", "VBC"), ("OLY", "FBT")],
+    8: [("CZV", "MTA"), ("DUB", "PBB"), ("KBA", "RMB"), ("BAY", "BAR"), ("VBC", "FBT"), ("PAO", "MIL"), ("HTA", "EFS"), ("ASV", "PAR"), ("BJK", "OLY"), ("VIR", "ZAL")],
+    9: [("CZV", "BAY"), ("MTA", "PBB"), ("RMB", "FBT"), ("DUB", "HTA"), ("ASV", "KBA"), ("ZAL", "PAR"), ("BAR", "VBC"), ("EFS", "PAO"), ("VIR", "BJK"), ("OLY", "MIL")],
+    10: [("RMB", "PAO"), ("FBT", "KBA"), ("HTA", "BAR"), ("ASV", "BAY"), ("EFS", "PBB"), ("MIL", "VBC"), ("BJK", "ZAL"), ("VIR", "DUB"), ("PAR", "MTA"), ("OLY", "CZV")],
+    11: [("PBB", "FBT"), ("PAR", "KBA"), ("MTA", "HTA"), ("MIL", "ZAL"), ("VBC", "BAY"), ("RMB", "CZV"), ("OLY", "DUB"), ("ASV", "BJK"), ("EFS", "VIR"), ("PAO", "BAR")],
+    12: [("DUB", "EFS"), ("ZAL", "BAY"), ("MTA", "OLY"), ("KBA", "HTA"), ("MIL", "CZV"), ("BAR", "PBB"), ("FBT", "ASV"), ("PAR", "VBC"), ("VIR", "PAO"), ("BJK", "RMB")],
+    13: [("ZAL", "PAO"), ("MTA", "DUB"), ("MIL", "FBT"), ("BAY", "KBA"), ("VBC", "VIR"), ("PBB", "HTA"), ("EFS", "ASV"), ("BAR", "CZV"), ("PAR", "BJK"), ("OLY", "RMB")],
+    14: [("CZV", "VIR"), ("BJK", "PBB"), ("BAR", "FBT"), ("BAY", "MTA"), ("VBC", "PAO"), ("ASV", "MIL"), ("DUB", "PAR"), ("KBA", "EFS"), ("RMB", "ZAL"), ("OLY", "HTA")],
+    15: [("HTA", "MIL"), ("EFS", "VBC"), ("BAY", "PBB"), ("FBT", "CZV"), ("RMB", "BAR"), ("BJK", "PAO"), ("ZAL", "DUB"), ("KBA", "MTA"), ("VIR", "PAR"), ("OLY", "ASV")],
+    16: [("HTA", "ASV"), ("ZAL", "KBA"), ("MIL", "BAY"), ("PBB", "RMB"), ("FBT", "EFS"), ("DUB", "BJK"), ("VBC", "CZV"), ("VIR", "MTA"), ("PAR", "BAR"), ("PAO", "OLY")],
+    17: [("MTA", "ZAL"), ("VBC", "DUB"), ("VIR", "ASV"), ("FBT", "HTA"), ("PBB", "OLY"), ("RMB", "BAY"), ("BJK", "MIL"), ("KBA", "BAR"), ("PAR", "EFS"), ("PAO", "CZV")],
+    18: [("HTA", "ZAL"), ("ASV", "DUB"), ("FBT", "MTA"), ("RMB", "VBC"), ("CZV", "BJK"), ("EFS", "MIL"), ("KBA", "PBB"), ("BAR", "VIR"), ("BAY", "PAO"), ("OLY", "PAR")],
+    19: [("BJK", "FBT"), ("HTA", "PAR"), ("ASV", "BAR"), ("BAY", "OLY"), ("VIR", "RMB"), ("CZV", "KBA"), ("DUB", "PAO"), ("ZAL", "VBC"), ("MTA", "EFS"), ("MIL", "PBB")],
+    20: [("HTA", "MTA"), ("KBA", "VBC"), ("FBT", "PAO"), ("PAR", "ZAL"), ("RMB", "DUB"), ("ASV", "OLY"), ("EFS", "BAR"), ("BAY", "BJK"), ("VIR", "MIL"), ("PBB", "CZV")],
+    21: [("BAR", "BJK"), ("ZAL", "PBB"), ("MTA", "PAO"), ("EFS", "FBT"), ("MIL", "HTA"), ("VBC", "PAR"), ("CZV", "ASV"), ("DUB", "BAY"), ("KBA", "VIR"), ("RMB", "OLY")],
+    22: [("CZV", "RMB"), ("HTA", "PBB"), ("ASV", "ZAL"), ("MTA", "BAY"), ("BAR", "MIL"), ("VIR", "EFS"), ("DUB", "FBT"), ("PAO", "VBC"), ("BJK", "PAR"), ("OLY", "KBA")],
+    23: [("HTA", "VBC"), ("ZAL", "CZV"), ("MIL", "ASV"), ("RMB", "EFS"), ("PAO", "BAY"), ("BJK", "KBA"), ("DUB", "MTA"), ("VIR", "BAR"), ("PAR", "FBT"), ("OLY", "PBB")],
+    24: [("HTA", "PAO"), ("BAY", "MIL"), ("FBT", "BJK"), ("PBB", "KBA"), ("PAR", "OLY"), ("RMB", "MTA"), ("CZV", "BAR"), ("ZAL", "VIR"), ("EFS", "DUB"), ("VBC", "ASV")],
+    25: [("BJK", "CZV"), ("KBA", "ZAL"), ("BAY", "VBC"), ("VIR", "PBB"), ("OLY", "MTA"), ("ASV", "HTA"), ("MIL", "PAR"), ("BAR", "DUB"), ("FBT", "RMB"), ("PAO", "EFS")],
+    26: [("MTA", "VIR"), ("EFS", "ZAL"), ("KBA", "FBT"), ("PBB", "BJK"), ("PAR", "RMB"), ("PAO", "DUB"), ("HTA", "OLY"), ("BAR", "ASV"), ("BAY", "CZV"), ("VBC", "MIL")],
+    27: [("DUB", "VIR"), ("ZAL", "BJK"), ("EFS", "MTA"), ("RMB", "PBB"), ("ASV", "FBT"), ("KBA", "CZV"), ("MIL", "PAO"), ("VBC", "BAR"), ("PAR", "HTA"), ("OLY", "BAY")],
+    28: [("HTA", "KBA"), ("ASV", "EFS"), ("BJK", "DUB"), ("CZV", "PAR"), ("MTA", "BAR"), ("VBC", "PBB"), ("VIR", "BAY"), ("ZAL", "RMB"), ("FBT", "MIL"), ("OLY", "PAO")],
+    29: [("KBA", "PAR"), ("VBC", "ZAL"), ("VIR", "HTA"), ("PBB", "MTA"), ("PAO", "BJK"), ("CZV", "FBT"), ("DUB", "OLY"), ("MIL", "EFS"), ("BAR", "RMB"), ("BAY", "ASV")],
+    30: [("BJK", "ASV"), ("ZAL", "BAR"), ("MTA", "CZV"), ("KBA", "PAO"), ("BAY", "EFS"), ("VIR", "FBT"), ("PAR", "PBB"), ("RMB", "HTA"), ("DUB", "VBC"), ("MIL", "OLY")],
+    31: [("MTA", "ASV"), ("EFS", "PAR"), ("BAY", "HTA"), ("PBB", "PAO"), ("RMB", "VIR"), ("CZV", "DUB"), ("ZAL", "MIL"), ("BAR", "KBA"), ("FBT", "VBC"), ("OLY", "BJK")],
+    32: [("MTA", "VBC"), ("PAR", "BAY"), ("FBT", "PBB"), ("RMB", "KBA"), ("PAO", "ZAL"), ("BJK", "EFS"), ("CZV", "OLY"), ("DUB", "MIL"), ("ASV", "VIR"), ("BAR", "HTA")],
+    33: [("DUB", "KBA"), ("HTA", "FBT"), ("ASV", "PAO"), ("EFS", "CZV"), ("PBB", "MIL"), ("PAR", "VIR"), ("ZAL", "MTA"), ("BAY", "RMB"), ("VBC", "BJK"), ("OLY", "BAR")],
+    34: [("HTA", "DUB"), ("ASV", "PBB"), ("EFS", "KBA"), ("PAO", "PAR"), ("CZV", "VBC"), ("MIL", "MTA"), ("BAY", "ZAL"), ("FBT", "BAR"), ("RMB", "BJK"), ("OLY", "VIR")],
+    35: [("ZAL", "HTA"), ("VIR", "CZV"), ("EFS", "OLY"), ("MTA", "FBT"), ("MIL", "BJK"), ("VBC", "RMB"), ("PBB", "DUB"), ("KBA", "BAY"), ("BAR", "PAO"), ("PAR", "ASV")],
+    36: [("BJK", "HTA"), ("CZV", "PAO"), ("KBA", "ASV"), ("BAR", "BAY"), ("VIR", "VBC"), ("FBT", "OLY"), ("PBB", "EFS"), ("RMB", "MIL"), ("DUB", "ZAL"), ("MTA", "PAR")],
+    37: [("HTA", "CZV"), ("ASV", "RMB"), ("MIL", "KBA"), ("BAY", "FBT"), ("VBC", "EFS"), ("PBB", "BAR"), ("PAO", "VIR"), ("BJK", "MTA"), ("PAR", "DUB"), ("OLY", "ZAL")],
+    38: [("ZAL", "FBT"), ("CZV", "MIL"), ("MTA", "KBA"), ("EFS", "HTA"), ("PBB", "BAY"), ("PAO", "RMB"), ("BJK", "VIR"), ("DUB", "ASV"), ("BAR", "PAR"), ("OLY", "VBC")],
+}
+
+
+def add_opponents_to_current_games(games_df):
+    if games_df.empty:
+        return games_df.copy()
+
+    output = games_df.copy()
+
+    opponent_lookup = {}
+    for round_number, games in EUROLEAGUE_SCHEDULE.items():
+        for team_a, team_b in games:
+            opponent_lookup[(round_number, team_a)] = team_b
+            opponent_lookup[(round_number, team_b)] = team_a
+
+    output["Opponent Team Code"] = output.apply(
+        lambda row: opponent_lookup.get(
+            (int(row["Round"]), str(row["Team"]).strip())
+        ),
+        axis=1
+    )
+
+    if "Position" in output.columns:
+        position_text = output["Position"].fillna("").astype(str).str.strip().str.upper()
+        output["Position Bucket"] = position_text.map(
+            lambda value: (
+                "G" if value.startswith("G") else
+                "F" if value.startswith("F") else
+                "C" if value.startswith("C") else
+                None
+            )
+        )
+    else:
+        output["Position Bucket"] = None
+
+    return output
+
+
+current_games = add_opponents_to_current_games(current_games)
+
+
+# =========================================================
 # PREPARE CURRENT ROSTER
 # =========================================================
 
@@ -2299,10 +2386,11 @@ merged = merged.sort_values(
 # TABS
 # =========================================================
 
-database_tab, h2h_tab = st.tabs(
+database_tab, h2h_tab, fpt_allowed_tab = st.tabs(
     [
         "🏀 Player Database",
-        "⚔️ Head-to-Head"
+        "⚔️ Head-to-Head",
+        "🛡️ FPT Allowed"
     ]
 )
 
@@ -2562,6 +2650,128 @@ with database_tab:
         table_html,
         unsafe_allow_html=True
     )
+
+
+# =========================================================
+# FPT ALLOWED BY POSITION
+# =========================================================
+
+with fpt_allowed_tab:
+
+    st.markdown(
+        '<div class="section-title">'
+        'FPT <span>Allowed</span>'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        '<div class="section-description">'
+        'Average Fantasy points allowed by each team to Guards, Forwards and Centers. '
+        'Click any column header to sort the table.'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    if current_games.empty:
+        st.warning("No current-season round files are loaded yet.")
+
+    elif current_games["Opponent Team Code"].notna().sum() == 0:
+        st.warning("The loaded round files could not be matched to the EuroLeague schedule.")
+
+    else:
+        available_rounds = sorted(
+            current_games["Round"]
+            .dropna()
+            .astype(int)
+            .unique()
+            .tolist()
+        )
+
+        if len(available_rounds) == 1:
+            start_round = end_round = available_rounds[0]
+            st.caption(f"Round {start_round}")
+        else:
+            start_round, end_round = st.slider(
+                "Rounds included",
+                min_value=min(available_rounds),
+                max_value=max(available_rounds),
+                value=(min(available_rounds), max(available_rounds)),
+                step=1,
+                key="fpt_allowed_round_range"
+            )
+
+        allowed_games = current_games[
+            current_games["Round"].between(start_round, end_round)
+            & current_games["Opponent Team Code"].notna()
+            & current_games["Position Bucket"].isin(["G", "F", "C"])
+        ].copy()
+
+        if allowed_games.empty:
+            st.warning("No usable Fantasy data was found for the selected round range.")
+        else:
+            by_position = (
+                allowed_games
+                .groupby(["Opponent Team Code", "Position Bucket"])["FPT"]
+                .mean()
+                .unstack("Position Bucket")
+                .reindex(columns=["G", "F", "C"])
+            )
+
+            overall_allowed = (
+                allowed_games
+                .groupby("Opponent Team Code")["FPT"]
+                .mean()
+                .rename("ALL")
+            )
+
+            games_count = (
+                allowed_games
+                .groupby("Opponent Team Code")["Round"]
+                .nunique()
+                .rename("Games")
+            )
+
+            allowed_table = (
+                by_position
+                .join(overall_allowed)
+                .join(games_count)
+                .reset_index()
+            )
+
+            allowed_table["Team"] = (
+                allowed_table["Opponent Team Code"]
+                .map(TEAM_NAMES)
+                .fillna(allowed_table["Opponent Team Code"])
+            )
+
+            for column in ["G", "F", "C", "ALL"]:
+                allowed_table[column] = allowed_table[column].round(1)
+
+            allowed_table = (
+                allowed_table[["Team", "G", "F", "C", "ALL", "Games"]]
+                .sort_values("C", ascending=False, na_position="last")
+                .reset_index(drop=True)
+            )
+
+            st.caption(
+                f"Showing Rounds {start_round}-{end_round}. "
+                "Higher FPT Allowed = a more favorable Fantasy matchup for that position."
+            )
+
+            st.dataframe(
+                allowed_table,
+                use_container_width=True,
+                hide_index=True,
+                column_config={
+                    "Team": st.column_config.TextColumn("Team"),
+                    "G": st.column_config.NumberColumn("Guards (G)", format="%.1f"),
+                    "F": st.column_config.NumberColumn("Forwards (F)", format="%.1f"),
+                    "C": st.column_config.NumberColumn("Centers (C)", format="%.1f"),
+                    "ALL": st.column_config.NumberColumn("All Players", format="%.1f"),
+                    "Games": st.column_config.NumberColumn("Games", format="%d"),
+                }
+            )
 
 
 # =========================================================
