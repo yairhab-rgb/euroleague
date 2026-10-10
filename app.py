@@ -1083,6 +1083,14 @@ def load_current_season_rounds():
         round_df["Quotation"] = pd.to_numeric(round_df["Quotation"], errors="coerce")
         round_df["Team"] = round_df["Team"].astype(str).str.strip()
 
+        # Ensure stat columns exist and are numeric for participation filtering
+        stat_cols = ['Pts', 'Reb', 'Ast', 'Stl', 'Tov', 'Blk', 'Blka', 'Fd', 'Pf', 'Fg missed', 'Ft missed']
+        for col in stat_cols:
+            if col in round_df.columns:
+                round_df[col] = pd.to_numeric(round_df[col], errors="coerce").fillna(0)
+            else:
+                round_df[col] = 0
+
         round_df = round_df[round_df["FPT"].notna()].copy()
         frames.append(round_df)
 
@@ -2149,16 +2157,21 @@ with fpt_allowed_tab:
                 key="fpt_allowed_round_range"
             )
 
+        # סינון שחקנים ששיחקו בפועל (FPT != 0 או סטטיסטיקה כלשהי פעילה)
+        stat_cols = ['Pts', 'Reb', 'Ast', 'Stl', 'Tov', 'Blk', 'Blka', 'Fd', 'Pf', 'Fg missed', 'Ft missed']
+        played_mask = (current_games['FPT'] != 0) | (current_games[stat_cols].abs().sum(axis=1) > 0)
+
         allowed_games = current_games[
             current_games["Round"].between(start_round, end_round)
             & current_games["Opponent Team Code"].notna()
             & current_games["Position Bucket"].isin(["G", "F", "C"])
+            & played_mask
         ].copy()
 
         if allowed_games.empty:
             st.warning("No usable Fantasy data was found for the selected round range.")
         else:
-            # שלב א': ממוצע השחקנים בכל עמדה בכל משחק בנפרד
+            # שלב א': ממוצע השחקנים ששיחקו בכל עמדה בכל משחק בנפרד
             game_position_means = (
                 allowed_games
                 .groupby(["Round", "Opponent Team Code", "Position Bucket"])["FPT"]
@@ -2175,7 +2188,7 @@ with fpt_allowed_tab:
                 .reindex(columns=["G", "F", "C"])
             )
 
-            # חישוב כללי (ALL): ממוצע השחקנים במשחק ואז ממוצע בין המחזורים
+            # חישוב כללי (ALL): ממוצע השחקנים ששיחקו במשחק ואז ממוצע בין המחזורים
             game_overall_means = (
                 allowed_games
                 .groupby(["Round", "Opponent Team Code"])["FPT"]
