@@ -728,7 +728,7 @@ hero_html = (
     '<div class="hero-title">Yaya’s <span>Rating</span></div>'
     '<div class="hero-subtitle">'
     'A Fantasy rating built to answer one question: '
-    'How much do I want this player on My Fantasy team?'
+    'How much do I want this player on my Fantasy team?'
     '</div>'
     '<div class="hero-description">'
     'The rating combines Fantasy production, value, team role, consistency, '
@@ -2125,7 +2125,7 @@ with fpt_allowed_tab:
         unsafe_allow_html=True
     )
     st.markdown(
-        '<div class="section-description">Average Fantasy points allowed by each team to Guards, Forwards and Centers per game. Click any column header to sort the table.</div>',
+        '<div class="section-description">Average Fantasy points allowed by each team to Guards, Forwards and Centers (player average per game). Click any column header to sort the table.</div>',
         unsafe_allow_html=True
     )
 
@@ -2158,31 +2158,33 @@ with fpt_allowed_tab:
         if allowed_games.empty:
             st.warning("No usable Fantasy data was found for the selected round range.")
         else:
-            # תיקון אגרגציה: סכימת הנקודות בכל משחק לפי עמדה, ואז ממוצע בין המחזורים
-            game_position_totals = (
+            # שלב א': ממוצע השחקנים בכל עמדה בכל משחק בנפרד
+            game_position_means = (
                 allowed_games
                 .groupby(["Round", "Opponent Team Code", "Position Bucket"])["FPT"]
-                .sum()
+                .mean()
                 .reset_index()
             )
 
+            # שלב ב': ממוצע הממוצעים האלה בין כל המחזורים
             by_position = (
-                game_position_totals
+                game_position_means
                 .groupby(["Opponent Team Code", "Position Bucket"])["FPT"]
                 .mean()
                 .unstack("Position Bucket")
                 .reindex(columns=["G", "F", "C"])
             )
 
-            game_overall_totals = (
+            # חישוב כללי (ALL): ממוצע השחקנים במשחק ואז ממוצע בין המחזורים
+            game_overall_means = (
                 allowed_games
                 .groupby(["Round", "Opponent Team Code"])["FPT"]
-                .sum()
+                .mean()
                 .reset_index()
             )
 
             overall_allowed = (
-                game_overall_totals
+                game_overall_means
                 .groupby("Opponent Team Code")["FPT"]
                 .mean()
                 .rename("ALL")
