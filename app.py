@@ -1244,14 +1244,52 @@ current_games = add_opponents_to_current_games(current_games)
 # PREPARE CURRENT ROSTER
 # =========================================================
 
-new_df = new_df.rename(
-    columns={
-        "׳©׳ ׳©׳—׳§׳": "Current Name",
-        "׳©׳ ׳§׳‘׳•׳¦׳”": "Team Code",
-        "׳¢׳׳“׳”": "Position",
-        "׳׳—׳™׳¨": "Price"
-    }
-)
+# Accept both the original Hebrew headers and common English headers.
+# The deployed app crashed when the roster CSV used a different header for
+# the player name, because the old rename only recognized "׳©׳ ׳©׳—׳§׳".
+column_lookup = {
+    str(column).strip().casefold(): column
+    for column in new_df.columns
+}
+
+header_aliases = {
+    "Current Name": [
+        "׳©׳ ׳©׳—׳§׳", "Current Name", "Player Name", "Player",
+        "Name", "Full Name", "׳©׳"
+    ],
+    "Team Code": [
+        "׳©׳ ׳§׳‘׳•׳¦׳”", "Team Code", "Team", "Club", "׳§׳‘׳•׳¦׳”"
+    ],
+    "Position": [
+        "׳¢׳׳“׳”", "Position", "Pos"
+    ],
+    "Price": [
+        "׳׳—׳™׳¨", "Price", "Quotation", "Value"
+    ],
+}
+
+rename_map = {}
+for target_column, aliases in header_aliases.items():
+    for alias in aliases:
+        source_column = column_lookup.get(alias.strip().casefold())
+        if source_column is not None:
+            rename_map[source_column] = target_column
+            break
+
+new_df = new_df.rename(columns=rename_map)
+
+required_columns = ["Current Name", "Team Code", "Position", "Price"]
+missing_columns = [
+    column for column in required_columns
+    if column not in new_df.columns
+]
+if missing_columns:
+    raise ValueError(
+        "new.csv is missing required roster columns: "
+        + ", ".join(missing_columns)
+        + ". Available columns: "
+        + ", ".join(str(column) for column in new_df.columns)
+    )
 
 new_df["Current Name"] = new_df["Current Name"].astype(str)
 new_df["Team Code"] = new_df["Team Code"].astype(str).str.strip()
@@ -2706,19 +2744,13 @@ with fpt_allowed_tab:
             start_round = end_round = available_rounds[0]
             st.caption(f"Round {start_round}")
         else:
-            # Use a new widget key when a new round file is added.
-            # This resets the default range to include the latest round,
-            # while keeping the user's selected range during normal reruns.
-            latest_available_round = max(available_rounds)
-            slider_key = f"fpt_allowed_round_range_through_{latest_available_round}"
-
             start_round, end_round = st.slider(
                 "Rounds included",
                 min_value=min(available_rounds),
-                max_value=latest_available_round,
-                value=(min(available_rounds), latest_available_round),
+                max_value=max(available_rounds),
+                value=(min(available_rounds), max(available_rounds)),
                 step=1,
-                key=slider_key
+                key="fpt_allowed_round_range"
             )
 
         allowed_games = current_games[
@@ -2771,46 +2803,8 @@ with fpt_allowed_tab:
                 "Higher FPT Allowed = a more favorable Fantasy matchup for that position."
             )
 
-            # Style the dataframe itself (not only its outer container),
-            # because Streamlit renders dataframe cells separately from page CSS.
-            styled_allowed_table = (
-                allowed_table.style
-                .set_properties(
-                    **{
-                        "background-color": "#06100b",
-                        "color": "#eef6f1",
-                        "border-color": "rgba(255,255,255,0.055)",
-                        "font-family": "Arial, sans-serif",
-                        "font-size": "14px",
-                    }
-                )
-                .set_table_styles(
-                    [
-                        {
-                            "selector": "th",
-                            "props": [
-                                ("background-color", "#0b2016"),
-                                ("color", "#35ff98"),
-                                ("font-weight", "900"),
-                                ("font-family", "Arial, sans-serif"),
-                                ("border-bottom", "1px solid rgba(53,255,152,0.23)"),
-                            ],
-                        },
-                        {
-                            "selector": "td",
-                            "props": [
-                                ("background-color", "#06100b"),
-                                ("color", "#eef6f1"),
-                                ("font-family", "Arial, sans-serif"),
-                                ("border-color", "rgba(255,255,255,0.055)"),
-                            ],
-                        },
-                    ]
-                )
-            )
-
             st.dataframe(
-                styled_allowed_table,
+                allowed_table,
                 use_container_width=True,
                 hide_index=True,
                 column_config={
