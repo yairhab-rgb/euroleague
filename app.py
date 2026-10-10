@@ -1036,10 +1036,32 @@ old_df = pd.read_csv(
     encoding="utf-8-sig"
 )
 
+# new.csv may be a headerless four-column roster (Name, Team, Position, Price)
+# or a CSV that already includes column headers. Read without assuming a header
+# so the first player is never accidentally consumed as the column names.
 new_df = pd.read_csv(
     "new.csv",
-    encoding="utf-8-sig"
+    encoding="utf-8-sig",
+    header=None
 )
+
+if len(new_df.columns) == 4:
+    first_row = [
+        str(value).strip().casefold()
+        for value in new_df.iloc[0].tolist()
+    ] if not new_df.empty else []
+
+    known_name_headers = {
+        "name", "player", "current name", "׳©׳ ׳©׳—׳§׳"
+    }
+
+    if first_row and first_row[0] in known_name_headers:
+        new_df.columns = new_df.iloc[0].astype(str).str.strip().tolist()
+        new_df = new_df.iloc[1:].reset_index(drop=True)
+    else:
+        new_df.columns = [
+            "Current Name", "Team Code", "Position", "Price"
+        ]
 
 
 # =========================================================
@@ -1244,54 +1266,33 @@ current_games = add_opponents_to_current_games(current_games)
 # PREPARE CURRENT ROSTER
 # =========================================================
 
-# Accept both the original Hebrew headers and common English headers.
-# The deployed app crashed when the roster CSV used a different header for
-# the player name, because the old rename only recognized "׳©׳ ׳©׳—׳§׳".
-column_lookup = {
-    str(column).strip().casefold(): column
-    for column in new_df.columns
+new_df = new_df.rename(
+    columns={
+        "׳©׳ ׳©׳—׳§׳": "Current Name",
+        "׳©׳ ׳§׳‘׳•׳¦׳”": "Team Code",
+        "׳¢׳׳“׳”": "Position",
+        "׳׳—׳™׳¨": "Price",
+        "Name": "Current Name",
+        "Player": "Current Name",
+        "Current Name": "Current Name",
+        "Team": "Team Code",
+        "Team Code": "Team Code",
+        "Position": "Position",
+        "Price": "Price"
+    }
+)
+
+required_roster_columns = {
+    "Current Name", "Team Code", "Position", "Price"
 }
-
-header_aliases = {
-    "Current Name": [
-        "׳©׳ ׳©׳—׳§׳", "Current Name", "Player Name", "Player",
-        "Name", "Full Name", "׳©׳"
-    ],
-    "Team Code": [
-        "׳©׳ ׳§׳‘׳•׳¦׳”", "Team Code", "Team", "Club", "׳§׳‘׳•׳¦׳”"
-    ],
-    "Position": [
-        "׳¢׳׳“׳”", "Position", "Pos"
-    ],
-    "Price": [
-        "׳׳—׳™׳¨", "Price", "Quotation", "Value"
-    ],
-}
-
-rename_map = {}
-for target_column, aliases in header_aliases.items():
-    for alias in aliases:
-        source_column = column_lookup.get(alias.strip().casefold())
-        if source_column is not None:
-            rename_map[source_column] = target_column
-            break
-
-new_df = new_df.rename(columns=rename_map)
-
-required_columns = ["Current Name", "Team Code", "Position", "Price"]
-missing_columns = [
-    column for column in required_columns
-    if column not in new_df.columns
-]
-if missing_columns:
-    raise ValueError(
-        "new.csv is missing required roster columns: "
-        + ", ".join(missing_columns)
-        + ". Available columns: "
-        + ", ".join(str(column) for column in new_df.columns)
+if not required_roster_columns.issubset(set(new_df.columns)):
+    st.error(
+        "new.csv must contain four columns: player name, team code, position, and price. "
+        f"Detected columns: {list(new_df.columns)}"
     )
+    st.stop()
 
-new_df["Current Name"] = new_df["Current Name"].astype(str)
+new_df["Current Name"] = new_df["Current Name"].astype(str).str.strip()
 new_df["Team Code"] = new_df["Team Code"].astype(str).str.strip()
 new_df["Position"] = new_df["Position"].astype(str).str.strip()
 
@@ -3319,3 +3320,4 @@ with h2h_tab:
         h2h_html,
         unsafe_allow_html=True
     )
+                
