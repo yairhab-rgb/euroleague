@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import unicodedata
 import re
@@ -13,7 +14,7 @@ import os
 
 st.set_page_config(
     page_title="Yaya's Rating",
-    page_icon="נ€",
+    page_icon="🏀",
     layout="wide"
 )
 
@@ -21,38 +22,19 @@ st.set_page_config(
 # GOOGLE ANALYTICS
 # =========================================================
 
-google_analytics = st.components.v2.component(
-    "google_analytics",
-    html="",
-    js="""
-    export default function(component) {
+components.html("""
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-94WZ8E7BME"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-94WZ8E7BME', {
+            page_title: document.title,
+            page_location: window.location.href
+        });
+    </script>
+""", height=0)
 
-        if (!document.getElementById("google-analytics-script")) {
-
-            const script = document.createElement("script");
-            script.id = "google-analytics-script";
-            script.async = true;
-            script.src = "https://www.googletagmanager.com/gtag/js?id=G-94WZ8E7BME";
-            document.head.appendChild(script);
-
-            window.dataLayer = window.dataLayer || [];
-
-            window.gtag = function() {
-                window.dataLayer.push(arguments);
-            };
-
-            window.gtag("js", new Date());
-
-            window.gtag("config", "G-94WZ8E7BME", {
-                page_title: document.title,
-                page_location: window.location.href
-            });
-        }
-    }
-    """
-)
-
-google_analytics()
 
 # =========================================================
 # CSS
@@ -208,8 +190,6 @@ hr {
     font-size: 14px;
 }
 
-
-/* NEW: yellow warning shown directly below a rookie player card */
 .rookie-warning {
     background: linear-gradient(90deg, rgba(255,196,0,0.11), rgba(255,196,0,0.035));
     border: 1px solid rgba(255,204,0,0.30);
@@ -341,8 +321,7 @@ div[data-baseweb="input"] * {
 
 
 /* ==============================
-   SORTABLE FPT ALLOWED TABLE
-   Keep Streamlit sorting, but visually match the Player Database.
+   DATAFRAME STYLING
 ============================== */
 
 div[data-testid="stDataFrame"] {
@@ -368,6 +347,7 @@ div[data-testid="stDataFrame"] [role="gridcell"] {
 div[data-testid="stDataFrame"] [role="row"]:hover [role="gridcell"] {
     background: #0a1b12 !important;
 }
+
 
 /* ==============================
    DATABASE TABLE
@@ -474,6 +454,7 @@ div[data-testid="stDataFrame"] [role="row"]:hover [role="gridcell"] {
     letter-spacing: 0.6px;
     vertical-align: middle;
 }
+
 
 /* ==============================
    PLAYER CARDS
@@ -744,7 +725,7 @@ hero_html = (
     '<div class="hero-side-text">PLAY&nbsp;&nbsp; ANALYZE&nbsp;&nbsp; COMPARE&nbsp;&nbsp; WIN</div>'
     '<div class="hero-content">'
     '<div class="hero-kicker">EuroLeague Fantasy Analysis</div>'
-    '<div class="hero-title">Yayaג€™s <span>Rating</span></div>'
+    '<div class="hero-title">Yaya’s <span>Rating</span></div>'
     '<div class="hero-subtitle">'
     'A Fantasy rating built to answer one question: '
     'How much do I want this player on my Fantasy team?'
@@ -763,7 +744,7 @@ st.markdown(hero_html, unsafe_allow_html=True)
 
 st.markdown(
     '<div class="info-box">'
-    'ג ן¸ Ratings now combine previous-season information with current-season Fantasy '
+    '⚡ Ratings now combine previous-season information with current-season Fantasy '
     'performance. Current-season influence increases automatically as more games are played.'
     '</div>',
     unsafe_allow_html=True
@@ -839,7 +820,7 @@ def normalize_name(value):
         if not unicodedata.combining(c)
     )
 
-    text = re.sub(r"[^a-z0-9\\s]", " ", text)
+    text = re.sub(r"[^a-z0-9\s]", " ", text)
     text = " ".join(text.split())
 
     return text
@@ -888,7 +869,7 @@ NBA_EXPERIENCE = {
     "Jae Crowder": 5,
     "Tosan Evbuomwan": 3,
     "TyTy Washington Jr.": 3,
-    "Mֳ£ozinha Pereira": 2,
+    "Maozinha Pereira": 2,
     "Joffrey Lauvergne": 4,
     "Stanley Umude": 2,
     "Olivier Sarr": 2,
@@ -919,7 +900,7 @@ EUROPE_EXPERIENCE = {
     "Rokas Jokubaitis": 5,
     "Scottie Wilbekin": 5,
     "Mam Jaiteh": 5,
-    "Sertaֳ§ ֵanlִ±": 5,
+    "Sertac Sanli": 5,
 
     "Jonas Valanciunas": 4,
     "Dario Saric": 4,
@@ -952,9 +933,9 @@ EUROPE_EXPERIENCE = {
     "Chris Duarte": 3,
     "Devon Dotson": 3,
     "Anthony Brown": 3,
-    "Mֳ£ozinha Pereira": 3,
+    "Maozinha Pereira": 3,
     "Jason Burnell": 3,
-    "Gonzalo Corbalֳ¡n": 3,
+    "Gonzalo Corbalan": 3,
     "Kevin Kokila": 3,
     "Hugo Besson": 3,
     "Both Gach": 3,
@@ -968,7 +949,7 @@ EUROPE_EXPERIENCE = {
     "Elias Valtonen": 3,
     "Tobias Jensen": 3,
     "Kaodirichi Akobundu-Ehiogu": 3,
-    "ֳlvaro Cֳ¡rdenas": 3,
+    "Alvaro Cardenas": 3,
     "Vojin Medarevic": 3,
 
     "Marcus Carr": 1,
@@ -986,37 +967,29 @@ EXPERIENCE_ADJUSTMENT = {
 
 # =========================================================
 # INJURY STATUS
-# Managed from injuries.xlsx in the GitHub repository.
-# Required columns: Player, Status
-# Only Status == OUT is treated as injured. GTD / Doubt remain active.
 # =========================================================
 
 def load_injured_players():
-    injury_df = pd.read_excel("injuries.xlsx")
+    if not os.path.exists("injuries.xlsx"):
+        return set()
+    try:
+        injury_df = pd.read_excel("injuries.xlsx")
+        required_columns = {"Player", "Status"}
+        if not required_columns.issubset(set(injury_df.columns)):
+            return set()
 
-    required_columns = {"Player", "Status"}
+        injury_df = injury_df.copy()
+        injury_df["Player"] = injury_df["Player"].astype(str).str.strip()
+        injury_df["Status"] = injury_df["Status"].astype(str).str.strip().str.upper()
 
-    if not required_columns.issubset(set(injury_df.columns)):
-        st.error(
-            "injuries.xlsx must contain the columns: Player and Status."
-        )
-        st.stop()
+        out_players = injury_df.loc[
+            injury_df["Status"] == "OUT",
+            "Player"
+        ].dropna().tolist()
 
-    injury_df = injury_df.copy()
-    injury_df["Player"] = injury_df["Player"].astype(str).str.strip()
-    injury_df["Status"] = (
-        injury_df["Status"]
-        .astype(str)
-        .str.strip()
-        .str.upper()
-    )
-
-    out_players = injury_df.loc[
-        injury_df["Status"] == "OUT",
-        "Player"
-    ].dropna().tolist()
-
-    return set(out_players)
+        return set(out_players)
+    except Exception:
+        return set()
 
 
 INJURED_PLAYERS = load_injured_players()
@@ -1031,19 +1004,17 @@ INJURED_KEYS = {
 # LOAD FILES
 # =========================================================
 
-old_df = pd.read_csv(
-    "fantasy_euroleague_stats.csv",
-    encoding="utf-8-sig"
-)
+try:
+    old_df = pd.read_csv("fantasy_euroleague_stats.csv", encoding="utf-8-sig")
+except Exception as e:
+    st.error(f"Error loading fantasy_euroleague_stats.csv: {e}")
+    st.stop()
 
-# new.csv may be a headerless four-column roster (Name, Team, Position, Price)
-# or a CSV that already includes column headers. Read without assuming a header
-# so the first player is never accidentally consumed as the column names.
-new_df = pd.read_csv(
-    "new.csv",
-    encoding="utf-8-sig",
-    header=None
-)
+try:
+    new_df = pd.read_csv("new.csv", encoding="utf-8-sig", header=None)
+except Exception as e:
+    st.error(f"Error loading new.csv: {e}")
+    st.stop()
 
 if len(new_df.columns) == 4:
     first_row = [
@@ -1052,7 +1023,7 @@ if len(new_df.columns) == 4:
     ] if not new_df.empty else []
 
     known_name_headers = {
-        "name", "player", "current name", "׳©׳ ׳©׳—׳§׳"
+        "name", "player", "current name", "שם שחקן"
     }
 
     if first_row and first_row[0] in known_name_headers:
@@ -1066,70 +1037,40 @@ if len(new_df.columns) == 4:
 
 # =========================================================
 # LOAD CURRENT-SEASON ROUND FILES
-# Add files to the repository as:
-# round_1.xlsx, round_2.xlsx, round_3.xlsx, ...
-# They are automatically combined into one current season.
 # =========================================================
 
 def load_current_season_rounds():
-
     round_files = []
 
     for file_path in glob.glob("round_*.xlsx"):
-
         match = re.search(
             r"round_(\d+)\.xlsx$",
             os.path.basename(file_path),
             flags=re.IGNORECASE
         )
-
         if match:
-            round_files.append(
-                (
-                    int(match.group(1)),
-                    file_path
-                )
-            )
+            round_files.append((int(match.group(1)), file_path))
 
-    round_files.sort(
-        key=lambda item: item[0]
-    )
-
+    round_files.sort(key=lambda item: item[0])
     frames = []
 
     for round_number, file_path in round_files:
+        try:
+            round_df = pd.read_excel(file_path)
+        except Exception:
+            continue
 
-        round_df = pd.read_excel(file_path)
-
-        required_columns = {
-            "Name",
-            "Surname",
-            "Team",
-            "FPT",
-            "Quotation"
-        }
-
-        if not required_columns.issubset(
-            set(round_df.columns)
-        ):
+        required_columns = {"Name", "Surname", "Team", "FPT", "Quotation"}
+        if not required_columns.issubset(set(round_df.columns)):
             continue
 
         round_df = round_df.copy()
-
         round_df["Round"] = round_number
 
         round_df["Current Full Name"] = (
-            round_df["Name"]
-            .fillna("")
-            .astype(str)
-            .str.strip()
-            +
-            " "
-            +
-            round_df["Surname"]
-            .fillna("")
-            .astype(str)
-            .str.strip()
+            round_df["Name"].fillna("").astype(str).str.strip()
+            + " "
+            + round_df["Surname"].fillna("").astype(str).str.strip()
         ).str.strip()
 
         round_df["Name Key"] = (
@@ -1138,37 +1079,17 @@ def load_current_season_rounds():
             .apply(apply_alias)
         )
 
-        round_df["FPT"] = pd.to_numeric(
-            round_df["FPT"],
-            errors="coerce"
-        )
+        round_df["FPT"] = pd.to_numeric(round_df["FPT"], errors="coerce")
+        round_df["Quotation"] = pd.to_numeric(round_df["Quotation"], errors="coerce")
+        round_df["Team"] = round_df["Team"].astype(str).str.strip()
 
-        round_df["Quotation"] = pd.to_numeric(
-            round_df["Quotation"],
-            errors="coerce"
-        )
-
-        round_df["Team"] = (
-            round_df["Team"]
-            .astype(str)
-            .str.strip()
-        )
-
-        # A row counts as a played Fantasy game only when FPT exists.
-        round_df = round_df[
-            round_df["FPT"].notna()
-        ].copy()
-
+        round_df = round_df[round_df["FPT"].notna()].copy()
         frames.append(round_df)
 
     if not frames:
         return pd.DataFrame(), []
 
-    current_games = pd.concat(
-        frames,
-        ignore_index=True
-    )
-
+    current_games = pd.concat(frames, ignore_index=True)
     return current_games, round_files
 
 
@@ -1177,9 +1098,6 @@ current_games, loaded_round_files = load_current_season_rounds()
 
 # =========================================================
 # 2026-27 EUROLEAGUE SCHEDULE
-# Used to calculate Fantasy points allowed by opponent and position.
-# The schedule is fixed for the regular season, so only the round_x.xlsx
-# files need to be added each week.
 # =========================================================
 
 EUROLEAGUE_SCHEDULE = {
@@ -1268,10 +1186,10 @@ current_games = add_opponents_to_current_games(current_games)
 
 new_df = new_df.rename(
     columns={
-        "׳©׳ ׳©׳—׳§׳": "Current Name",
-        "׳©׳ ׳§׳‘׳•׳¦׳”": "Team Code",
-        "׳¢׳׳“׳”": "Position",
-        "׳׳—׳™׳¨": "Price",
+        "שם שחקן": "Current Name",
+        "שם קבוצה": "Team Code",
+        "עמדה": "Position",
+        "מחיר": "Price",
         "Name": "Current Name",
         "Player": "Current Name",
         "Current Name": "Current Name",
@@ -1337,9 +1255,6 @@ merged = new_df.merge(
 )
 
 merged["Name"] = merged["Current Name"]
-
-# Keep the original preseason price permanently for the historical baseline.
-# Live round prices may change later, but they must NOT rewrite the preseason rating.
 merged["Preseason Price"] = merged["Price"]
 
 merged["Team"] = merged["Team Code"].map(
@@ -1414,7 +1329,6 @@ if not current_games.empty:
         how="left"
     )
 
-    # The latest Fantasy quotation becomes the live price.
     has_latest_price = (
         merged["Latest Price"].notna()
     )
@@ -1534,7 +1448,6 @@ merged["Captain"] = (
 # =========================================================
 
 def interpolate_score(value, points):
-
     if pd.isna(value):
         return 0.0
 
@@ -1547,26 +1460,15 @@ def interpolate_score(value, points):
         return float(points[-1][1])
 
     for i in range(len(points) - 1):
-
         x1, y1 = points[i]
         x2, y2 = points[i + 1]
 
         if x1 <= value <= x2:
-
             if x2 == x1:
                 return float(y1)
 
-            ratio = (
-                (value - x1)
-                /
-                (x2 - x1)
-            )
-
-            return (
-                y1
-                +
-                ratio * (y2 - y1)
-            )
+            ratio = (value - x1) / (x2 - x1)
+            return y1 + ratio * (y2 - y1)
 
     return 0.0
 
@@ -1585,13 +1487,10 @@ PRODUCTION_POINTS = [
     (20, 10)
 ]
 
-# Current-season production is intentionally simpler:
-# 30 average FPT = 10/10, with a straight-line scale below it.
 CURRENT_PRODUCTION_POINTS = [
     (0, 0),
     (30, 10)
 ]
-
 
 VALUE_POINTS = [
     (0.50, 0),
@@ -1606,7 +1505,6 @@ VALUE_POINTS = [
     (1.40, 10)
 ]
 
-
 STABILITY_POINTS = [
     (3, 10),
     (4, 9),
@@ -1617,7 +1515,6 @@ STABILITY_POINTS = [
     (9, 2),
     (10, 0)
 ]
-
 
 FLOOR_POINTS = [
     (0, 10),
@@ -1630,7 +1527,6 @@ FLOOR_POINTS = [
     (75, 0)
 ]
 
-
 MINUTES_POINTS = [
     (8, 1),
     (12, 3),
@@ -1639,7 +1535,6 @@ MINUTES_POINTS = [
     (24, 9),
     (28, 10)
 ]
-
 
 EFFICIENCY_POINTS = [
     (0.20, 1),
@@ -1650,7 +1545,6 @@ EFFICIENCY_POINTS = [
     (0.80, 10)
 ]
 
-
 CEILING_POINTS = [
     (0, 0),
     (10, 2),
@@ -1660,7 +1554,6 @@ CEILING_POINTS = [
     (50, 9),
     (60, 10)
 ]
-
 
 GAMES_POINTS = [
     (5, 2),
@@ -1676,104 +1569,45 @@ GAMES_POINTS = [
 # SCORE COMPONENTS
 # =========================================================
 
-merged["Production Score"] = merged[
-    "Overall Avg FPT"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        PRODUCTION_POINTS
-    )
+merged["Production Score"] = merged["Overall Avg FPT"].apply(
+    lambda x: interpolate_score(x, PRODUCTION_POINTS)
 )
 
+merged["Value Ratio"] = merged["Overall Avg FPT"] / merged["Preseason Price"]
 
-merged["Value Ratio"] = (
-    merged["Overall Avg FPT"]
-    /
-    merged["Preseason Price"]
+merged["Value Score"] = merged["Value Ratio"].apply(
+    lambda x: interpolate_score(x, VALUE_POINTS)
 )
 
-
-merged["Value Score"] = merged[
-    "Value Ratio"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        VALUE_POINTS
-    )
+merged["Stability Score"] = merged["FPT Std Dev"].apply(
+    lambda x: interpolate_score(x, STABILITY_POINTS)
 )
 
-
-merged["Stability Score"] = merged[
-    "FPT Std Dev"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        STABILITY_POINTS
-    )
+merged["Floor Score"] = merged["Floor Rate % (FPT<8)"].apply(
+    lambda x: interpolate_score(x, FLOOR_POINTS)
 )
 
-
-merged["Floor Score"] = merged[
-    "Floor Rate % (FPT<8)"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        FLOOR_POINTS
-    )
+merged["Minutes Score"] = merged["Minutes Per Game"].apply(
+    lambda x: interpolate_score(x, MINUTES_POINTS)
 )
 
-
-merged["Minutes Score"] = merged[
-    "Minutes Per Game"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        MINUTES_POINTS
-    )
+merged["Efficiency Score"] = merged["FPT per Minute"].apply(
+    lambda x: interpolate_score(x, EFFICIENCY_POINTS)
 )
 
-
-merged["Efficiency Score"] = merged[
-    "FPT per Minute"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        EFFICIENCY_POINTS
-    )
+merged["Ceiling Score"] = merged["Ceiling Rate % (FPT>=20)"].apply(
+    lambda x: interpolate_score(x, CEILING_POINTS)
 )
 
-
-merged["Ceiling Score"] = merged[
-    "Ceiling Rate % (FPT>=20)"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        CEILING_POINTS
-    )
-)
-
-
-merged["Games Score"] = merged[
-    "Games Played"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        GAMES_POINTS
-    )
+merged["Games Score"] = merged["Games Played"].apply(
+    lambda x: interpolate_score(x, GAMES_POINTS)
 )
 
 
 # =========================================================
 # TEAM ROLE
-# Two versions are kept:
-# 1) Baseline Team Role = frozen preseason hierarchy, used only for the
-#    historical/preseason rating. It never changes because of live prices
-#    or injuries.
-# 2) Team Role Score = live hierarchy, used for current app context and
-#    experience-based preseason ratings for players without history.
 # =========================================================
 
-# Frozen preseason hierarchy
 merged["Baseline Role Rank"] = (
     merged
     .groupby(["Team Code", "Position"])["Preseason Price"]
@@ -1782,7 +1616,6 @@ merged["Baseline Role Rank"] = (
 
 
 def role_score_from_price_and_rank(price, rank):
-
     if pd.isna(price) or pd.isna(rank):
         return 0.0
 
@@ -1791,10 +1624,8 @@ def role_score_from_price_and_rank(price, rank):
 
     if rank == 1:
         return 10.0
-
     if rank == 2:
         return 6.0
-
     if rank == 3:
         return 3.0
 
@@ -1809,20 +1640,14 @@ merged["Baseline Team Role Score"] = merged.apply(
     axis=1
 )
 
-
-# Live hierarchy: OUT players are excluded so healthy players below them move up.
 merged["Role Rank"] = pd.NA
 
 active_for_role = (
     (~merged["Injured"])
-    &
-    merged["Price"].notna()
+    & merged["Price"].notna()
 )
 
-merged.loc[
-    active_for_role,
-    "Role Rank"
-] = (
+merged.loc[active_for_role, "Role Rank"] = (
     merged.loc[active_for_role]
     .groupby(["Team Code", "Position"])["Price"]
     .rank(method="max", ascending=False)
@@ -1830,7 +1655,6 @@ merged.loc[
 
 
 def team_role_score(row):
-
     if row["Injured"]:
         return 0.0
 
@@ -1851,28 +1675,19 @@ merged["Team Role Score"] = merged.apply(
 # =========================================================
 
 def historical_yaya_rating(row):
-
     if not row["Has Historical Data"]:
         return pd.NA
 
     rating = (
         row["Production Score"] * 0.16
-        +
-        row["Value Score"] * 0.27
-        +
-        row["Baseline Team Role Score"] * 0.23
-        +
-        row["Stability Score"] * 0.05
-        +
-        row["Floor Score"] * 0.04
-        +
-        row["Minutes Score"] * 0.09
-        +
-        row["Efficiency Score"] * 0.08
-        +
-        row["Ceiling Score"] * 0.05
-        +
-        row["Games Score"] * 0.03
+        + row["Value Score"] * 0.27
+        + row["Baseline Team Role Score"] * 0.23
+        + row["Stability Score"] * 0.05
+        + row["Floor Score"] * 0.04
+        + row["Minutes Score"] * 0.09
+        + row["Efficiency Score"] * 0.08
+        + row["Ceiling Score"] * 0.05
+        + row["Games Score"] * 0.03
     )
 
     if row["Team Changed"]:
@@ -1893,24 +1708,17 @@ merged["Historical Rating"] = merged.apply(
 
 experience_names = set(
     list(NBA_EXPERIENCE.keys())
-    +
-    list(EUROPE_EXPERIENCE.keys())
-    +
-    list(EXPERIENCE_ADJUSTMENT.keys())
+    + list(EUROPE_EXPERIENCE.keys())
+    + list(EXPERIENCE_ADJUSTMENT.keys())
 )
 
 experience_lookup = {}
-
 for experience_name in experience_names:
-    experience_lookup[
-        normalize_name(experience_name)
-    ] = experience_name
+    experience_lookup[normalize_name(experience_name)] = experience_name
 
 
 def get_experience_name(player_name):
-
     normalized = normalize_name(player_name)
-
     normalized = apply_alias(normalized)
 
     if normalized in experience_lookup:
@@ -1919,11 +1727,7 @@ def get_experience_name(player_name):
     return player_name
 
 
-merged["Experience Name"] = merged[
-    "Name"
-].apply(
-    get_experience_name
-)
+merged["Experience Name"] = merged["Name"].apply(get_experience_name)
 
 
 # =========================================================
@@ -1931,76 +1735,27 @@ merged["Experience Name"] = merged[
 # =========================================================
 
 def get_nba_experience(name):
-    return NBA_EXPERIENCE.get(
-        name,
-        0
-    )
-
+    return NBA_EXPERIENCE.get(name, 0)
 
 def get_europe_experience(name):
-    return EUROPE_EXPERIENCE.get(
-        name,
-        0
-    )
-
+    return EUROPE_EXPERIENCE.get(name, 0)
 
 def get_experience_adjustment(name):
-    return EXPERIENCE_ADJUSTMENT.get(
-        name,
-        0
-    )
+    return EXPERIENCE_ADJUSTMENT.get(name, 0)
 
 
-merged["NBA Experience"] = merged[
-    "Experience Name"
-].apply(
-    get_nba_experience
-)
-
-
-merged["European Experience"] = merged[
-    "Experience Name"
-].apply(
-    get_europe_experience
-)
-
-
-merged["Experience Adjustment"] = merged[
-    "Experience Name"
-].apply(
-    get_experience_adjustment
-)
-
-
-# =========================================================
-# NEW EXPERIENCE WEIGHTING
-# EuroLeague experience x1.40
-# NBA experience x0.75
-# Manual adjustment stays exactly as before
-# =========================================================
+merged["NBA Experience"] = merged["Experience Name"].apply(get_nba_experience)
+merged["European Experience"] = merged["Experience Name"].apply(get_europe_experience)
+merged["Experience Adjustment"] = merged["Experience Name"].apply(get_experience_adjustment)
 
 merged["Experience Score"] = (
     merged["NBA Experience"] * 0.75
-    +
-    merged["European Experience"] * 1.40
-    +
-    merged["Experience Adjustment"]
+    + merged["European Experience"] * 1.40
+    + merged["Experience Adjustment"]
 )
 
-
-merged["Experience Score"] = (
-    merged["Experience Score"]
-    .clip(
-        lower=0,
-        upper=10
-    )
-)
-
-
-# Every player without historical data uses experience formula
-merged["Use Experience Rating"] = (
-    ~merged["Has Historical Data"]
-)
+merged["Experience Score"] = merged["Experience Score"].clip(lower=0, upper=10)
+merged["Use Experience Rating"] = ~merged["Has Historical Data"]
 
 
 # =========================================================
@@ -2008,64 +1763,33 @@ merged["Use Experience Rating"] = (
 # =========================================================
 
 def experience_labels(row):
-
     if not row["Use Experience Rating"]:
         return []
 
     nba = row["NBA Experience"]
     europe = row["European Experience"]
-
     labels = []
 
     if nba == 0 and europe == 0:
-        labels.append(
-            ("Not Expected to Play", "none")
-        )
+        labels.append(("Not Expected to Play", "none"))
         return labels
 
     if europe > 0:
-
         if europe > 3:
-            labels.append(
-                (
-                    "High European Experience",
-                    "high"
-                )
-            )
-
+            labels.append(("High European Experience", "high"))
         else:
-            labels.append(
-                (
-                    "Low European Experience",
-                    "low"
-                )
-            )
+            labels.append(("Low European Experience", "low"))
 
     if nba > 0:
-
         if nba > 3:
-            labels.append(
-                (
-                    "High NBA Experience",
-                    "high"
-                )
-            )
-
+            labels.append(("High NBA Experience", "high"))
         else:
-            labels.append(
-                (
-                    "Low NBA Experience",
-                    "low"
-                )
-            )
+            labels.append(("Low NBA Experience", "low"))
 
     return labels
 
 
-merged["Experience Labels"] = merged.apply(
-    experience_labels,
-    axis=1
-)
+merged["Experience Labels"] = merged.apply(experience_labels, axis=1)
 
 
 # =========================================================
@@ -2073,41 +1797,23 @@ merged["Experience Labels"] = merged.apply(
 # =========================================================
 
 def budget_score(price):
-
     if pd.isna(price):
         return 0.0
 
     price = float(price)
-
     minimum_price = 4.0
     maximum_price = 17.0
 
     if price <= minimum_price:
         return 10.0
-
     if price >= maximum_price:
         return 0.0
 
-    score = (
-        10
-        *
-        (
-            maximum_price - price
-        )
-        /
-        (
-            maximum_price - minimum_price
-        )
-    )
-
+    score = 10 * (maximum_price - price) / (maximum_price - minimum_price)
     return score
 
 
-merged["Budget Score"] = merged[
-    "Price"
-].apply(
-    budget_score
-)
+merged["Budget Score"] = merged["Price"].apply(budget_score)
 
 
 # =========================================================
@@ -2115,140 +1821,74 @@ merged["Budget Score"] = merged[
 # =========================================================
 
 def experience_yaya_rating(row):
-
     if not row["Use Experience Rating"]:
         return pd.NA
 
     experience = row["Experience Score"]
-
     if experience <= 0:
         return 0.0
 
     rating = (
         experience * 0.60
-        +
-        row["Team Role Score"] * 0.25
-        +
-        row["Budget Score"] * 0.15
+        + row["Team Role Score"] * 0.25
+        + row["Budget Score"] * 0.15
     )
 
     rating = rating * 0.75
-
-    return round(
-        rating,
-        2
-    )
+    return round(rating, 2)
 
 
-merged["Experience Rating"] = merged.apply(
-    experience_yaya_rating,
-    axis=1
-)
+merged["Experience Rating"] = merged.apply(experience_yaya_rating, axis=1)
 
 
 # =========================================================
 # CURRENT-SEASON PERFORMANCE RATING
-# The exported Fantasy file has no minutes, so the current-season
-# layer uses only components that can be calculated reliably.
 # =========================================================
 
-merged["Current Production Score"] = merged[
-    "Current Season Avg FPT"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        CURRENT_PRODUCTION_POINTS
-    )
+merged["Current Production Score"] = merged["Current Season Avg FPT"].apply(
+    lambda x: interpolate_score(x, CURRENT_PRODUCTION_POINTS)
 )
 
-merged["Current Value Ratio"] = (
-    merged["Current Season Avg FPT"]
-    /
-    merged["Price"]
+merged["Current Value Ratio"] = merged["Current Season Avg FPT"] / merged["Price"]
+
+merged["Current Value Score"] = merged["Current Value Ratio"].apply(
+    lambda x: interpolate_score(x, VALUE_POINTS)
 )
 
-merged["Current Value Score"] = merged[
-    "Current Value Ratio"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        VALUE_POINTS
-    )
+merged["Current Stability Score"] = merged["Current Season FPT Std Dev"].apply(
+    lambda x: 5.0 if pd.isna(x) else interpolate_score(x, STABILITY_POINTS)
 )
 
-merged["Current Stability Score"] = merged[
-    "Current Season FPT Std Dev"
-].apply(
-    lambda x: 5.0
-    if pd.isna(x)
-    else interpolate_score(
-        x,
-        STABILITY_POINTS
-    )
+merged["Current Floor Score"] = merged["Current Season Floor Rate"].apply(
+    lambda x: interpolate_score(x, FLOOR_POINTS)
 )
 
-merged["Current Floor Score"] = merged[
-    "Current Season Floor Rate"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        FLOOR_POINTS
-    )
+merged["Current Ceiling Score"] = merged["Current Season Ceiling Rate"].apply(
+    lambda x: interpolate_score(x, CEILING_POINTS)
 )
 
-merged["Current Ceiling Score"] = merged[
-    "Current Season Ceiling Rate"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        CEILING_POINTS
-    )
-)
-
-merged["Current Games Score"] = merged[
-    "Current Season Games"
-].apply(
-    lambda x: interpolate_score(
-        x,
-        GAMES_POINTS
-    )
+merged["Current Games Score"] = merged["Current Season Games"].apply(
+    lambda x: interpolate_score(x, GAMES_POINTS)
 )
 
 
 def current_season_rating(row):
-
     current_avg_fpt = row["Current Season Avg FPT"]
-
     if pd.isna(current_avg_fpt) or row["Current Season Games"] <= 0:
         return pd.NA
 
-    # Current-season performance is intentionally based ONLY on actual
-    # Fantasy production. The historical/pre-season baseline keeps the
-    # richer model (value, role, stability, minutes, efficiency, etc.).
-    rating = interpolate_score(
-        current_avg_fpt,
-        CURRENT_PRODUCTION_POINTS
-    )
-
-    return round(
-        rating,
-        2
-    )
+    rating = interpolate_score(current_avg_fpt, CURRENT_PRODUCTION_POINTS)
+    return round(rating, 2)
 
 
-merged["Current Season Rating"] = merged.apply(
-    current_season_rating,
-    axis=1
-)
+merged["Current Season Rating"] = merged.apply(current_season_rating, axis=1)
 
 
 def current_season_weight(games):
-
     if pd.isna(games):
         return 0.0
 
     games = int(games)
-
     weights = {
         0: 0.00,
         1: 0.15,
@@ -2264,28 +1904,19 @@ def current_season_weight(games):
     if games >= 9:
         return 0.90
 
-    return weights.get(
-        games,
-        0.0
-    )
+    return weights.get(games, 0.0)
 
 
 def choose_baseline_rating(row):
-
     if row["Has Historical Data"]:
         return row["Historical Rating"]
-
     return row["Experience Rating"]
 
 
-merged["Baseline Rating"] = merged.apply(
-    choose_baseline_rating,
-    axis=1
-)
+merged["Baseline Rating"] = merged.apply(choose_baseline_rating, axis=1)
 
 
 def choose_final_rating(row):
-
     baseline = row["Baseline Rating"]
     current = row["Current Season Rating"]
     games = row["Current Season Games"]
@@ -2293,36 +1924,19 @@ def choose_final_rating(row):
     if pd.isna(current) or games <= 0:
         return baseline
 
-    weight = current_season_weight(
-        games
-    )
+    weight = current_season_weight(games)
 
     if pd.isna(baseline):
         return current
 
-    # Players without historical EuroLeague data no longer carry an
-    # experience-heavy baseline once real season data exists. This prevents
-    # one new player from jumping to the very top because of the preseason
-    # experience formula. Their live rating is based on actual FPT only.
     if not row["Has Historical Data"]:
         return current
 
-    rating = (
-        float(baseline) * (1 - weight)
-        +
-        float(current) * weight
-    )
-
-    return round(
-        rating,
-        2
-    )
+    rating = float(baseline) * (1 - weight) + float(current) * weight
+    return round(rating, 2)
 
 
-merged["Yaya Rating"] = merged.apply(
-    choose_final_rating,
-    axis=1
-)
+merged["Yaya Rating"] = merged.apply(choose_final_rating, axis=1)
 
 
 # =========================================================
@@ -2330,107 +1944,55 @@ merged["Yaya Rating"] = merged.apply(
 # =========================================================
 
 def safe_text(value):
-
     if pd.isna(value):
         return "N/A"
+    return html.escape(str(value))
 
-    return html.escape(
-        str(value)
-    )
-
-
-def display_number(
-    value,
-    decimals=1
-):
-
+def display_number(value, decimals=1):
     if pd.isna(value):
         return "N/A"
-
     return f"{float(value):.{decimals}f}"
 
-
 def display_integer(value):
-
     if pd.isna(value):
         return "N/A"
-
-    return str(
-        int(
-            round(
-                float(value)
-            )
-        )
-    )
-
+    return str(int(round(float(value))))
 
 def display_price(value):
-
     if pd.isna(value):
         return "N/A"
-
     return f"{float(value):.1f}"
 
-
 def display_rating(value):
-
     if pd.isna(value):
         return "N/A"
-
     return f"{float(value):.2f}"
 
-
 def player_name_html(row):
-
-    name = html.escape(
-        str(row["Name"])
-    )
-
+    name = html.escape(str(row["Name"]))
     badges = ""
-
     if row["Captain"]:
         badges += '<span class="captain-badge">C</span>'
-
     if row["Injured"]:
         badges += '<span class="inj-badge">INJ</span>'
-
     return name + badges
 
-
 def experience_badges_html(row):
-
     labels = row["Experience Labels"]
-
     if not labels:
         return ""
 
     output = '<div class="exp-badges">'
-
     for label, badge_type in labels:
-
         if badge_type == "high":
             css_class = "exp-high"
-
         elif badge_type == "low":
             css_class = "exp-low"
-
         else:
             css_class = "exp-none"
 
-        output += (
-            '<span class="exp-badge '
-            +
-            css_class
-            +
-            '">'
-            +
-            html.escape(label)
-            +
-            '</span>'
-        )
-
+        output += f'<span class="exp-badge {css_class}">{html.escape(label)}</span>'
     output += "</div>"
-
     return output
 
 
@@ -2439,14 +2001,8 @@ def experience_badges_html(row):
 # =========================================================
 
 merged = merged.sort_values(
-    by=[
-        "Yaya Rating",
-        "Price"
-    ],
-    ascending=[
-        False,
-        False
-    ]
+    by=["Yaya Rating", "Price"],
+    ascending=[False, False]
 ).reset_index(drop=True)
 
 
@@ -2456,9 +2012,9 @@ merged = merged.sort_values(
 
 database_tab, h2h_tab, fpt_allowed_tab = st.tabs(
     [
-        "נ€ Player Database",
-        "ג”ן¸ Head-to-Head",
-        "נ›¡ן¸ FPT Allowed"
+        "🏀 Player Database",
+        "⚔️ Head-to-Head",
+        "🛡️ FPT Allowed"
     ]
 )
 
@@ -2468,141 +2024,58 @@ database_tab, h2h_tab, fpt_allowed_tab = st.tabs(
 # =========================================================
 
 with database_tab:
-
     st.markdown(
-        '<div class="section-title">'
-        'Player <span>Database</span>'
-        '</div>',
+        '<div class="section-title">Player <span>Database</span></div>',
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        '<div class="section-description">Search, filter and compare every current EuroLeague Fantasy player.</div>',
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        '<div class="section-description">'
-        'Search, filter and compare every current EuroLeague Fantasy player.'
-        '</div>',
-        unsafe_allow_html=True
-    )
+    all_player_names = sorted(merged["Name"].dropna().astype(str).unique().tolist())
+    team_options = sorted(merged["Team"].dropna().astype(str).unique().tolist())
+    position_options = sorted(merged["Position"].dropna().astype(str).unique().tolist())
 
-    all_player_names = sorted(
-        merged["Name"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
-
-    team_options = sorted(
-        merged["Team"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
-
-    position_options = sorted(
-        merged["Position"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
-
-
-    filter_col1, filter_col2, filter_col3 = st.columns(
-        [1.4, 1, 1]
-    )
-
+    filter_col1, filter_col2, filter_col3 = st.columns([1.4, 1, 1])
 
     with filter_col1:
-
-        selected_player = st.selectbox(
-            "Search Player",
-            options=[""] + all_player_names,
-            index=0
-        )
-
+        selected_player = st.selectbox("Search Player", options=[""] + all_player_names, index=0)
 
     with filter_col2:
-
-        selected_teams = st.multiselect(
-            "Team",
-            options=team_options
-        )
-
+        selected_teams = st.multiselect("Team", options=team_options)
 
     with filter_col3:
+        selected_positions = st.multiselect("Position", options=position_options)
 
-        selected_positions = st.multiselect(
-            "Position",
-            options=position_options
-        )
-
-
-    minimum_price = float(
-        merged["Price"].min()
-    )
-
-    maximum_price = float(
-        merged["Price"].max()
-    )
+    minimum_price = float(merged["Price"].min())
+    maximum_price = float(merged["Price"].max())
 
     selected_price_range = st.slider(
         "Price Range",
         min_value=minimum_price,
         max_value=maximum_price,
-        value=(
-            minimum_price,
-            maximum_price
-        ),
+        value=(minimum_price, maximum_price),
         step=0.1
     )
 
-
     filtered = merged.copy()
 
-
     if selected_player != "":
-        filtered = filtered[
-            filtered["Name"]
-            ==
-            selected_player
-        ]
-
+        filtered = filtered[filtered["Name"] == selected_player]
 
     if selected_teams:
-        filtered = filtered[
-            filtered["Team"].isin(
-                selected_teams
-            )
-        ]
-
+        filtered = filtered[filtered["Team"].isin(selected_teams)]
 
     if selected_positions:
-        filtered = filtered[
-            filtered["Position"].isin(
-                selected_positions
-            )
-        ]
-
+        filtered = filtered[filtered["Position"].isin(selected_positions)]
 
     filtered = filtered[
-        (
-            filtered["Price"]
-            >= selected_price_range[0]
-        )
-        &
-        (
-            filtered["Price"]
-            <= selected_price_range[1]
-        )
+        (filtered["Price"] >= selected_price_range[0])
+        & (filtered["Price"] <= selected_price_range[1])
     ]
 
-
-    filtered = filtered.sort_values(
-        "Yaya Rating",
-        ascending=False
-    )
-
+    filtered = filtered.sort_values("Yaya Rating", ascending=False)
 
     table_html = (
         '<div class="database-wrap">'
@@ -2623,86 +2096,23 @@ with database_tab:
         '<tbody>'
     )
 
-
     for _, row in filtered.iterrows():
-
         table_html += (
             '<tr>'
-            '<td>'
-            +
-            player_name_html(row)
-            +
-            '</td>'
-            '<td>'
-            +
-            safe_text(row["Team"])
-            +
-            '</td>'
-            '<td>'
-            +
-            safe_text(row["Position"])
-            +
-            '</td>'
-            '<td>'
-            +
-            display_number(
-                row["Overall Avg FPT"],
-                1
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_number(
-                row["FPT per Minute"],
-                2
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_integer(
-                row["Games Played"]
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_number(
-                row["Current Season Avg FPT"],
-                1
-            )
-            +
-            '</td>'
-            '<td>'
-            +
-            display_integer(
-                row["Current Season Games"]
-            )
-            +
-            '</td>'
-            '<td class="rating-value">'
-            +
-            display_rating(
-                row["Yaya Rating"]
-            )
-            +
-            '</td>'
+            f'<td>{player_name_html(row)}</td>'
+            f'<td>{safe_text(row["Team"])}</td>'
+            f'<td>{safe_text(row["Position"])}</td>'
+            f'<td>{display_number(row["Overall Avg FPT"], 1)}</td>'
+            f'<td>{display_number(row["FPT per Minute"], 2)}</td>'
+            f'<td>{display_integer(row["Games Played"])}</td>'
+            f'<td>{display_number(row["Current Season Avg FPT"], 1)}</td>'
+            f'<td>{display_integer(row["Current Season Games"])}</td>'
+            f'<td class="rating-value">{display_rating(row["Yaya Rating"])}</td>'
             '</tr>'
         )
 
-
-    table_html += (
-        '</tbody>'
-        '</table>'
-        '</div>'
-    )
-
-
-    st.markdown(
-        table_html,
-        unsafe_allow_html=True
-    )
+    table_html += '</tbody></table></div>'
+    st.markdown(table_html, unsafe_allow_html=True)
 
 
 # =========================================================
@@ -2710,36 +2120,21 @@ with database_tab:
 # =========================================================
 
 with fpt_allowed_tab:
-
     st.markdown(
-        '<div class="section-title">'
-        'FPT <span>Allowed</span>'
-        '</div>',
+        '<div class="section-title">FPT <span>Allowed</span></div>',
         unsafe_allow_html=True
     )
-
     st.markdown(
-        '<div class="section-description">'
-        'Average Fantasy points allowed by each team to Guards, Forwards and Centers. '
-        'Click any column header to sort the table.'
-        '</div>',
+        '<div class="section-description">Average Fantasy points allowed by each team to Guards, Forwards and Centers. Click any column header to sort the table.</div>',
         unsafe_allow_html=True
     )
 
     if current_games.empty:
         st.warning("No current-season round files are loaded yet.")
-
     elif current_games["Opponent Team Code"].notna().sum() == 0:
         st.warning("The loaded round files could not be matched to the EuroLeague schedule.")
-
     else:
-        available_rounds = sorted(
-            current_games["Round"]
-            .dropna()
-            .astype(int)
-            .unique()
-            .tolist()
-        )
+        available_rounds = sorted(current_games["Round"].dropna().astype(int).unique().tolist())
 
         if len(available_rounds) == 1:
             start_round = end_round = available_rounds[0]
@@ -2778,11 +2173,7 @@ with fpt_allowed_tab:
                 .rename("ALL")
             )
 
-            allowed_table = (
-                by_position
-                .join(overall_allowed)
-                .reset_index()
-            )
+            allowed_table = by_position.join(overall_allowed).reset_index()
 
             allowed_table["Team"] = (
                 allowed_table["Opponent Team Code"]
@@ -2823,501 +2214,154 @@ with fpt_allowed_tab:
 # =========================================================
 
 with h2h_tab:
-
     st.markdown(
-        '<div class="section-title">'
-        'Head-to-<span>Head</span>'
-        '</div>',
+        '<div class="section-title">Head-to-<span>Head</span></div>',
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        '<div class="section-description">Compare two players side by side and see which one fits your Fantasy team better.</div>',
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        '<div class="section-description">'
-        'Compare two players side by side and see which one fits your Fantasy team better.'
-        '</div>',
-        unsafe_allow_html=True
-    )
-
-
-    all_names = sorted(
-        merged["Name"]
-        .dropna()
-        .astype(str)
-        .unique()
-        .tolist()
-    )
-
+    all_names = sorted(merged["Name"].dropna().astype(str).unique().tolist())
 
     default_player_1 = "Sasha Vezenkov"
     default_player_2 = "Elijah Bryant"
 
-
-    if default_player_1 in all_names:
-        player_1_index = all_names.index(
-            default_player_1
-        )
-    else:
-        player_1_index = 0
-
-
-    if default_player_2 in all_names:
-        player_2_index = all_names.index(
-            default_player_2
-        )
-    else:
-        player_2_index = min(
-            1,
-            len(all_names) - 1
-        )
-
+    player_1_index = all_names.index(default_player_1) if default_player_1 in all_names else 0
+    player_2_index = all_names.index(default_player_2) if default_player_2 in all_names else min(1, len(all_names) - 1)
 
     selector_col1, selector_col2 = st.columns(2)
 
-
     with selector_col1:
-
-        player_1_name = st.selectbox(
-            "Player 1",
-            options=all_names,
-            index=player_1_index,
-            key="h2h_player_1"
-        )
-
+        player_1_name = st.selectbox("Player 1", options=all_names, index=player_1_index, key="h2h_player_1")
 
     with selector_col2:
+        player_2_name = st.selectbox("Player 2", options=all_names, index=player_2_index, key="h2h_player_2")
 
-        player_2_name = st.selectbox(
-            "Player 2",
-            options=all_names,
-            index=player_2_index,
-            key="h2h_player_2"
-        )
-
-
-    player_1 = merged[
-        merged["Name"]
-        ==
-        player_1_name
-    ].iloc[0]
-
-
-    player_2 = merged[
-        merged["Name"]
-        ==
-        player_2_name
-    ].iloc[0]
-
+    player_1 = merged[merged["Name"] == player_1_name].iloc[0]
+    player_2 = merged[merged["Name"] == player_2_name].iloc[0]
 
     card_col1, card_col2 = st.columns(2)
 
-
     with card_col1:
-
         player_1_card = (
             '<div class="player-card">'
             '<div class="player-label">Player 1</div>'
-            '<div class="player-name">'
-            +
-            player_name_html(player_1)
-            +
-            '</div>'
-            '<div class="player-meta">'
-            +
-            safe_text(player_1["Team"])
-            +
-            ' ג€¢ '
-            +
-            safe_text(player_1["Position"])
-            +
-            ' ג€¢ Price '
-            +
-            display_price(player_1["Price"])
-            +
-            '</div>'
+            f'<div class="player-name">{player_name_html(player_1)}</div>'
+            f'<div class="player-meta">{safe_text(player_1["Team"])} • {safe_text(player_1["Position"])} • Price {display_price(player_1["Price"])}</div>'
             '<div class="player-rating-title">Yaya Rating</div>'
-            '<div class="player-rating">'
-            +
-            display_rating(
-                player_1["Yaya Rating"]
-            )
-            +
-            '<span>/10</span>'
-            '</div>'
-            +
-            experience_badges_html(player_1)
-            +
+            f'<div class="player-rating">{display_rating(player_1["Yaya Rating"])}<span>/10</span></div>'
+            f'{experience_badges_html(player_1)}'
             '</div>'
         )
+        st.markdown(player_1_card, unsafe_allow_html=True)
 
-        st.markdown(
-            player_1_card,
-            unsafe_allow_html=True
-        )
-
-        # Rookie warning directly under Player 1
         if not player_1["Has Historical Data"]:
-
             rookie_warning_1 = (
                 '<div class="rookie-warning">'
-                'ג ן¸ <b>Rookie:</b> '
-                +
-                html.escape(str(player_1["Name"]))
-                +
-                ' has no previous EuroLeague Fantasy data, so the rating is based on '
-                'experience, current price and projected team role.'
+                '⚠️ <b>Rookie:</b> '
+                + html.escape(str(player_1["Name"]))
+                + ' has no previous EuroLeague Fantasy data, so the rating is based on experience, current price and projected team role.'
                 '</div>'
             )
-
-            st.markdown(
-                rookie_warning_1,
-                unsafe_allow_html=True
-            )
-
+            st.markdown(rookie_warning_1, unsafe_allow_html=True)
 
     with card_col2:
-
         player_2_card = (
             '<div class="player-card">'
             '<div class="player-label">Player 2</div>'
-            '<div class="player-name">'
-            +
-            player_name_html(player_2)
-            +
-            '</div>'
-            '<div class="player-meta">'
-            +
-            safe_text(player_2["Team"])
-            +
-            ' ג€¢ '
-            +
-            safe_text(player_2["Position"])
-            +
-            ' ג€¢ Price '
-            +
-            display_price(player_2["Price"])
-            +
-            '</div>'
+            f'<div class="player-name">{player_name_html(player_2)}</div>'
+            f'<div class="player-meta">{safe_text(player_2["Team"])} • {safe_text(player_2["Position"])} • Price {display_price(player_2["Price"])}</div>'
             '<div class="player-rating-title">Yaya Rating</div>'
-            '<div class="player-rating">'
-            +
-            display_rating(
-                player_2["Yaya Rating"]
-            )
-            +
-            '<span>/10</span>'
-            '</div>'
-            +
-            experience_badges_html(player_2)
-            +
+            f'<div class="player-rating">{display_rating(player_2["Yaya Rating"])}<span>/10</span></div>'
+            f'{experience_badges_html(player_2)}'
             '</div>'
         )
+        st.markdown(player_2_card, unsafe_allow_html=True)
 
-        st.markdown(
-            player_2_card,
-            unsafe_allow_html=True
-        )
-
-        # Rookie warning directly under Player 2
         if not player_2["Has Historical Data"]:
-
             rookie_warning_2 = (
                 '<div class="rookie-warning">'
-                'ג ן¸ <b>Rookie:</b> '
-                +
-                html.escape(str(player_2["Name"]))
-                +
-                ' has no previous EuroLeague Fantasy data, so the rating is based on '
-                'experience, current price and projected team role.'
+                '⚠️ <b>Rookie:</b> '
+                + html.escape(str(player_2["Name"]))
+                + ' has no previous EuroLeague Fantasy data, so the rating is based on experience, current price and projected team role.'
                 '</div>'
             )
-
-            st.markdown(
-                rookie_warning_2,
-                unsafe_allow_html=True
-            )
-
-
-    # =====================================================
-    # TEAM CHANGE WARNINGS
-    # =====================================================
+            st.markdown(rookie_warning_2, unsafe_allow_html=True)
 
     warning_messages = []
-
-
     if player_1["Team Changed"]:
-        warning_messages.append(
-            player_1["Name"]
-            +
-            " is playing for a new team this season. "
-            "His rating uses last season's performance from his previous team."
-        )
-
-
+        warning_messages.append(player_1["Name"] + " is playing for a new team this season. His rating uses last season's performance from his previous team.")
     if player_2["Team Changed"]:
-        warning_messages.append(
-            player_2["Name"]
-            +
-            " is playing for a new team this season. "
-            "His rating uses last season's performance from his previous team."
-        )
-
+        warning_messages.append(player_2["Name"] + " is playing for a new team this season. His rating uses last season's performance from his previous team.")
 
     if warning_messages:
-
-        warning_html = (
-            '<div class="info-box">ג ן¸ '
-            +
-            "<br><br>ג ן¸ ".join(
-                html.escape(message)
-                for message in warning_messages
-            )
-            +
-            '</div>'
-        )
-
-        st.markdown(
-            warning_html,
-            unsafe_allow_html=True
-        )
-
-
-    # =====================================================
-    # H2H VALUES
-    # =====================================================
+        warning_html = '<div class="info-box">⚠️ ' + "<br><br>⚠️ ".join(html.escape(m) for m in warning_messages) + '</div>'
+        st.markdown(warning_html, unsafe_allow_html=True)
 
     comparison_rows = [
-        (
-            safe_text(player_1["Name"]),
-            "Name",
-            safe_text(player_2["Name"]),
-            None
-        ),
-        (
-            safe_text(player_1["Team"]),
-            "Team",
-            safe_text(player_2["Team"]),
-            None
-        ),
-        (
-            safe_text(player_1["Position"]),
-            "Position",
-            safe_text(player_2["Position"]),
-            None
-        ),
-        (
-            display_price(
-                player_1["Price"]
-            ),
-            "Price",
-            display_price(
-                player_2["Price"]
-            ),
-            "lower"
-        ),
-        (
-            display_number(
-                player_1["Overall Avg FPT"],
-                1
-            ),
-            "Last Season Avg FPT",
-            display_number(
-                player_2["Overall Avg FPT"],
-                1
-            ),
-            "higher"
-        ),
-        (
-            display_number(
-                player_1["Current Season Avg FPT"],
-                1
-            ),
-            "Current Season Avg FPT",
-            display_number(
-                player_2["Current Season Avg FPT"],
-                1
-            ),
-            "higher"
-        ),
-        (
-            display_integer(
-                player_1["Current Season Games"]
-            ),
-            "Current Season Games",
-            display_integer(
-                player_2["Current Season Games"]
-            ),
-            "higher"
-        ),
-        (
-            display_number(
-                player_1["Minutes Per Game"],
-                1
-            ),
-            "Minutes",
-            display_number(
-                player_2["Minutes Per Game"],
-                1
-            ),
-            "higher"
-        ),
-        (
-            display_number(
-                player_1["FPT per Minute"],
-                2
-            ),
-            "FPT / Min",
-            display_number(
-                player_2["FPT per Minute"],
-                2
-            ),
-            "higher"
-        ),
-        (
-            display_integer(
-                player_1["Games Played"]
-            ),
-            "Games",
-            display_integer(
-                player_2["Games Played"]
-            ),
-            "higher"
-        ),
-        (
-            display_rating(
-                player_1["Yaya Rating"]
-            ),
-            "Yaya Rating",
-            display_rating(
-                player_2["Yaya Rating"]
-            ),
-            "higher"
-        )
+        (safe_text(player_1["Name"]), "Name", safe_text(player_2["Name"]), None),
+        (safe_text(player_1["Team"]), "Team", safe_text(player_2["Team"]), None),
+        (safe_text(player_1["Position"]), "Position", safe_text(player_2["Position"]), None),
+        (display_price(player_1["Price"]), "Price", display_price(player_2["Price"]), "lower"),
+        (display_number(player_1["Overall Avg FPT"], 1), "Last Season Avg FPT", display_number(player_2["Overall Avg FPT"], 1), "higher"),
+        (display_number(player_1["Current Season Avg FPT"], 1), "Current Season Avg FPT", display_number(player_2["Current Season Avg FPT"], 1), "higher"),
+        (display_integer(player_1["Current Season Games"]), "Current Season Games", display_integer(player_2["Current Season Games"]), "higher"),
+        (display_number(player_1["Minutes Per Game"], 1), "Minutes", display_number(player_2["Minutes Per Game"], 1), "higher"),
+        (display_number(player_1["FPT per Minute"], 2), "FPT / Min", display_number(player_2["FPT per Minute"], 2), "higher"),
+        (display_integer(player_1["Games Played"]), "Games", display_integer(player_2["Games Played"]), "higher"),
+        (display_rating(player_1["Yaya Rating"]), "Yaya Rating", display_rating(player_2["Yaya Rating"]), "higher")
     ]
 
-
-    def numeric_value(
-        row,
-        category
-    ):
-
+    def numeric_value(row, category):
         if category == "Price":
             return row["Price"]
-
         if category == "Last Season Avg FPT":
             return row["Overall Avg FPT"]
-
         if category == "Current Season Avg FPT":
             return row["Current Season Avg FPT"]
-
         if category == "Current Season Games":
             return row["Current Season Games"]
-
         if category == "Minutes":
             return row["Minutes Per Game"]
-
         if category == "FPT / Min":
             return row["FPT per Minute"]
-
         if category == "Games":
             return row["Games Played"]
-
         if category == "Yaya Rating":
             return row["Yaya Rating"]
-
         return pd.NA
 
+    h2h_html = '<div class="h2h-wrap"><table class="h2h-table"><tbody>'
 
-    h2h_html = (
-        '<div class="h2h-wrap">'
-        '<table class="h2h-table">'
-        '<tbody>'
-    )
-
-
-    for (
-        value_1,
-        category,
-        value_2,
-        comparison_type
-    ) in comparison_rows:
-
+    for value_1, category, value_2, comparison_type in comparison_rows:
         class_1 = "h2h-left"
         class_2 = "h2h-right"
 
         if comparison_type is not None:
+            number_1 = numeric_value(player_1, category)
+            number_2 = numeric_value(player_2, category)
 
-            number_1 = numeric_value(
-                player_1,
-                category
-            )
-
-            number_2 = numeric_value(
-                player_2,
-                category
-            )
-
-            if (
-                not pd.isna(number_1)
-                and
-                not pd.isna(number_2)
-            ):
-
+            if not pd.isna(number_1) and not pd.isna(number_2):
                 if comparison_type == "higher":
-
                     if number_1 > number_2:
                         class_1 += " h2h-win"
-
                     elif number_2 > number_1:
                         class_2 += " h2h-win"
-
-
                 elif comparison_type == "lower":
-
                     if number_1 < number_2:
                         class_1 += " h2h-win"
-
                     elif number_2 < number_1:
                         class_2 += " h2h-win"
 
-
         h2h_html += (
             '<tr>'
-            '<td class="'
-            +
-            class_1
-            +
-            '">'
-            +
-            value_1
-            +
-            '</td>'
-            '<td class="h2h-category">'
-            +
-            html.escape(category)
-            +
-            '</td>'
-            '<td class="'
-            +
-            class_2
-            +
-            '">'
-            +
-            value_2
-            +
-            '</td>'
+            f'<td class="{class_1}">{value_1}</td>'
+            f'<td class="h2h-category">{html.escape(category)}</td>'
+            f'<td class="{class_2}">{value_2}</td>'
             '</tr>'
         )
 
-
-    h2h_html += (
-        '</tbody>'
-        '</table>'
-        '</div>'
-    )
-
-
-    st.markdown(
-        h2h_html,
-        unsafe_allow_html=True
-    )
-                
+    h2h_html += '</tbody></table></div>'
+    st.markdown(h2h_html, unsafe_allow_html=True)
